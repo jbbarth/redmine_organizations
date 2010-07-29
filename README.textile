@@ -1,0 +1,5 @@
+h1. Redmine organizations plugin
+
+This plugin aims at providing a nested organization structure for Redmine users. 
+It will help manage Redmine instances in big organizations.
+
