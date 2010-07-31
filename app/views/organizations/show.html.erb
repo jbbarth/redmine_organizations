@@ -1,0 +1,31 @@
+<div class="contextual">
+  <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => @organization},
+      :class => 'icon icon-edit' %>
+  <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => @organization},
+      :class => 'icon icon-del', :confirm => l(:text_are_you_sure), :method => :delete %>
+</div>
+
+<h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=h @organization.name%></h2>
+
+<p>
+  <b><%= l(:field_name)%>:</b>
+  <%=h @organization.name %>
+</p>
+<p>
+  <b><%= l(:field_description)%>:</b>
+  <%=h @organization.description %>
+</p>
+<p>
+  <b><%= l(:field_parent_id)%>:</b>
+  <%=h @organization.parent_id %>
+</p>
+<p>
+  <b><%= l(:field_lft)%>:</b>
+  <%=h @organization.lft %>
+</p>
+<p>
+  <b><%= l(:field_rgt)%>:</b>
+  <%=h @organization.rgt %>
+</p>
+
+<% html_title(l(:label_organization_plural)) -%>
