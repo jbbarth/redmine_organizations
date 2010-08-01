@@ -18,7 +18,7 @@
   <tbody>
   <% @organizations.each do |organization| -%>
     <tr class="organization <%= cycle("odd", "even") %>">
-      <td><%=link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => @organization} %></td>
+      <td><%=link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %></td>
       <td><%=h organization.description %></td>
       <td><%=h organization.parent.try(:name) %></td>
       <td class="buttons">
