@@ -1,15 +1,22 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 one:
   id: 1
-  name: MyString
-  description: MyText
-  parent_id: 1
+  name: Org A
+  description: Description of organization A
+  parent_id: 
   lft: 1
-  rgt: 1
+  rgt: 6
 two:
   id: 2
-  name: MyString
-  description: MyText
+  name: Org A / Team A
+  description: Team A in org A
   parent_id: 1
-  lft: 1
-  rgt: 1
+  lft: 2
+  rgt: 3
+three:
+  id: 3
+  name: Org A / Team B
+  description: Team B in org B
+  parent_id: 1
+  lft: 4
+  rgt: 5
