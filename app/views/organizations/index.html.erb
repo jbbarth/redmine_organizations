@@ -20,7 +20,7 @@
     <tr class="organization <%= cycle("odd", "even") %>">
       <td><%=link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => @organization} %></td>
       <td><%=h organization.description %></td>
-      <td><%=h organization.parent %></td>
+      <td><%=h organization.parent.try(:name) %></td>
       <td class="buttons">
         <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
             :class => 'icon icon-edit' %>

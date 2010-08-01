@@ -1,4 +1,4 @@
-<h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=h @organization %></h2>
+<h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=h @organization.name %></h2>
 
 <% labelled_tabular_form_for :organization, @organization, :url => {:controller=>'organizations', :action=>'update'}, :html => { :class => nil, :method => :put } do |f| -%>
 	<%= render :partial => 'form', :locals => { :f => f } %>
