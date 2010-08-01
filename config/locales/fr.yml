@@ -1,5 +1,5 @@
-# English strings go here for Rails i18n
-en:
+# French strings go here for Rails i18n
+fr:
   label_organization: "Organisation"
   label_organization_plural: "Organisations"
   label_organization_new: "Nouvelle organisation"
