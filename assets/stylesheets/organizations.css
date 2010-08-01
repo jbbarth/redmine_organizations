@@ -1,1 +1,11 @@
 .icon-organizations, #admin-menu a.organizations { background-image: url(../images/building.png); }
+tr.organization.idnt td.name a {background: url(../../../images/bullet_arrow_right.png) no-repeat 0 50%; padding-left: 16px;}
+tr.organization.idnt-1 td.name {padding-left: 0.5em;}
+tr.organization.idnt-2 td.name {padding-left: 2em;}
+tr.organization.idnt-3 td.name {padding-left: 3.5em;}
+tr.organization.idnt-4 td.name {padding-left: 5em;}
+tr.organization.idnt-5 td.name {padding-left: 6.5em;}
+tr.organization.idnt-6 td.name {padding-left: 8em;}
+tr.organization.idnt-7 td.name {padding-left: 9.5em;}
+tr.organization.idnt-8 td.name {padding-left: 11em;}
+tr.organization.idnt-9 td.name {padding-left: 12.5em;}

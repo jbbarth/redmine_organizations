@@ -4,7 +4,7 @@ class OrganizationsController < ApplicationController
   layout 'admin'
   
   def index
-    @organizations = Organization.all
+    @organizations = Organization.all(:order => 'lft')
   end
   
   def show
