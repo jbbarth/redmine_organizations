@@ -16,16 +16,8 @@
   <%=h @organization.description %>
 </p>
 <p>
-  <b><%= l(:field_parent_id)%>:</b>
-  <%=h @organization.parent_id %>
-</p>
-<p>
-  <b><%= l(:field_lft)%>:</b>
-  <%=h @organization.lft %>
-</p>
-<p>
-  <b><%= l(:field_rgt)%>:</b>
-  <%=h @organization.rgt %>
+  <b><%= l(:field_parent_organization)%>:</b>
+  <%=h @organization.parent.try(:name) %>
 </p>
 
 <% html_title(l(:label_organization_plural)) -%>

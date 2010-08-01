@@ -11,37 +11,23 @@
     <tr>
             <th><%= l(:field_name)%></th>
             <th><%= l(:field_description)%></th>
-            <th><%= l(:field_parent_id)%></th>
-            <th><%= l(:field_lft)%></th>
-            <th><%= l(:field_rgt)%></th>
+            <th><%= l(:field_parent_organization)%></th>
             <th> </th>
     </tr>
   </thead>
   <tbody>
   <% @organizations.each do |organization| -%>
     <tr class="organization <%= cycle("odd", "even") %>">
-          
-        <td><%=link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => @organization} %></td>
-      
-          
-        <td><%=h organization.description %></td>
-      
-          
-        <td><%=h organization.parent_id %></td>
-      
-          
-        <td><%=h organization.lft %></td>
-      
-          
-        <td><%=h organization.rgt %></td>
-      
-        <td class="buttons">
-      <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
-          :class => 'icon icon-edit' %>
-      <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
-          :class => 'icon icon-del', :confirm => l(:text_are_you_sure), :method => :delete %>
-    </td>
-  </tr>
+      <td><%=link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => @organization} %></td>
+      <td><%=h organization.description %></td>
+      <td><%=h organization.parent %></td>
+      <td class="buttons">
+        <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
+            :class => 'icon icon-edit' %>
+        <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
+            :class => 'icon icon-del', :confirm => l(:text_are_you_sure), :method => :delete %>
+      </td>
+    </tr>
   <% end -%>
   </tbody>
 </table>

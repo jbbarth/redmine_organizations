@@ -3,3 +3,4 @@ en:
   label_organization: "Organization"
   label_organization_plural: "Organizations"
   label_organization_new: "New organization"
+  field_parent_organization: "Parent organization"
