@@ -37,7 +37,7 @@ class OrganizationsControllerTest < ActionController::TestCase
 
   test "should destroy organization" do
     assert_difference('Organization.count', -1) do
-      delete :destroy, :id => Organization.find(1).to_param
+      delete :destroy, :id => Organization.find(3).to_param
     end
 
     assert_redirected_to organizations_path
