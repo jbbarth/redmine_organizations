@@ -7,8 +7,12 @@ class Organization < ActiveRecord::Base
   # But also far less complicated
   after_save do |org|
     siblings = org.siblings
-    while org.left_sibling && (org.left_sibling.name.casecmp(org.name) == 1)
+    while org.left_sibling && org.left_sibling < org
       org.move_left
     end
+  end
+  
+  def <=>(other)
+    (other.name || "").casecmp(self.name)
   end
 end
