@@ -13,6 +13,10 @@ class Organization < ActiveRecord::Base
   end
   
   def <=>(other)
-    (other.name || "").casecmp(self.name)
+    other.name.casecmp(self.name)
+  end
+  
+  def name
+    read_attribute(:name) || ""
   end
 end
