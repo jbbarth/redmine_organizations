@@ -1,6 +1,14 @@
 require 'redmine'
 
+#patches
+config.to_prepare do
+  require_dependency 'redmine_organizations/patches/user_patch'
+end
+
+#hooks
 require 'redmine_organizations/hooks/view_layouts_base_html_head_hook'
+
+#additions
 require 'awesome_nested_set2/init'
 
 Redmine::Plugin.register :redmine_organizations do

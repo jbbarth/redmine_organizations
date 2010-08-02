@@ -1,0 +1,25 @@
+require_dependency 'principal'
+require_dependency 'user'
+
+module RedmineOrganization
+  module Patches
+    module UserPatch
+      def self.included(base)
+        base.extend(ClassMethods)
+        base.send(:include, InstanceMethods)
+        base.class_eval do
+          has_many :organization_members
+          has_many :organisations, :through => :organization_members
+        end
+      end
+
+      module ClassMethods
+      end
+      
+      module InstanceMethods
+      end
+    end
+  end
+end
+
+User.send(:include, RedmineOrganization::Patches::UserPatch)

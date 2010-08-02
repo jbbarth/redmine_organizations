@@ -1,7 +1,10 @@
 class Organization < ActiveRecord::Base
   unloadable
   acts_as_nested_set2
-
+  
+  has_many :memberships, :class_name => 'OrganizationMember'
+  has_many :users, :through => :memberships
+  
   # Reorder tree after save on the fly
   # Less beautiful than Redmine method to keep tree sorted,
   # But also far less complicated
