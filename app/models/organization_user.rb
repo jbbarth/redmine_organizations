@@ -1,4 +1,4 @@
-class OrganizationMember < ActiveRecord::Base
+class OrganizationUser < ActiveRecord::Base
   belongs_to :organization
   belongs_to :user
 end
