@@ -17,6 +17,8 @@ class OrganizationsController < ApplicationController
   
   def edit
     @organization = Organization.find(params[:id])
+    @roles = Role.find_all_givable
+    @projects = Project.active.all(:order => 'lft')
   end
   
   def create

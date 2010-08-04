@@ -4,6 +4,8 @@ class Organization < ActiveRecord::Base
   
   has_many :organization_users
   has_many :users, :through => :organization_users
+  has_many :memberships, :class_name => 'OrganizationMembership'
+  has_many :projects, :through => :memberships
   
   # Reorder tree after save on the fly
   # Less beautiful than Redmine method to keep tree sorted,
