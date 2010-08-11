@@ -9,6 +9,25 @@ class OrganizationsController < ApplicationController
   
   def show
     @organization = Organization.find(params[:id])
+    #@custom_values = @user.custom_values
+    @custom_values = []
+    
+    @memberships = @organization.memberships.all(:include => :project,
+                                                 :conditions => Project.visible_by(User.current))
+    
+    @users = @organization.users
+    
+    events = []
+    #@users.each do |user|
+    #  events << Redmine::Activity::Fetcher.new(User.current, :author => user).events(nil, nil, :limit => 10)
+    #end
+    #@events_by_day = events.group_by(&:event_date) <<undefined method 'event_date' for Array
+    @events_by_day = []
+    
+    render :layout => 'base'
+
+  rescue ActiveRecord::RecordNotFound
+    render_404
   end
   
   def new

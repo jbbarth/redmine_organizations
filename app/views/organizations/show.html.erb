@@ -7,17 +7,68 @@
 
 <h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=h @organization.name%></h2>
 
+
+<div class="splitcontentleft">
+<p><%=textilizable @organization.description %></p>
+<ul>
+  <% if @organization.parent -%>
+    <li><%= l(:field_parent_organization)%>: <%=link_to @organization.parent.name, @organization.parent %></li>
+  <% end -%>
+	<% for custom_value in @custom_values %>
+	<% if !custom_value.value.blank? %>
+    <li><%=h custom_value.custom_field.name%>: <%=h show_value(custom_value) %></li>
+	<% end %>
+	<% end %>
+</ul>
+
+<% unless @memberships.empty? %>
+<h3><%=l(:label_project_plural)%></h3>
+<ul>
+<% for membership in @memberships %>
+	<li><%= link_to_project(membership.project) %>
+    (<%=h membership.roles.sort.collect(&:to_s).join(', ') %>)</li>
+<% end %>
+</ul>
+<% end %>
+
+<% unless @users.empty? %>
+<h3><%=l(:label_user_plural)%></h3>
+<ul>
+<% for user in @users %>
+	<li><%= link_to_user(user) %></li>
+<% end %>
+</ul>
+<% end %>
+
+<%= call_hook :view_organization_left_bottom, :organization => @organization %>
+</div>
+
+<div class="splitcontentright">
+
+<% unless @events_by_day.empty? %>
+<h3><%= link_to l(:label_activity), :controller => 'projects', :action => 'activity', :id => nil, :organization_id => @organization, :from => @events_by_day.keys.first %></h3>
+
 <p>
-  <b><%= l(:field_name)%>:</b>
-  <%=h @organization.name %>
+<%=l(:label_reported_issues)%>: <%= Issue.count(:conditions => {:author_id => @organization.users.map(&:id)}) %>
 </p>
-<p>
-  <b><%= l(:field_description)%>:</b>
-  <%=h @organization.description %>
-</p>
-<p>
-  <b><%= l(:field_parent_organization)%>:</b>
-  <%=h @organization.parent.try(:name) %>
-</p>
+
+<div id="activity">
+<% @events_by_day.keys.sort.reverse.each do |day| %>
+<h4><%= format_activity_day(day) %></h4>
+<dl>
+<% @events_by_day[day].sort {|x,y| y.event_datetime <=> x.event_datetime }.each do |e| -%>
+  <dt class="<%= e.event_type %>">
+  <span class="time"><%= format_time(e.event_datetime, false) %></span>
+  <%= content_tag('span', h(e.project), :class => 'project') %>
+  <%= link_to format_activity_title(e.event_title), e.event_url %></dt>
+  <dd><span class="description"><%= format_activity_description(e.event_description) %></span></dd>
+<% end -%>
+</dl>
+<% end -%>
+</div>
+
+<% end %>
+<%= call_hook :view_account_right_bottom, :organization => @organization %>
+</div>
 
 <% html_title(l(:label_organization_plural)) -%>
