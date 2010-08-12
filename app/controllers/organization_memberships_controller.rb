@@ -1,4 +1,6 @@
 class OrganizationMembershipsController < ApplicationController
+  before_filter :require_admin
+
   helper :organizations
   include OrganizationsHelper   
   

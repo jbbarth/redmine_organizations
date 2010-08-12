@@ -1,5 +1,7 @@
 class OrganizationsController < ApplicationController
   unloadable
+
+  before_filter :require_admin, :except => :show
   
   layout 'admin'
   
