@@ -1,0 +1,15 @@
+organization_role_001:
+  id: 1
+  organization_membership_id: 1
+  role_id: 1
+  inherited_from:
+organization_role_002:
+  id: 2
+  organization_membership_id: 1
+  role_id: 2
+  inherited_from:
+organization_role_001:
+  id: 3
+  organization_membership_id: 2
+  role_id: 1
+  inherited_from:
