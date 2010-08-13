@@ -4,3 +4,4 @@ en:
   label_organization_plural: "Organizations"
   label_organization_new: "New organization"
   field_parent_organization: "Parent organization"
+  text_hide_groups_admin_menu: "Hide groups in admin menu"

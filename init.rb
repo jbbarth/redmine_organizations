@@ -19,8 +19,12 @@ Redmine::Plugin.register :redmine_organizations do
   author_url 'mailto:jeanbaptiste.barth@gmail.com'
   version '0.1'
   requires_redmine :version_or_higher => '1.0.0'
+  settings :default => {
+    'hide_groups_admin_menu' => "0",
+  }, :partial => 'settings/organizations_settings'
 end
 
 Redmine::MenuManager.map :admin_menu do |menu|
   menu.push :organizations, {:controller => 'organizations'}, :after => :groups
+  menu.delete :groups if Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] == "1"
 end
