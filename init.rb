@@ -3,6 +3,7 @@ require 'redmine'
 #patches
 config.to_prepare do
   require_dependency 'redmine_organizations/patches/user_patch'
+  require_dependency 'redmine_organizations/patches/setting_patch'
 end
 
 #hooks
@@ -26,5 +27,4 @@ end
 
 Redmine::MenuManager.map :admin_menu do |menu|
   menu.push :organizations, {:controller => 'organizations'}, :after => :groups
-  menu.delete :groups if Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] == "1"
 end
