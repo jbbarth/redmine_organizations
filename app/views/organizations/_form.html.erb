@@ -6,6 +6,6 @@
     <p><%= f.text_area :description, :size => "40x3" %></p>
     <p><%= f.select "parent_id", nested_set_options(Organization, @organization) { |i|
                       "#{'--' * i.level} #{i.name}"
-                    }, :include_blank => true %></p>
+                    }, :include_blank => true, :label => :field_parent_organization %></p>
   </div>
 <!--[eoform:organization]-->
