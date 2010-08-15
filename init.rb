@@ -4,6 +4,7 @@ require 'redmine'
 config.to_prepare do
   require_dependency 'redmine_organizations/patches/user_patch'
   require_dependency 'redmine_organizations/patches/setting_patch'
+  require_dependency 'redmine_organizations/patches/project_patch'
 end
 
 #hooks
