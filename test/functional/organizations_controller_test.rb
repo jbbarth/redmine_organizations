@@ -1,6 +1,10 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class OrganizationsControllerTest < ActionController::TestCase
+  def setup
+    @request.session[:user_id] = 1
+  end
+  
   test "should get index" do
     get :index
     assert_response :success

@@ -1,6 +1,10 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class OrganizationMembershipsControllerTest < ActionController::TestCase
+  def setup
+    @request.session[:user_id] = 1
+  end
+  
   test "should create organization membership" do
     assert_difference 'Organization.find(1).projects.count', 1 do
       post :create, :membership => {:organization_id => 1, :project_id => 3, :role_ids => ['1', '2']}
