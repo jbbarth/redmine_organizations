@@ -17,7 +17,7 @@ class CreateOrganizationProjects < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :organization_users
+    drop_table :organization_memberships
     drop_table :organization_roles
   end
 end
