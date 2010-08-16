@@ -7,6 +7,8 @@ class Organization < ActiveRecord::Base
   has_many :memberships, :class_name => 'OrganizationMembership'
   has_many :projects, :through => :memberships
   
+  SEPARATOR = '/'
+
   # Reorder tree after save on the fly
   # Less beautiful than Redmine method to keep tree sorted,
   # But also far less complicated
@@ -23,5 +25,11 @@ class Organization < ActiveRecord::Base
   
   def name
     read_attribute(:name) || ""
+  end
+  
+  def fullname
+    ancestors.all(:order => 'lft').map do |ancestor|
+      ancestor.name+Organization::SEPARATOR
+    end.join("") + name
   end
 end

@@ -8,14 +8,14 @@ one:
   rgt: 6
 two:
   id: 2
-  name: Org A / Team A
+  name: Team A
   description: Team A in org A
   parent_id: 1
   lft: 2
   rgt: 3
 three:
   id: 3
-  name: Org A / Team B
+  name: Team B
   description: Team B in org B
   parent_id: 1
   lft: 4

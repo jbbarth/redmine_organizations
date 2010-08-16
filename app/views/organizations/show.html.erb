@@ -5,7 +5,7 @@
       :class => 'icon icon-del', :confirm => l(:text_are_you_sure), :method => :delete %>
 </div>
 
-<h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=h @organization.name%></h2>
+<h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=link_to_organization @organization%></h2>
 
 
 <div class="splitcontentleft">
