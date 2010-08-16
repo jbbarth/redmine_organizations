@@ -11,6 +11,15 @@
 <div class="splitcontentleft">
 <p><%=textilizable @organization.description %></p>
 <ul>
+  <% if @organization.children.any? -%>
+  <li>
+    <%=l(:label_organization_children)%>: 
+    <%=@organization.children.map do |o|
+      link_to_organization o, {:fullname=>false,:link_ancestors=>false}
+    end.join(", ") %>
+  </li>
+  <% end -%>
+
 	<% for custom_value in @custom_values %>
 	<% if !custom_value.value.blank? %>
     <li><%=h custom_value.custom_field.name%>: <%=h show_value(custom_value) %></li>
