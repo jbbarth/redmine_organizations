@@ -11,9 +11,6 @@
 <div class="splitcontentleft">
 <p><%=textilizable @organization.description %></p>
 <ul>
-  <% if @organization.parent -%>
-    <li><%= l(:field_parent_organization)%>: <%=link_to @organization.parent.name, @organization.parent %></li>
-  <% end -%>
 	<% for custom_value in @custom_values %>
 	<% if !custom_value.value.blank? %>
     <li><%=h custom_value.custom_field.name%>: <%=h show_value(custom_value) %></li>
