@@ -31,5 +31,3 @@ module OrganizationsHelper
     end
   end
 end
-
-ActionView::Base.send(:include, OrganizationsHelper)

@@ -1,10 +1,12 @@
 require 'redmine'
 
-#patches
 config.to_prepare do
+  #patches
   require_dependency 'redmine_organizations/patches/user_patch'
   require_dependency 'redmine_organizations/patches/setting_patch'
   require_dependency 'redmine_organizations/patches/project_patch'
+  #ensure our helper is included
+  ActionView::Base.send(:include, OrganizationsHelper)
 end
 
 #hooks
@@ -12,6 +14,8 @@ require 'redmine_organizations/hooks/view_layouts_base_html_head_hook'
 
 #additions
 require 'awesome_nested_set2/init'
+
+#ensure organizations helper is loaded
 
 Redmine::Plugin.register :redmine_organizations do
   name 'Redmine organizations plugin'
