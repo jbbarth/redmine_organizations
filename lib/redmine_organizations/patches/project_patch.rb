@@ -13,15 +13,14 @@ class Project
       end
       h
     end
+    #{org1=>[user1,user2],org2=>[],?=>[user3]}
+    dummy_org = Organization.new(:name => l(:label_others))
     members.find(:all, :include => [:user, :roles]).inject({}) do |h, m|
       m.roles.each do |r|
-        #don't register user if he's not
-        #part of a registered organization
-        if ou = org_users[m.user_id]
-          h[r] ||= {}
-          h[r][ou] ||= []
-          h[r][org_users[m.user_id]] << m.user
-        end
+        ou = org_users[m.user_id] || dummy_org
+        h[r] ||= {}
+        h[r][ou] ||= []
+        h[r][ou] << m.user
       end
       h
     end
