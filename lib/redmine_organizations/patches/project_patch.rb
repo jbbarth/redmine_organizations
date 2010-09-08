@@ -17,6 +17,7 @@ class Project
     dummy_org = Organization.new(:name => l(:label_others))
     members.find(:all, :include => [:user, :roles]).inject({}) do |h, m|
       m.roles.each do |r|
+        next if r.hidden_on_overview?
         ou = org_users[m.user_id] || dummy_org
         h[r] ||= {}
         h[r][ou] ||= []

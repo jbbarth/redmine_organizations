@@ -5,4 +5,5 @@ fr:
   label_organization_new: "Nouvelle organisation"
   label_organization_children: "Sous-organisations"
   field_parent_organization: "Organisation parent"
+  field_hidden_on_overview: "Cacher sur l'aperçu des projets"
   text_hide_groups_admin_menu: "Cacher le menu 'Groupes' dans la partie administration"
