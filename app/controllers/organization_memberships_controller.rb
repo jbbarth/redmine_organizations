@@ -5,8 +5,8 @@ class OrganizationMembershipsController < ApplicationController
   include OrganizationsHelper   
   
   def create
-    @organization = Organization.find(params[:membership][:organization_id])
     @membership = OrganizationMembership.new(params[:membership])
+    @organization = Organization.find(params[:membership][:organization_id])
     @membership.save
     respond_to do |format|
        format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'memberships' }
@@ -20,8 +20,8 @@ class OrganizationMembershipsController < ApplicationController
   end
   
   def update
-    @organization = Organization.find(params[:id])
-    @membership = OrganizationMembership.find(params[:membership_id])
+    @membership = OrganizationMembership.find(params[:id])
+    @organization = Organization.find(params[:organization_id])
     @membership.update_attributes(params[:membership])
     respond_to do |format|
        format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'memberships' }
@@ -35,8 +35,8 @@ class OrganizationMembershipsController < ApplicationController
   end
   
   def destroy
-    @organization = Organization.find(params[:id])
-    OrganizationMembership.find(params[:membership_id]).destroy
+    OrganizationMembership.find(params[:id]).destroy
+    @organization = Organization.find(params[:organization_id])
     respond_to do |format|
       format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'memberships' }
       format.js { render(:update) {|page| page.replace_html "tab-content-memberships", :partial => 'organizations/memberships'} }

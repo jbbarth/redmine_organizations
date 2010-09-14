@@ -12,13 +12,13 @@ class OrganizationMembershipsControllerTest < ActionController::TestCase
   end
   
   test "should update organization membership" do
-    put :update, :id => 1, :membership_id => 1, :membership => { :role_ids => ['1', '3']}
+    put :update, :id => 1, :organization_id => 1, :membership => { :role_ids => ['1', '3']}
     assert_equal [1,3], OrganizationMembership.find(1).role_ids.sort
   end
   
   test "should destroy membership" do
     assert_difference 'Organization.find(1).projects.count', -1 do
-      delete :destroy, :id => 1, :membership_id => 3
+      delete :destroy, :id => 3, :organization_id => 1
     end
   end
 end
