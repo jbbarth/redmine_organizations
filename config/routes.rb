@@ -5,5 +5,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :organization_memberships, :only => [:create,:update,:destroy],
                                            :new => {:create_in_project => :post},
                                            :member => {:update_roles => :put,
+                                                       :update_users => :put,
                                                        :destroy_in_project => :delete}
 end
