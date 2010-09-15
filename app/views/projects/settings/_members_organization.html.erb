@@ -1,0 +1,34 @@
+<script type="text/javascript">
+//<![CDATA[
+function toggleOrgaForms(id) {
+  orga_id = 'orga-'+id;
+  $(orga_id+'-roles',orga_id+'-roles-form').invoke('toggle');
+}
+//]]>
+</script>
+
+<% m ||= @membership %>
+<% roles ||= Role.find_all_givable %>
+<% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project, :tab=>"members") %>
+<td><%= link_to_organization m.organization %></td>
+<td>
+  <span id="orga-<%= m.id %>-roles"><%= m.roles.map(&:name).join(", ") %></span>
+  <% remote_form_for(:membership, m.organization, :method => :put,
+                     :url => { :controller => 'organization_memberships', :action => 'update_roles', :id => m },
+                     :html => { :id => "orga-#{m.id}-roles-form", :class => 'hol' }) do |f| -%>
+    <p><% roles.each do |role| %>
+      <label><%= check_box_tag 'membership[role_ids][]', role.id, m.roles.include?(role) %> <%=h role %></label><br />
+    <% end %></p>
+    <%= hidden_field_tag 'membership[role_ids][]', '' %>
+    <p><%= submit_tag l(:button_change), :class => "small" %>
+    <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{m.id}); return false;" %></p>
+  <% end -%>
+</td>
+<td><%= m.organization.users.map(&:to_s).join(", ") %></td>
+<td class="buttons">
+  <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{m.id}); return false;",
+                       :class => 'icon icon-edit') %>
+  <%= link_to(l(:button_delete),
+              {:controller => 'organization_memberships', :action => 'destroy_in_project', :id => m, :back_url => @back},
+              :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
+</td>
