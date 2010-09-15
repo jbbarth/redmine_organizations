@@ -8,4 +8,21 @@ class OrganizationMembership < ActiveRecord::Base
   
   validates_presence_of :organization, :project
   validates_uniqueness_of :organization_id, :scope => :project_id
+  
+  after_save :update_users_memberships
+  
+  def update_users_memberships
+    #update users roles
+    self.users.each do |user|
+      attributes = {:user_id => user, :project_id => self.project_id}
+      member = Member.first(:conditions => attributes) || Member.new(attributes)
+      member.roles = self.roles
+      member.save
+    end
+    #delete old involvements
+    (self.organization.users - self.users).each do |user|
+      attributes = {:user_id => user, :project_id => self.project}
+      Member.first(:conditions => attributes).try(:destroy)
+    end
+  end
 end
