@@ -79,7 +79,7 @@ class OrganizationMembershipsController < ApplicationController
   
   def update_users
     @membership = OrganizationMembership.find(params[:id])
-###    @membership.update_attributes(params[:membership])
+    @membership.update_attributes(params[:membership])
     @organization = @membership.organization
     @project = @membership.project
     respond_to do |format|
