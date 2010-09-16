@@ -1,6 +1,6 @@
 class CreateOrganizationUsers < ActiveRecord::Migration
   def self.up
-    create_table :organization_users, :id => false do |t|
+    create_table :organization_users do |t|
       t.column :organization_id, :integer, :null => false
       t.column :user_id, :integer, :null => false
       t.column :function, :integer, :default => 0
