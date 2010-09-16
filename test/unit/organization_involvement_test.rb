@@ -30,4 +30,19 @@ class OrganizationInvolvementTest < ActiveSupport::TestCase
     m.save
     assert ! @user.reload.member_of?(@project)
   end
+  
+  #test "Involvements through multiple organizations don't break other ones inherited roles" do
+  def test_truc
+    @user2 = User.find(3)
+    @organization2 = Organization.find(2)
+    assert ! @user.member_of?(@project)
+    assert ! @user2.member_of?(@project)
+    m1 = OrganizationMembership.create!(:organization => @organization, :project => @project,
+                                        :roles => [@role1, @role2], :users => [@user])
+    assert_equal [1,2], @user.reload.roles_for_project(@project).map(&:id)
+    m2 = OrganizationMembership.create!(:organization => @organization2, :project => @project,
+                                        :roles => [@role1], :users => [@user, @user2])
+    assert_equal [1,2], @user.reload.roles_for_project(@project).map(&:id)
+    assert_equal [1], @user2.reload.roles_for_project(@project).map(&:id)
+  end
 end

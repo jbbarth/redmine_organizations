@@ -14,15 +14,22 @@ class OrganizationMembership < ActiveRecord::Base
   def update_users_memberships
     #update users roles
     self.users.each do |user|
-      attributes = {:user_id => user, :project_id => self.project_id}
+      attributes = {:user_id => user.id, :project_id => self.project_id}
       member = Member.first(:conditions => attributes) || Member.new(attributes)
-      member.roles = self.roles
+      member.roles = self.roles + user.roles_through_involvements(self.project_id, self.id)
       member.save
     end
     #delete old involvements
     (self.organization.users - self.users).each do |user|
-      attributes = {:user_id => user, :project_id => self.project}
-      Member.first(:conditions => attributes).try(:destroy)
+      attributes = {:user_id => user.id, :project_id => self.project_id}
+      if member = Member.first(:conditions => attributes).try(:destroy)
+        member.roles = user.roles_through_involvements(self.project_id, self.id)
+        if member.roles.blank?
+          member.destroy
+        else
+          member.save
+        end
+      end
     end
   end
 end
