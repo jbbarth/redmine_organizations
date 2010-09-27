@@ -1,6 +1,10 @@
 require_dependency 'principal'
 require_dependency 'user'
 
+#Here's a hack to avoid User class missing Principal scopes
+#TODO: find a better hack...
+User.scopes[:like] = Principal.scopes[:like]
+
 class User < Principal
   unloadable
   has_many :organization_users
