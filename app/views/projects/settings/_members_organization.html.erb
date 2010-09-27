@@ -10,6 +10,8 @@ function toggleOrgaForms(id) {
 <% m ||= @membership %>
 <% roles ||= Role.find_all_givable %>
 <% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project, :tab=>"members") %>
+
+<% if m.organization %>
 <td><%= link_to_organization m.organization %></td>
 <td>
   <span id="orga-<%= m.id %>-roles"><%= m.roles.map(&:name).join(", ") %></span>
@@ -44,3 +46,4 @@ function toggleOrgaForms(id) {
               {:controller => 'organization_memberships', :action => 'destroy_in_project', :id => m, :back_url => @back},
               :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
 </td>
+<% end %>

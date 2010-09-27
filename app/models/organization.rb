@@ -4,7 +4,7 @@ class Organization < ActiveRecord::Base
   
   has_many :organization_users
   has_many :users, :through => :organization_users
-  has_many :memberships, :class_name => 'OrganizationMembership'
+  has_many :memberships, :class_name => 'OrganizationMembership', :dependent => :delete_all
   has_many :projects, :through => :memberships
   
   SEPARATOR = '/'
