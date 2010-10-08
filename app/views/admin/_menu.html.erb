@@ -1,0 +1,14 @@
+<%
+Redmine::MenuManager.map(:admin_menu) do |menu|
+  if Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] == "1"
+    menu.delete :groups
+  elsif ! menu.exists?(:groups)
+    menu.push :groups, {:controller => 'groups'}, :caption => :label_group_plural, :after => :users
+  end
+end
+%>
+<div id="admin-menu">
+  <ul>
+    <%= render_menu :admin_menu %>
+  </ul>
+</div>
