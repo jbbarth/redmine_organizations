@@ -1,12 +1,13 @@
 .icon-organizations, #admin-menu a.organizations { background-image: url(../images/building.png); }
 tr.organization.idnt td.name a {background: url(../../../images/bullet_arrow_right.png) no-repeat 0 50%; padding-left: 16px;}
-tr.organization.idnt-1 td.name {padding-left: 0.5em;}
-tr.organization.idnt-2 td.name {padding-left: 2em;}
-tr.organization.idnt-3 td.name {padding-left: 3.5em;}
-tr.organization.idnt-4 td.name {padding-left: 5em;}
-tr.organization.idnt-5 td.name {padding-left: 6.5em;}
-tr.organization.idnt-6 td.name {padding-left: 8em;}
-tr.organization.idnt-7 td.name {padding-left: 9.5em;}
-tr.organization.idnt-8 td.name {padding-left: 11em;}
-tr.organization.idnt-9 td.name {padding-left: 12.5em;}
+p.idnt { margin:0; }
+tr.organization.idnt-1 td.name, p.idnt-1 {padding-left: 0.5em;}
+tr.organization.idnt-2 td.name, p.idnt-2 {padding-left: 2em;}
+tr.organization.idnt-3 td.name, p.idnt-3 {padding-left: 3.5em;}
+tr.organization.idnt-4 td.name, p.idnt-4 {padding-left: 5em;}
+tr.organization.idnt-5 td.name, p.idnt-5 {padding-left: 6.5em;}
+tr.organization.idnt-6 td.name, p.idnt-6 {padding-left: 8em;}
+tr.organization.idnt-7 td.name, p.idnt-7 {padding-left: 9.5em;}
+tr.organization.idnt-8 td.name, p.idnt-8 {padding-left: 11em;}
+tr.organization.idnt-9 td.name, p.idnt-9 {padding-left: 12.5em;}
 div.members span.organization-members { font-size:90%; }

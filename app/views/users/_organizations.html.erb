@@ -1,0 +1,14 @@
+<% form_for(:user, :url => { :action => 'update' }, :html => {:method => :put}) do %>
+<div class="box">
+<% Organization.all(:order=>'lft').each do |organization| %>
+  <p class="organization idnt <%= organization.level > 0 ? "idnt-#{organization.level}" : nil %>">
+    <label>
+      <%= check_box_tag 'user[organization_ids][]', organization.id, @user.organizations.include?(organization) %> 
+      <%= h organization.name %>
+    </label>
+  </p>
+<% end %>
+<%= hidden_field_tag 'user[organization_ids][]', '' %>
+</div>
+<%= submit_tag l(:button_save) %>
+<% end %>
