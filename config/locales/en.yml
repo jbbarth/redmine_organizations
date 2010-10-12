@@ -6,4 +6,4 @@ en:
   label_organization_children: "Sub-organizations"
   field_parent_organization: "Parent organization"
   field_hidden_on_overview: "Hide on project overview"
-  text_hide_groups_admin_menu: "Hide groups in admin menu"
+  text_hide_groups_admin_menu: "Hide groups"
