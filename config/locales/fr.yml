@@ -4,6 +4,7 @@ fr:
   label_organization_plural: "Organisations"
   label_organization_new: "Nouvelle organisation"
   label_organization_children: "Sous-organisations"
+  label_copy_organizations_and_involvements_from: "Copier les organisations et affiliations de"
   field_parent_organization: "Organisation parent"
   field_hidden_on_overview: "Cacher sur l'aperçu des projets"
   text_hide_groups_admin_menu: "Cacher les 'Groupes'"
