@@ -31,8 +31,7 @@ class OrganizationInvolvementTest < ActiveSupport::TestCase
     assert ! @user.reload.member_of?(@project)
   end
   
-  #test "Involvements through multiple organizations don't break other ones inherited roles" do
-  def test_truc
+  test "Involvements through multiple organizations don't break other ones inherited roles" do
     @user2 = User.find(3)
     @organization2 = Organization.find(2)
     assert ! @user.member_of?(@project)
