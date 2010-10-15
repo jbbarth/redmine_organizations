@@ -31,8 +31,7 @@
 <h3><%=l(:label_project_plural)%></h3>
 <ul>
 <% for membership in @memberships %>
-	<li><%= link_to_project(membership.project) %>
-    (<%=h membership.roles.sort.collect(&:to_s).join(', ') %>)</li>
+	<li><%= link_to_organization_membership(membership) %></li>
 <% end %>
 </ul>
 <% end %>
