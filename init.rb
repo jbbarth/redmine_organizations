@@ -5,6 +5,7 @@ config.to_prepare do
   require_dependency 'redmine_organizations/patches/user_patch'
   require_dependency 'redmine_organizations/patches/project_patch'
   require_dependency 'redmine_organizations/patches/users_helper_patch'
+  require_dependency 'redmine_organizations/patches/member_role_patch'
   #ensure our helper is included
   ActionView::Base.send(:include, OrganizationsHelper)
 end
