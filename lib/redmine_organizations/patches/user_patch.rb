@@ -26,4 +26,18 @@ class User < Principal
       member.save
     end
   end
+  
+  def destroy_membership_unless_through_other_organization(organization_membership)
+    if id && project_id = organization_membership.project_id
+      attributes = {:user_id => id, :project_id => project_id}
+      if member = Member.first(:conditions => attributes).try(:destroy)
+        member.roles = roles_through_involvements(project_id, id)
+        if member.roles.blank?
+          member.destroy
+        else
+          member.save
+        end
+      end
+    end
+  end
 end

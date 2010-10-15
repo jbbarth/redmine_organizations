@@ -18,15 +18,7 @@ class OrganizationMembership < ActiveRecord::Base
     end
     #delete old involvements
     (self.organization.users - self.users).each do |user|
-      attributes = {:user_id => user.id, :project_id => self.project_id}
-      if member = Member.first(:conditions => attributes).try(:destroy)
-        member.roles = user.roles_through_involvements(self.project_id, self.id)
-        if member.roles.blank?
-          member.destroy
-        else
-          member.save
-        end
-      end
+      user.destroy_membership_unless_through_other_organization(self)
     end
   end
 end
