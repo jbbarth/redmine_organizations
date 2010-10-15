@@ -14,10 +14,7 @@ class OrganizationMembership < ActiveRecord::Base
   def update_users_memberships
     #update users roles
     self.users.each do |user|
-      attributes = {:user_id => user.id, :project_id => self.project_id}
-      member = Member.first(:conditions => attributes) || Member.new(attributes)
-      member.roles = self.roles + user.roles_through_involvements(self.project_id, self.id)
-      member.save
+      user.update_membership_through_organization(self)
     end
     #delete old involvements
     (self.organization.users - self.users).each do |user|

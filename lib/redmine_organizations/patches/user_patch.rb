@@ -17,4 +17,13 @@ class User < Principal
                                                    excluded_organization_id, project_id, self.id])
     m.map(&:roles).flatten.uniq
   end
+
+  def update_membership_through_organization(organization_membership)
+    if id && project_id = organization_membership.project_id
+      attributes = {:user_id => id, :project_id => project_id}
+      member = Member.first(:conditions => attributes) || Member.new(attributes)
+      member.roles = organization_membership.roles + roles_through_involvements(project_id, id)
+      member.save
+    end
+  end
 end
