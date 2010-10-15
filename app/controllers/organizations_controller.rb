@@ -17,6 +17,11 @@ class OrganizationsController < ApplicationController
     @memberships = @organization.memberships.all(:include => :project,
                                                  :conditions => Project.visible_by(User.current))
     
+    @submemberships = @organization.descendants.all(:order => "lft").map do |organization|
+      organization.memberships.all(:include => [:project, :organization],
+                                   :conditions => Project.visible_by(User.current))
+    end.flatten
+    
     @users = @organization.users
     
     events = []
