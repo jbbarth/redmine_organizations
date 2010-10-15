@@ -33,8 +33,15 @@
 <% for membership in @memberships %>
 	<li><%= link_to_organization_membership(membership) %></li>
 <% end %>
-<% for membership in @submemberships %>
-	<li><%= link_to_organization_membership(membership, :display_name => true) %></li>
+<% for memberships in @submemberships %>
+  <% if memberships.any? %>
+    <li><%=memberships.first.organization.fullname%>
+    <ul>
+    <% for membership in memberships %>
+	    <li><%= link_to_organization_membership(membership) %></li>
+    <% end %>
+    </ul>
+  <% end %>
 <% end %>
 </ul>
 <% end %>

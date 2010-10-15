@@ -20,7 +20,7 @@ class OrganizationsController < ApplicationController
     @submemberships = @organization.descendants.all(:order => "lft").map do |organization|
       organization.memberships.all(:include => [:project, :organization],
                                    :conditions => Project.visible_by(User.current))
-    end.flatten
+    end
     
     @users = @organization.users
     
