@@ -19,12 +19,12 @@ require 'awesome_nested_set2/init'
 #ensure organizations helper is loaded
 
 Redmine::Plugin.register :redmine_organizations do
-  name 'Redmine organizations plugin'
+  name 'Redmine Organizations plugin'
   author 'Jean-Baptiste BARTH'
-  description 'Adds organizations objects to Redmine'
+  description 'Adds "organization" structure to replace Redmine groups'
   url 'http://github.com/jbbarth/redmine_organizations'
   author_url 'mailto:jeanbaptiste.barth@gmail.com'
-  version '0.1'
+  version '0.2'
   requires_redmine :version_or_higher => '1.0.0'
   settings :default => {
     'hide_groups_admin_menu' => "0",
