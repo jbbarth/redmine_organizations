@@ -19,15 +19,18 @@ class OrganizationInvolvementTest < ActiveSupport::TestCase
     #add a user
     m.users << @user
     m.save
-    assert @user.reload.member_of?(@project)
+    @user = User.find(1) #hard reload :(
+    assert @user.member_of?(@project)
     assert_equal [1,2], @user.roles_for_project(@project).map(&:id)
     #update its roles
     m.roles = [@role1]
     m.save
+    @user = User.find(1) #hard reload :(
     assert_equal [1], @user.reload.roles_for_project(@project).map(&:id)
     #remove involved users
     m.users = []
     m.save
+    @user = User.find(1) #hard reload :(
     assert ! @user.reload.member_of?(@project)
   end
   
@@ -38,10 +41,13 @@ class OrganizationInvolvementTest < ActiveSupport::TestCase
     assert ! @user2.member_of?(@project)
     m1 = OrganizationMembership.create!(:organization => @organization, :project => @project,
                                         :roles => [@role1, @role2], :users => [@user])
-    assert_equal [1,2], @user.reload.roles_for_project(@project).map(&:id)
+    @user = User.find(1) #hard reload :(
+    assert_equal [1,2], @user.roles_for_project(@project).map(&:id)
     m2 = OrganizationMembership.create!(:organization => @organization2, :project => @project,
                                         :roles => [@role1], :users => [@user, @user2])
-    assert_equal [1,2], @user.reload.roles_for_project(@project).map(&:id)
-    assert_equal [1], @user2.reload.roles_for_project(@project).map(&:id)
+    @user = User.find(1) #hard reload :(
+    @user2 = User.find(3) #hard reload :(
+    assert_equal [1,2], @user.roles_for_project(@project).map(&:id)
+    assert_equal [1], @user2.roles_for_project(@project).map(&:id)
   end
 end
