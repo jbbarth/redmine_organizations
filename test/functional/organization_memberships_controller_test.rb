@@ -21,4 +21,11 @@ class OrganizationMembershipsControllerTest < ActionController::TestCase
       delete :destroy, :id => 3
     end
   end
+
+  test "should destroy membership inside a project" do
+    assert_difference 'Organization.find(1).projects.count', -1 do
+      delete :destroy_in_project, :id => 3
+    end
+    assert_redirected_to '/projects/onlinestore/settings/members'
+  end
 end
