@@ -113,10 +113,10 @@ class OrganizationsController < ApplicationController
           #om.save
         end
       end
-      redirect_to :controller => "users", :action => "edit", :id => user_to, :tab => "organizations"
     else
-      render_404
+      flash[:error] = l(:label_missing_target_user)
     end
+    redirect_to :controller => "users", :action => "edit", :id => user_to, :tab => "organizations"
   end
   
   def autocomplete_for_user
