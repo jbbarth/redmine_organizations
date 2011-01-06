@@ -30,7 +30,7 @@
                    :html => {:id => 'organization-form', :style => 'display:none;'} do |f| -%>
   <p>
     <%= hidden_field_tag "membership[project_id]", @project.id %>
-    <%= f.select "organization_id", nested_set_options(Organization, @organization) { |i| "#{'--' * i.level} #{i.name}" }, 
+    <%= f.select "organization_id", nested_set_options2(Organization) { |i| "#{'--' * i.level} #{i.name}" }, 
                  :disabled => @project.organizations.map(&:id), :include_blank => true, :label => :field_parent_organization %>
     <% roles.each do |role| %>
       <label><%= check_box_tag 'membership[role_ids][]', role.id %> <%=h role %></label>
