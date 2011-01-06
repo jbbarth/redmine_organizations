@@ -10,7 +10,7 @@
   <%= submit_tag l(:button_copy) %>
   <% end %>
 </div>
-<% form_for(:user, :url => { :action => 'update' }, :html => {:method => :put}) do %>
+<% form_for(:user, :url => { :action => "edit", :id => @user, :tab => nil }, :html => {:method => :post}) do %>
 <div class="box">
 <% Organization.all(:order=>'lft').each do |organization| %>
   <p class="organization idnt <%= organization.level > 0 ? "idnt-#{organization.level}" : nil %>">
