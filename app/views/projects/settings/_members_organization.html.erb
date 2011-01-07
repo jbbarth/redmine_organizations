@@ -1,12 +1,3 @@
-<script type="text/javascript">
-//<![CDATA[
-function toggleOrgaForms(id) {
-  orga_id = 'orga-'+id;
-  $(orga_id+'-roles',orga_id+'-roles-form',orga_id+'-members',orga_id+'-members-form').invoke('toggle');
-}
-//]]>
-</script>
-
 <% m ||= @membership %>
 <% roles ||= Role.find_all_givable %>
 <% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project, :tab=>"members") %>
