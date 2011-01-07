@@ -43,5 +43,7 @@ class OrganizationInvolvementTest < ActiveSupport::TestCase
                                         :roles => [@role1], :users => [@user, @user2])
     assert_equal [1,2], @user.reload.roles_for_project(@project).map(&:id)
     assert_equal [1], @user2.reload.roles_for_project(@project).map(&:id)
+    m2.destroy
+    assert ! @user2.reload.member_of?(@project)
   end
 end
