@@ -18,8 +18,9 @@ class OrganizationsController < ApplicationController
                                                  :conditions => Project.visible_by(User.current))
     
     @submemberships = @organization.descendants.all(:order => "lft").map do |organization|
-      organization.memberships.all(:include => [:project, :organization],
-                                   :conditions => Project.visible_by(User.current))
+      organization.memberships.all(:include => [:project, :organization, :roles],
+                                   :conditions => [ Project.visible_by(User.current) +
+                                                    " AND #{Role.table_name}.hidden_on_overview = ?", false])
     end
     
     @users = @organization.users
