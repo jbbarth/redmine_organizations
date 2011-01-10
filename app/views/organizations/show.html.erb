@@ -33,6 +33,9 @@
 <% for membership in @memberships %>
 	<li><%= link_to_organization_membership(membership) %></li>
 <% end %>
+<% end %>
+
+<% unless @submemberships.empty? %>
 <% for memberships in @submemberships %>
   <% if memberships.any? %>
     <li><%=memberships.first.organization.fullname%>
