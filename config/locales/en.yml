@@ -8,4 +8,5 @@ en:
   label_missing_target_user: "Target user can't be blank"
   field_parent_organization: "Parent organization"
   field_hidden_on_overview: "Hide on project overview"
+  field_direction: "Is a direction"
   text_hide_groups_admin_menu: "Hide groups"
