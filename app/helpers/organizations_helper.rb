@@ -27,7 +27,7 @@ module OrganizationsHelper
     elsif options[:fullname]
       link_to(organization.fullname, url)
     else
-      link_to(organization.name, url)
+      link_to(organization.name, url, {:title => organization.fullname})
     end
   end
   
