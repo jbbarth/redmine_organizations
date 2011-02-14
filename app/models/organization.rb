@@ -34,6 +34,6 @@ class Organization < ActiveRecord::Base
   end
 
   def direction_organization
-    @direction_organization ||= (direction? || root? ? self : parent.direction)
+    @direction_organization ||= (direction? || root? ? self : parent.direction_organization)
   end
 end
