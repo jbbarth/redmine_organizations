@@ -4,6 +4,7 @@ one:
   name: Org A
   description: Description of organization A
   parent_id: 
+  direction: true
   lft: 1
   rgt: 6
 two:

@@ -32,4 +32,8 @@ class Organization < ActiveRecord::Base
       ancestor.name+Organization::SEPARATOR
     end.join("") + name
   end
+
+  def direction
+    @direction ||= (direction? || root? ? self : parent.direction)
+  end
 end
