@@ -23,7 +23,7 @@ module OrganizationsHelper
         h << link_to_organization(o, :fullname => false)
         h << Organization::SEPARATOR
       end
-      h << link_to(organization.name, url)
+      h << link_to(organization.name, url, {:title => organization.fullname})
     elsif options[:fullname]
       link_to(organization.fullname, url)
     else
