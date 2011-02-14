@@ -21,6 +21,6 @@ class OrganizationTest < ActiveSupport::TestCase
   test "Organization#direction" do
     assert Organization.find(1).direction?
     assert ! Organization.find(2).direction?
-    assert_equal 1, Organization.find(2).direction.id
+    assert_equal 1, Organization.find(2).direction_organization.id
   end
 end
