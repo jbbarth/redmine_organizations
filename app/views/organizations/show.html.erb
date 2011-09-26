@@ -33,6 +33,7 @@
 <% for membership in @memberships %>
 	<li><%= link_to_organization_membership(membership) %></li>
 <% end %>
+</ul>
 <% end %>
 
 <% unless @submemberships.empty? %>
