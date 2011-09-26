@@ -15,12 +15,12 @@
 <% Organization.all(:order=>'lft').each do |organization| %>
   <p class="organization idnt <%= organization.level > 0 ? "idnt-#{organization.level}" : nil %>">
     <label>
-      <%= check_box_tag 'user[organization_ids][]', organization.id, @user.organizations.include?(organization) %> 
+      <%= radio_button_tag 'user[organization_id]', organization.id, @user.organization == organization %> 
       <%= h organization.name %>
     </label>
   </p>
 <% end %>
-<%= hidden_field_tag 'user[organization_ids][]', '' %>
+<%= hidden_field_tag 'user[organization_id]', '' %>
 </div>
 <%= submit_tag l(:button_save) %>
 <% end %>

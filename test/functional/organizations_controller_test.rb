@@ -49,11 +49,12 @@ class OrganizationsControllerTest < ActionController::TestCase
   
   test "should copy organizations and involvements from an other user" do
     user2 = User.find(2)
+    user2.organization = Organization.find(1)
     user3 = User.find(3)
     project2 = Project.find(2)
     #check user(2)
     assert_equal [1,2,5], user2.project_ids
-    assert_equal [1], project2.organization_ids
+    assert_equal 1, project2.organization_id
     assert Organization.find(1).user_ids.include?(2)
     assert OrganizationInvolvement.all(:conditions => {:user_id => 2, :organization_memberships => {:project_id => 2}},
                                        :include => [:organization_membership]).any?

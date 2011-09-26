@@ -7,8 +7,7 @@ User.scopes[:like] = Principal.scopes[:like]
 
 class User < Principal
   unloadable
-  has_many :organization_users
-  has_many :organizations, :through => :organization_users
+  belongs_to :organization
   has_many :organization_involvements
   
   def reload(*args)

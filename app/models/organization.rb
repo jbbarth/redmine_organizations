@@ -2,8 +2,7 @@ class Organization < ActiveRecord::Base
   unloadable
   acts_as_nested_set2
   
-  has_many :organization_users
-  has_many :users, :through => :organization_users
+  has_many :users
   has_many :memberships, :class_name => 'OrganizationMembership', :dependent => :delete_all
   has_many :projects, :through => :memberships
   
