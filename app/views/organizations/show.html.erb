@@ -33,7 +33,6 @@
 <% for membership in @memberships %>
 	<li><%= link_to_organization_membership(membership) %></li>
 <% end %>
-</ul>
 <% end %>
 
 <% unless @submemberships.empty? %>
@@ -47,8 +46,8 @@
     </ul>
   <% end %>
 <% end %>
-</ul>
 <% end %>
+</ul>
 
 <% unless @users.empty? %>
 <h3><%=l(:label_user_plural)%></h3>
