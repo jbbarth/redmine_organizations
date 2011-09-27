@@ -119,7 +119,7 @@ class OrganizationsController < ApplicationController
     end
     redirect_to :controller => "users", :action => "edit", :id => user_to, :tab => "organizations"
   end
-  
+
   def autocomplete_for_user
     @organization = Organization.find(params[:id])
     @users = User.active.like(params[:q]).find(:all, :limit => 100) - @organization.users

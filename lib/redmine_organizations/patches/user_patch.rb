@@ -9,6 +9,8 @@ class User < Principal
   unloadable
   belongs_to :organization
   has_many :organization_involvements
+
+  safe_attributes 'organization_id'
   
   def reload(*args)
     @name = nil
