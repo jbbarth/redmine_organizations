@@ -16,7 +16,7 @@
   <p class="organization idnt <%= organization.level > 0 ? "idnt-#{organization.level}" : nil %>">
     <label>
       <%= radio_button_tag 'user[organization_id]', organization.id, @user.organization == organization %> 
-      <%= h organization.name %>
+      <%= organization.direction? ? content_tag(:strong, organization.name) : h(organization.name) %>
     </label>
   </p>
 <% end %>

@@ -16,7 +16,7 @@
   </thead>
   <tbody>
   <% @organizations.each do |organization| -%>
-    <tr class="organization <%= cycle("odd", "even") %> <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %>">
+    <tr class="organization <%= cycle("odd", "even") %> <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
       <td class="name"><%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %></td>
       <td class="description"><%=h organization.description %></td>
       <td class="buttons">
