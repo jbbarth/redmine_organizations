@@ -30,14 +30,19 @@
 <% end %>
 </ul>
 
-<% unless @users.empty? %>
 <h3><%=l(:label_user_plural)%></h3>
 <ul>
 <% for user in @users %>
 	<li><%= link_to_user(user) %></li>
 <% end %>
-</ul>
+<% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
+  <% users = @subusers[suborganization] %>
+  <li>
+    <%= h suborganization.name %> :
+    <%= users.map{|u| link_to_user(u)}.join(", ") %>
+  </li>
 <% end %>
+</ul>
 
 <%= call_hook :view_organization_left_bottom, :organization => @organization %>
 </div>

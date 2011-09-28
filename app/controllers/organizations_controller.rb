@@ -23,6 +23,10 @@ class OrganizationsController < ApplicationController
     end
     
     @users = @organization.users
+    @subusers = @organization.descendants.all(:order => "lft").inject({}) do |memo, organization|
+      memo[organization] = organization.users
+      memo
+    end
     
     events = []
     #@users.each do |user|
