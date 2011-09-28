@@ -26,8 +26,7 @@ class OrganizationInvolvementTest < ActiveSupport::TestCase
     m.save
     assert_equal [1], @user.reload.roles_for_project(@project).map(&:id)
     #remove involved users
-    m.users = []
-    m.save
+    m.user_ids = []
     assert ! @user.reload.member_of?(@project)
   end
   
