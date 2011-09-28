@@ -11,8 +11,6 @@ class OrganizationsController < ApplicationController
   
   def show
     @organization = Organization.find(params[:id])
-    #@custom_values = @user.custom_values
-    @custom_values = []
     
     @memberships = @organization.memberships.all(:include => :project,
                                                  :conditions => Project.visible_condition(User.current))
