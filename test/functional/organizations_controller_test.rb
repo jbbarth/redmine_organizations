@@ -49,7 +49,8 @@ class OrganizationsControllerTest < ActionController::TestCase
   
   test "should copy organizations and involvements from an other user" do
     user2 = User.find(2)
-    user2.organization = Organization.find(1)
+    user2.organization_id = 1
+    user2.save
     user3 = User.find(3)
     project2 = Project.find(2)
     #check user(2)
