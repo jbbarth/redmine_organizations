@@ -7,39 +7,26 @@
 
 <h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=link_to_organization @organization%></h2>
 
+<p><em><%=textilizable @organization.description %></em></p>
 
 <div class="splitcontentleft">
-<p><%=textilizable @organization.description %></p>
-<ul>
-  <% if @organization.children.any? -%>
-  <li>
-    <%=l(:label_organization_children)%>: 
-    <%=@organization.children.map do |o|
-      link_to_organization o, {:fullname=>false,:link_ancestors=>false}
-    end.join(", ") %>
-  </li>
-  <% end -%>
-</ul>
-
-<% unless @memberships.empty? %>
 <h3><%=l(:label_project_plural)%></h3>
 <ul>
 <% for membership in @memberships %>
 	<li><%= link_to_organization_membership(membership) %></li>
 <% end %>
-<% end %>
-
-<% unless @submemberships.empty? %>
-<% for memberships in @submemberships %>
-  <% if memberships.any? %>
-    <li><%=memberships.first.organization.fullname%>
+<% @submemberships.keys.sort_by(&:fullname).each do |suborganization| %>
+  <% memberships = @submemberships[suborganization] %>
+  <li>
+    <%= link_to_organization suborganization, :link_ancestors => false %>
+    <% if memberships.any? %>
     <ul>
-    <% for membership in memberships %>
-	    <li><%= link_to_organization_membership(membership) %></li>
-    <% end %>
+      <% for membership in memberships %>
+        <li><%= link_to_organization_membership(membership) %></li>
+      <% end %>
     </ul>
-  <% end %>
-<% end %>
+    <% end %>
+  </li>
 <% end %>
 </ul>
 

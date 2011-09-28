@@ -15,10 +15,11 @@ class OrganizationsController < ApplicationController
     @memberships = @organization.memberships.all(:include => :project,
                                                  :conditions => Project.visible_condition(User.current))
     
-    @submemberships = @organization.descendants.all(:order => "lft").map do |organization|
-      organization.memberships.all(:include => [:project, :organization, :roles],
-                                   :conditions => [ Project.visible_condition(User.current) +
-                                                    " AND #{Role.table_name}.hidden_on_overview = ?", false])
+    @submemberships = @organization.descendants.all(:order => "lft").inject({}) do |memo, organization|
+      memo[organization] = organization.memberships.all(:include => [:project, :organization, :roles],
+                                                        :conditions => [ Project.visible_condition(User.current) +
+                                                          " AND #{Role.table_name}.hidden_on_overview = ?", false])
+      memo
     end
     
     @users = @organization.users
