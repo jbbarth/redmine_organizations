@@ -87,6 +87,12 @@
 
 <% end %>
 <%= call_hook :view_account_right_bottom, :organization => @organization %>
+
+<% if @issues.any? %>
+  <h3><%= l(:label_issue_plural) %></h3>
+  <%= render :partial => 'issues/list_simple', :locals => {:issues => @issues} %>
+<% end %>
+
 </div>
 
 <% html_title(l(:label_organization_plural)) -%>

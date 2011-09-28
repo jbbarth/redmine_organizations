@@ -31,6 +31,12 @@ class OrganizationsController < ApplicationController
     #end
     #@events_by_day = events.group_by(&:event_date) <<undefined method 'event_date' for Array
     @events_by_day = []
+
+    #issues for projects of this organization + sub organizations
+    organization_ids = @organization.self_and_descendants.map(&:id)
+    project_ids = OrganizationMembership.all(:conditions => {:organization_id => organization_ids}).map(&:project_id)
+    opts = {:joins => :priority, :order => "enumerations.position desc", :limit => 50}
+    @issues = Issue.open.visible.on_active_project.find_all_by_project_id(project_ids, opts)
     
     render :layout => 'base'
 
