@@ -14,3 +14,5 @@ tr.organization.idnt-9 td.name, p.idnt-9 {padding-left: 12.5em;}
 div.members span.organization-members { font-size:90%; }
 div.right { float:right; }
 table.memberships .buttons .icon-edit { display:none; }
+.organization.splitcontentleft { width:34%; }
+.organization.splitcontentright { width:64%; }

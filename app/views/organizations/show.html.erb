@@ -9,7 +9,7 @@
 
 <p><em><%=textilizable @organization.description %></em></p>
 
-<div class="splitcontentleft">
+<div class="splitcontentleft organization">
 <h3><%=l(:label_project_plural)%></h3>
 <ul>
 <% for membership in @memberships %>
@@ -47,7 +47,7 @@
 <%= call_hook :view_organization_left_bottom, :organization => @organization %>
 </div>
 
-<div class="splitcontentright">
+<div class="splitcontentright organization">
 
 <% unless @events_by_day.empty? %>
 <h3><%= link_to l(:label_activity), :controller => 'projects', :action => 'activity', :id => nil, :organization_id => @organization, :from => @events_by_day.keys.first %></h3>
