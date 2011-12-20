@@ -10,6 +10,7 @@ class OrganizationMembership < ActiveRecord::Base
   validates_uniqueness_of :organization_id, :scope => :project_id
   
   after_save :update_users_memberships
+  after_destroy :delete_old_members
   
   def update_users_memberships
     #update users roles
@@ -20,5 +21,17 @@ class OrganizationMembership < ActiveRecord::Base
     (self.organization.users - self.users).each do |user|
       user.destroy_membership_unless_through_other_organization(self)
     end
+  end
+
+  def delete_old_members(excluded = [])
+    self.users.each do |user|
+      next if excluded.include?(user.id)
+      user.destroy_membership_unless_through_other_organization(self)
+    end
+  end
+
+  def user_ids=(values)
+    delete_old_members(values)
+    write_attribute(:user_ids, values)
   end
 end

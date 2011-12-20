@@ -7,58 +7,47 @@
 
 <h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=link_to_organization @organization%></h2>
 
+<p><em><%=textilizable @organization.description %></em></p>
 
-<div class="splitcontentleft">
-<p><%=textilizable @organization.description %></p>
-<ul>
-  <% if @organization.children.any? -%>
-  <li>
-    <%=l(:label_organization_children)%>: 
-    <%=@organization.children.map do |o|
-      link_to_organization o, {:fullname=>false,:link_ancestors=>false}
-    end.join(", ") %>
-  </li>
-  <% end -%>
-
-	<% for custom_value in @custom_values %>
-	<% if !custom_value.value.blank? %>
-    <li><%=h custom_value.custom_field.name%>: <%=h show_value(custom_value) %></li>
-	<% end %>
-	<% end %>
-</ul>
-
-<% unless @memberships.empty? %>
+<div class="splitcontentleft organization">
 <h3><%=l(:label_project_plural)%></h3>
 <ul>
 <% for membership in @memberships %>
 	<li><%= link_to_organization_membership(membership) %></li>
 <% end %>
-<% for memberships in @submemberships %>
-  <% if memberships.any? %>
-    <li><%=memberships.first.organization.fullname%>
+<% @submemberships.keys.sort_by(&:fullname).each do |suborganization| %>
+  <% memberships = @submemberships[suborganization] %>
+  <li>
+    <%= link_to_organization suborganization, :link_ancestors => false %>
+    <% if memberships.any? %>
     <ul>
-    <% for membership in memberships %>
-	    <li><%= link_to_organization_membership(membership) %></li>
-    <% end %>
+      <% for membership in memberships %>
+        <li><%= link_to_organization_membership(membership) %></li>
+      <% end %>
     </ul>
-  <% end %>
+    <% end %>
+  </li>
 <% end %>
 </ul>
-<% end %>
 
-<% unless @users.empty? %>
 <h3><%=l(:label_user_plural)%></h3>
 <ul>
 <% for user in @users %>
 	<li><%= link_to_user(user) %></li>
 <% end %>
-</ul>
+<% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
+  <% users = @subusers[suborganization] %>
+  <li>
+    <%= h suborganization.name %> :
+    <%= users.map{|u| link_to_user(u)}.join(", ") %>
+  </li>
 <% end %>
+</ul>
 
 <%= call_hook :view_organization_left_bottom, :organization => @organization %>
 </div>
 
-<div class="splitcontentright">
+<div class="splitcontentright organization">
 
 <% unless @events_by_day.empty? %>
 <h3><%= link_to l(:label_activity), :controller => 'projects', :action => 'activity', :id => nil, :organization_id => @organization, :from => @events_by_day.keys.first %></h3>
@@ -84,6 +73,12 @@
 
 <% end %>
 <%= call_hook :view_account_right_bottom, :organization => @organization %>
+
+<% if @issues.any? %>
+  <h3><%= l(:label_issue_plural) %></h3>
+  <%= render :partial => 'issues/list_simple', :locals => {:issues => @issues} %>
+<% end %>
+
 </div>
 
 <% html_title(l(:label_organization_plural)) -%>

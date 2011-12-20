@@ -3,7 +3,7 @@
 <div class="box">
 
 <div class="contextual">
-  <%= toggle_link l(:button_add), 'organization-form', {:focus => 'relation_issue_to_id'} %>
+  <%= toggle_link l(:button_add), 'organization-form', {:focus => 'membership_organization_id'} %>
 </div>
 
 <h3><%= l(:label_organization_plural) %></h3>
@@ -30,7 +30,7 @@
                    :html => {:id => 'organization-form', :style => 'display:none;'} do |f| -%>
   <p>
     <%= hidden_field_tag "membership[project_id]", @project.id %>
-    <%= f.select "organization_id", nested_set_options(Organization, @organization) { |i| "#{'--' * i.level} #{i.name}" }, 
+    <%= f.select "organization_id", nested_set_options2(Organization) { |i| "#{'--' * i.level} #{i.name}" }, 
                  :disabled => @project.organizations.map(&:id), :include_blank => true, :label => :field_parent_organization %>
     <% roles.each do |role| %>
       <label><%= check_box_tag 'membership[role_ids][]', role.id %> <%=h role %></label>

@@ -98,7 +98,7 @@ class OrganizationMembershipsController < ApplicationController
     membership = OrganizationMembership.find(params[:id]).destroy
     @organization = membership.organization
     respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :project_id => @project, :tab => 'members' }
+      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => membership.project, :tab => 'members' }
       format.js { render(:update) {|page| page.replace_html "tab-content-members", :partial => "projects/settings/members"} }
     end
   end

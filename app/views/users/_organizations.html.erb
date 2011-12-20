@@ -10,17 +10,16 @@
   <%= submit_tag l(:button_copy) %>
   <% end %>
 </div>
-<% form_for(:user, :url => { :action => 'update' }, :html => {:method => :put}) do %>
+<% form_for :user, @user, :url => { :controller => 'users', :action => "update", :tab => nil }, :html => { :method => :put, :class => nil } do %>
 <div class="box">
 <% Organization.all(:order=>'lft').each do |organization| %>
   <p class="organization idnt <%= organization.level > 0 ? "idnt-#{organization.level}" : nil %>">
     <label>
-      <%= check_box_tag 'user[organization_ids][]', organization.id, @user.organizations.include?(organization) %> 
-      <%= h organization.name %>
+      <%= radio_button_tag 'user[organization_id]', organization.id, @user.organization == organization %> 
+      <%= organization.direction? ? content_tag(:strong, organization.name) : h(organization.name) %>
     </label>
   </p>
 <% end %>
-<%= hidden_field_tag 'user[organization_ids][]', '' %>
 </div>
 <%= submit_tag l(:button_save) %>
 <% end %>

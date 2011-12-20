@@ -15,19 +15,24 @@ module OrganizationsHelper
   end
   
   def link_to_organization(organization, options = {})
-    options = {:link_ancestors => true, :fullname => true}.merge(options)
+    options = {:link_ancestors => true,
+               :fullname => true,
+               :title => organization.fullname}.merge(options)
+
     url = {:controller=>'organizations',:action=>'show',:id=>organization}
+    html = {:title => options[:title] }
+
     if options[:fullname] && options[:link_ancestors]
       h = ""
       organization.ancestors.all(:order => 'lft').each do |o|
         h << link_to_organization(o, :fullname => false)
         h << Organization::SEPARATOR
       end
-      h << link_to(organization.name, url)
+      h << link_to(organization.name, url, html)
     elsif options[:fullname]
-      link_to(organization.fullname, url)
+      link_to(organization.fullname, url, html)
     else
-      link_to(organization.name, url)
+      link_to(organization.name, url, html)
     end
   end
   

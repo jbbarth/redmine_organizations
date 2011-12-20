@@ -1,4 +1,5 @@
 .icon-organizations, #admin-menu a.organizations { background-image: url(../images/building.png); }
+tr.organization.direction td.name, tr.organization.direction td.description { font-weight:bold; }
 tr.organization.idnt td.name a {background: url(../../../images/bullet_arrow_right.png) no-repeat 0 50%; padding-left: 16px;}
 p.idnt { margin:0; }
 tr.organization.idnt-1 td.name, p.idnt-1 {padding-left: 0.5em;}
@@ -12,3 +13,6 @@ tr.organization.idnt-8 td.name, p.idnt-8 {padding-left: 11em;}
 tr.organization.idnt-9 td.name, p.idnt-9 {padding-left: 12.5em;}
 div.members span.organization-members { font-size:90%; }
 div.right { float:right; }
+table.memberships .buttons .icon-edit { display:none; }
+.organization.splitcontentleft { width:34%; }
+.organization.splitcontentright { width:64%; }

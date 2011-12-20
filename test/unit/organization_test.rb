@@ -17,4 +17,10 @@ class OrganizationTest < ActiveSupport::TestCase
     assert_equal "Org A", Organization.find(1).fullname
     assert_equal "Org A/Team A", Organization.find(2).fullname
   end
+
+  test "Organization#direction" do
+    assert Organization.find(1).direction?
+    assert ! Organization.find(2).direction?
+    assert_equal 1, Organization.find(2).direction_organization.id
+  end
 end

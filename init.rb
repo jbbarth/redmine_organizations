@@ -32,5 +32,5 @@ Redmine::Plugin.register :redmine_organizations do
 end
 
 Redmine::MenuManager.map :admin_menu do |menu|
-  menu.push :organizations, {:controller => 'organizations'}, :after => :groups
+  menu.push :organizations, {:controller => 'organizations'}, :after => :groups, :caption => :label_organization_plural
 end

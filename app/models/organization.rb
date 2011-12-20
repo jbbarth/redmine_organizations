@@ -2,8 +2,7 @@ class Organization < ActiveRecord::Base
   unloadable
   acts_as_nested_set2
   
-  has_many :organization_users
-  has_many :users, :through => :organization_users
+  has_many :users
   has_many :memberships, :class_name => 'OrganizationMembership', :dependent => :delete_all
   has_many :projects, :through => :memberships
   
@@ -31,5 +30,9 @@ class Organization < ActiveRecord::Base
     ancestors.all(:order => 'lft').map do |ancestor|
       ancestor.name+Organization::SEPARATOR
     end.join("") + name
+  end
+
+  def direction_organization
+    @direction_organization ||= (direction? || root? ? self : parent.direction_organization)
   end
 end

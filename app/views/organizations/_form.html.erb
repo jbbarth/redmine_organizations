@@ -7,5 +7,6 @@
     <p><%= f.select "parent_id", nested_set_options(Organization, @organization) { |i|
                       "#{'--' * i.level} #{i.name}"
                     }, :include_blank => true, :label => :field_parent_organization %></p>
+    <p><%= f.check_box :direction %></p>
   </div>
 <!--[eoform:organization]-->
