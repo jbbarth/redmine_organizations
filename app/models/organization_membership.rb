@@ -19,14 +19,14 @@ class OrganizationMembership < ActiveRecord::Base
     end
     #delete old involvements
     (self.organization.users - self.users).each do |user|
-      user.destroy_membership_unless_through_other_organization(self)
+      user.destroy_membership_through_organization(self)
     end
   end
 
   def delete_old_members(excluded = [])
     self.users.each do |user|
       next if excluded.include?(user.id)
-      user.destroy_membership_unless_through_other_organization(self)
+      user.destroy_membership_through_organization(self)
     end
   end
 
