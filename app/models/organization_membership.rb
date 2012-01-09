@@ -17,7 +17,7 @@ class OrganizationMembership < ActiveRecord::Base
     self.users.each do |user|
       user.update_membership_through_organization(self)
     end
-    #delete old involvements
+    #delete old involvements/memberships
     (self.organization.users - self.users).each do |user|
       user.destroy_membership_through_organization(self)
     end
@@ -28,10 +28,5 @@ class OrganizationMembership < ActiveRecord::Base
       next if excluded.include?(user.id)
       user.destroy_membership_through_organization(self)
     end
-  end
-
-  def user_ids=(values)
-    delete_old_members(values)
-    write_attribute(:user_ids, values)
   end
 end

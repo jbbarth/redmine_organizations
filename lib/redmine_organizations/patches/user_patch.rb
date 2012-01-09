@@ -30,7 +30,7 @@ class User < Principal
       attributes = {:user_id => id, :project_id => project_id}
       member = Member.first(:conditions => attributes) || Member.new(attributes)
       member.roles = organization_membership.roles
-      member.save
+      member.save!
     end
   end
   
