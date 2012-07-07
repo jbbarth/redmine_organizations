@@ -14,12 +14,6 @@ class User < Principal
 
   safe_attributes 'organization_id'
   
-  def reload(*args)
-    @name = nil
-    self.memberships.reload
-    super(*args)
-  end
-  
   def roles_through_involvements(project_id, excluded_organization_id)
     m = OrganizationMembership.all(:joins => [:users,:roles],
                                    :conditions => ["organization_memberships.id != ? AND project_id = ? AND users.id = ?",
