@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class OrganizationInvolvementTest < ActiveSupport::TestCase
-  fixtures :all
+  fixtures :organizations, :organization_memberships, :organization_involvements, :organization_roles,
+           :users, :roles, :projects, :members, :member_roles
 
   def setup
     @organization = Organization.find(1)

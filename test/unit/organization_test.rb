@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class OrganizationTest < ActiveSupport::TestCase
-  fixtures :all
+  fixtures :organizations, :organization_memberships, :organization_involvements, :organization_roles,
+           :users, :roles, :projects, :members, :member_roles
 
   test "test_organization_tree_sorting" do
     o = Organization.create(:name => "Team C", :parent_id => 1)
