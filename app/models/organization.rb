@@ -1,6 +1,6 @@
 class Organization < ActiveRecord::Base
   unloadable
-  acts_as_nested_set2
+  acts_as_nested_set
   
   has_many :users
   has_many :memberships, :class_name => 'OrganizationMembership', :dependent => :delete_all
@@ -13,7 +13,7 @@ class Organization < ActiveRecord::Base
   # But also far less complicated
   after_save do |org|
     siblings = org.siblings
-    while org.left_sibling && org.left_sibling < org
+    while org.left_sibling && org.left_sibling.name > org.name
       org.move_left
     end
   end

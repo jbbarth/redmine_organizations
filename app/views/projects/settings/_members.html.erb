@@ -26,11 +26,11 @@
 </table>
 <% end %>
 
-<% remote_form_for :membership, :url => { :controller => 'organization_memberships', :action => 'create_in_project' },
-                   :html => {:id => 'organization-form', :style => 'display:none;'} do |f| -%>
+<%= form_for :membership, :url => { :controller => 'organization_memberships', :action => 'create_in_project' },
+             :remote => true, :html => {:id => 'organization-form', :style => 'display:none;'} do |f| -%>
   <p>
     <%= hidden_field_tag "membership[project_id]", @project.id %>
-    <%= f.select "organization_id", nested_set_options2(Organization) { |i| "#{'--' * i.level} #{i.name}" }, 
+    <%= f.select "organization_id", nested_set_options(Organization) { |i| "#{'--' * i.level} #{i.name}" }, 
                  :disabled => @project.organizations.map(&:id), :include_blank => true, :label => :field_parent_organization %>
     <% roles.each do |role| %>
       <label><%= check_box_tag 'membership[role_ids][]', role.id %> <%=h role %></label>

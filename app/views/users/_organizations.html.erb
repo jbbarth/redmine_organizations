@@ -1,5 +1,5 @@
 <div class="box">
-  <% form_for(:organizations, :url => { :controller => 'organizations', :action => 'copy_user' }) do %>
+  <%= form_for(:organizations, :url => { :controller => 'organizations', :action => 'copy_user' }) do %>
   <%=l(:label_copy_organizations_and_involvements_from)%>
   #<%=text_field_tag 'copy[user_from]', '', :size=>"5", :style=>"width:3em;"%>
   <%= observe_field :copy_user_from, :frequency => 1, :update => :user, :with => 'q',
@@ -10,7 +10,7 @@
   <%= submit_tag l(:button_copy) %>
   <% end %>
 </div>
-<% form_for :user, @user, :url => { :controller => 'users', :action => "update", :tab => nil }, :html => { :method => :put, :class => nil } do %>
+<%= form_for @user, :url => { :controller => 'users', :action => "update", :tab => nil }, :html => { :method => :put, :class => nil } do %>
 <div class="box">
 <% Organization.all(:order=>'lft').each do |organization| %>
   <p class="organization idnt <%= organization.level > 0 ? "idnt-#{organization.level}" : nil %>">

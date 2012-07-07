@@ -1,9 +1,11 @@
+require_dependency 'project' #see: http://www.redmine.org/issues/11035
 require_dependency 'principal'
 require_dependency 'user'
 
 #Here's a hack to avoid User class missing Principal scopes
 #TODO: find a better hack...
-User.scopes[:like] = Principal.scopes[:like]
+#TODO: confirm the bug is gone in rails 3
+#User.scopes[:like] = Principal.scopes[:like]
 
 class User < Principal
   unloadable

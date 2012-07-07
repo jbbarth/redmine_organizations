@@ -29,6 +29,7 @@ module OrganizationsHelper
         h << Organization::SEPARATOR
       end
       h << link_to(organization.name, url, html)
+      h.html_safe
     elsif options[:fullname]
       link_to(organization.fullname, url, html)
     else

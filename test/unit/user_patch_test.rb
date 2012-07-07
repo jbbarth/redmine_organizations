@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require File.dirname(__FILE__) + '/../../lib/redmine_organizations/patches/project_patch'
 
 class ProjectPatchTest < ActiveSupport::TestCase
-  fixtures :organizations, :projects
+  fixtures :all
   
   test "User#update_membership_through_organization" do
     @project = Project.find(1)

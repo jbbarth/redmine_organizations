@@ -26,7 +26,7 @@
 <div class="splitcontentright">
 <% users = User.active.find(:all, :limit => 100) - @organization.users %>
 <% if users.any? %>
-  <% remote_form_for(:organization, @organization, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
+  <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
     <fieldset><legend><%=l(:label_user_new)%></legend>
     
     <p><%= text_field_tag 'user_search', nil %></p>

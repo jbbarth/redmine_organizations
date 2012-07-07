@@ -1,4 +1,4 @@
-<% labelled_tabular_form_for :organization, @organization, :url => {:controller=>'organizations', :action=>'update'}, :html => { :class => nil, :method => :put } do |f| -%>
+<%= labelled_form_for :organization, @organization, :url => {:controller=>'organizations', :action=>'update'}, :html => { :class => nil, :method => :put } do |f| -%>
 	<%= render :partial => 'form', :locals => { :f => f } %>
 	<p><%= submit_tag l(:button_update) %></p>
 <% end -%>

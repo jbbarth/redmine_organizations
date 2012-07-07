@@ -1,12 +1,15 @@
-ActionController::Routing::Routes.draw do |map|
-  map.resources :organizations, :member => {:add_users => :post,
-                                            :remove_user => :post,
-                                            :autocomplete_for_user => :post},
-                                :collection => {:autocomplete_user_from_id => :post,
-                                                :copy_user => :post}
-  map.resources :organization_memberships, :only => [:create,:update,:destroy],
-                                           :new => {:create_in_project => :post},
-                                           :member => {:update_roles => :put,
-                                                       :update_users => :put,
-                                                       :destroy_in_project => :delete}
+RedmineApp::Application.routes.draw do
+  resources :organizations do
+    member { post :add_users }
+    member { post :remove_user }
+    member { post :autocomplete_for_user }
+    collection { post :autocomplete_user_from_id }
+    collection { post :copy_user }
+  end
+  resources :organization_memberships, :only => [:create,:update,:destroy] do
+    new { post :create_in_project }
+    member { put :update_roles }
+    member { put :update_users }
+    member { delete :destroy_in_project }
+  end
 end

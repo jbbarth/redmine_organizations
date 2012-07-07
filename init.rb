@@ -1,6 +1,7 @@
 require 'redmine'
 
-config.to_prepare do
+# Patches to existing classes/modules
+ActionDispatch::Callbacks.to_prepare do
   #patches
   require_dependency 'redmine_organizations/patches/user_patch'
   require_dependency 'redmine_organizations/patches/project_patch'
@@ -13,9 +14,6 @@ end
 #hooks
 require 'redmine_organizations/hooks/view_layouts_base_html_head_hook'
 
-#additions
-require 'awesome_nested_set2/init'
-
 #ensure organizations helper is loaded
 
 Redmine::Plugin.register :redmine_organizations do
@@ -25,7 +23,7 @@ Redmine::Plugin.register :redmine_organizations do
   url 'http://github.com/jbbarth/redmine_organizations'
   author_url 'mailto:jeanbaptiste.barth@gmail.com'
   version '0.2'
-  requires_redmine :version_or_higher => '1.0.0'
+  requires_redmine :version_or_higher => '2.0.0'
   settings :default => {
     'hide_groups_admin_menu' => "0",
   }, :partial => 'settings/organizations_settings'

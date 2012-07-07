@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class OrganizationInvolvementTest < ActiveSupport::TestCase
-  fixtures :organizations, :organization_memberships
+  fixtures :all
 
   def setup
     @organization = Organization.find(1)
@@ -27,6 +27,7 @@ class OrganizationInvolvementTest < ActiveSupport::TestCase
     assert_equal [1], @user.reload.roles_for_project(@project).map(&:id)
     #remove involved users
     m.user_ids = []
+    m.save
     assert ! @user.reload.member_of?(@project)
   end
 end

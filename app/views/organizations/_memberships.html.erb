@@ -16,9 +16,9 @@
 	<td class="project"><%=link_to membership.project, membership.project %></td>
   <td class="roles">
     <span id="member-<%= membership.id %>-roles"><%=h membership.roles.sort.collect(&:to_s).join(', ') %></span>
-    <% remote_form_for(:membership,
-                       :url => { :controller => 'organization_memberships', :action => 'update', :id => membership },
-                       :html => { :method => :put, :id => "member-#{membership.id}-roles-form", :style => 'display:none;'}) do %>
+    <%= form_for(:membership, :remote => true,
+                 :url => { :controller => 'organization_memberships', :action => 'update', :id => membership },
+                 :html => { :method => :put, :id => "member-#{membership.id}-roles-form", :style => 'display:none;'}) do %>
       	<p><% roles.each do |role| %>
         <label><%= check_box_tag 'membership[role_ids][]', role.id, membership.roles.include?(role) %> <%=h role %></label><br />
         <% end %></p>
@@ -46,7 +46,7 @@
 <% if projects.any? %>
 <fieldset>
 <legend><%=l(:label_project_new)%></legend>
-<% remote_form_for(:membership, :url => { :controller => 'organization_memberships', :action => 'create' }) do %>
+<%= form_for(:membership, :remote => true, :url => { :controller => 'organization_memberships', :action => 'create' }) do %>
   <%= hidden_field_tag 'membership[organization_id]', @organization.id %>
   <%= select_tag 'membership[project_id]', options_for_membership_project_select(@organization, projects) %>
   <p><%= l(:label_role_plural) %>:

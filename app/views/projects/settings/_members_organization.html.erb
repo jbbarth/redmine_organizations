@@ -6,7 +6,7 @@
 <td><%= link_to_organization m.organization %></td>
 <td>
   <span id="orga-<%= m.id %>-roles"><%= m.roles.map(&:name).join(", ") %></span>
-  <% remote_form_for(:membership, m.organization, :method => :put,
+  <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
                      :url => { :controller => 'organization_memberships', :action => 'update_roles', :id => m },
                      :html => { :id => "orga-#{m.id}-roles-form", :class => 'hol' }) do |f| -%>
     <p><% roles.each do |role| %>
@@ -19,7 +19,7 @@
 </td>
 <td>
   <span id="orga-<%= m.id %>-members"><%= m.users.map(&:to_s).join(", ") %></span>
-  <% remote_form_for(:membership, m.organization, :method => :put,
+  <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
                      :url => { :controller => 'organization_memberships', :action => 'update_users', :id => m },
                      :html => { :id => "orga-#{m.id}-members-form", :class => 'hol' }) do |f| -%>
     <p><% m.organization.users.each do |user| %>

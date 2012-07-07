@@ -66,7 +66,7 @@ class OrganizationsControllerTest < ActionController::TestCase
     assert !user3.member_of?(project2)
     #copy
     post :copy_user, :copy => {:user_from => 2, :user_to => 3}
-    assert_redirected_to '/users/3/edit/organizations'
+    assert_redirected_to '/users/3/edit?tab=organizations'
     #check user(3)
     assert OrganizationInvolvement.all(:conditions => {:user_id => 3, :organization_memberships => {:project_id => 2}},
                                        :include => [:organization_membership]).any?

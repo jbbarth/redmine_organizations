@@ -12,12 +12,12 @@ class UsersAdminPatchTest < ActionController::TestCase
   test "should hide groups tab if option is selected" do
     Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = "1"
     get :edit, :id => 3
-    assert_no_tag :tag => 'a', :attributes => { :href => "/users/3/edit/groups" }
+    assert_no_tag :tag => 'a', :attributes => { :href => "/users/3/edit?tab=groups" }
   end
   
   test "should display groups tab if option is not selected" do
     Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = ""
     get :edit, :id => 3
-    assert_tag :tag => 'a', :attributes => { :href => "/users/3/edit/groups" }
+    assert_tag :tag => 'a', :attributes => { :href => "/users/3/edit?tab=groups" }
   end
 end
