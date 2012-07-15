@@ -7,8 +7,8 @@
 <td>
   <span id="orga-<%= m.id %>-roles"><%= m.roles.map(&:name).join(", ") %></span>
   <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
-                     :url => { :controller => 'organization_memberships', :action => 'update_roles', :id => m },
-                     :html => { :id => "orga-#{m.id}-roles-form", :class => 'hol' }) do |f| -%>
+               :url => { :controller => 'organization_memberships', :action => 'update_roles', :project_id => @project, :id => m },
+               :html => { :id => "orga-#{m.id}-roles-form", :class => 'hol' }) do |f| -%>
     <p><% roles.each do |role| %>
       <label><%= check_box_tag 'membership[role_ids][]', role.id, m.roles.include?(role) %> <%=h role %></label><br />
     <% end %></p>
@@ -20,8 +20,8 @@
 <td>
   <span id="orga-<%= m.id %>-members"><%= m.users.map(&:to_s).join(", ") %></span>
   <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
-                     :url => { :controller => 'organization_memberships', :action => 'update_users', :id => m },
-                     :html => { :id => "orga-#{m.id}-members-form", :class => 'hol' }) do |f| -%>
+               :url => { :controller => 'organization_memberships', :action => 'update_users', :project_id => @project, :id => m },
+               :html => { :id => "orga-#{m.id}-members-form", :class => 'hol' }) do |f| -%>
     <p><% m.organization.users.each do |user| %>
       <label><%= check_box_tag 'membership[user_ids][]', user.id, m.users.include?(user) %> <%=h user %></label><br />
     <% end %></p>
@@ -34,7 +34,7 @@
   <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{m.id}); return false;",
                        :class => 'icon icon-edit') %>
   <%= link_to(l(:button_delete),
-              {:controller => 'organization_memberships', :action => 'destroy_in_project', :id => m, :back_url => @back},
+              {:controller => 'organization_memberships', :action => 'destroy_in_project', :project_id => @project, :id => m, :back_url => @back},
               :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
 </td>
 <% end %>
