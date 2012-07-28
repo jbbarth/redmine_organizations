@@ -1,12 +1,12 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 require 'action_view/test_case'
 
-class OrganizationsHelperTest < HelperTestCase
+class OrganizationsHelperTest < ActionView::TestCase
   include ApplicationHelper
   include OrganizationsHelper
-  
-  fixtures :all
-  
+
+  fixtures :organizations
+
   test "test rendering of link_to_organization" do
     link_1 = %(<a href="/organizations/1" title="Org A">Org A</a>)
     link_2 = %(<a href="/organizations/2" title="Org A/Team A">Team A</a>)
