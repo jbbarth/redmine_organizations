@@ -1,8 +1,10 @@
 <div class="contextual">
+  <% if User.current.admin? %>
   <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => @organization},
       :class => 'icon icon-edit' %>
   <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => @organization},
       :class => 'icon icon-del', :data => { :confirm => l(:text_are_you_sure) }, :method => :delete %>
+  <% end %>
 </div>
 
 <h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=link_to_organization @organization%></h2>

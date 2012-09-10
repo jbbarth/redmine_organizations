@@ -1,6 +1,8 @@
 <div class="contextual">
+  <% if User.current.admin? %>
   <%= link_to l(:label_organization_new), {:controller=>'organizations',:action=>'new'},
       :class => 'icon icon-add' %>
+  <% end %>
 </div>
 
 <h2><%=l(:label_organization_plural)%></h2>
@@ -20,10 +22,12 @@
       <td class="name"><%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %></td>
       <td class="description"><%=h organization.description %></td>
       <td class="buttons">
+      <% if User.current.admin? %>
         <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
             :class => 'icon icon-edit' %>
         <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
             :class => 'icon icon-del', :data => { :confirm => l(:text_are_you_sure) }, :method => :delete %>
+      <% end %>
       </td>
     </tr>
   <% end -%>
