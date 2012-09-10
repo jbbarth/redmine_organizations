@@ -8,6 +8,7 @@ class OrganizationsController < ApplicationController
   
   def index
     @organizations = Organization.all(:order => 'lft')
+    render :layout => (User.current.admin? ? 'admin' : 'base')
   end
   
   def show
