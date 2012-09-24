@@ -39,6 +39,6 @@ module OrganizationsHelper
   
   def link_to_organization_membership(membership, options={})
     html = link_to_project(membership.project)
-    html << " (#{h membership.roles.sort.map(&:to_s).join(', ')})" if membership.roles.any?
+    html << " (#{membership.roles.sort.map(&:to_s).join(', ')})" if membership.roles.any?
   end
 end
