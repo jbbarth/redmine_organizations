@@ -12,12 +12,7 @@ class OrganizationMembershipsController < ApplicationController
     @organization = @membership.organization
     respond_to do |format|
        format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'memberships' }
-       format.js { 
-         render(:update) {|page| 
-           page.replace_html "tab-content-memberships", :partial => 'organizations/memberships'
-           page.visual_effect(:highlight, "member-#{@membership.id}")
-         }
-       }
+       format.js
      end
   end
   
@@ -27,12 +22,7 @@ class OrganizationMembershipsController < ApplicationController
     @organization = @membership.organization
     respond_to do |format|
        format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'memberships' }
-       format.js { 
-         render(:update) {|page| 
-           page.replace_html "tab-content-memberships", :partial => 'organizations/memberships'
-           page.visual_effect(:highlight, "member-#{@membership.id}")
-         }
-       }
+       format.js
      end
   end
   
@@ -41,7 +31,7 @@ class OrganizationMembershipsController < ApplicationController
     @organization = membership.organization
     respond_to do |format|
       format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'memberships' }
-      format.js { render(:update) {|page| page.replace_html "tab-content-memberships", :partial => 'organizations/memberships'} }
+      format.js
     end
   end
   
@@ -52,13 +42,7 @@ class OrganizationMembershipsController < ApplicationController
     @project = @membership.project
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :project_id => @project, :tab => 'members' }
-      format.js { 
-        render(:update) {|page| 
-          page.replace_html "tab-content-members", :partial => "projects/settings/members"
-          page << 'hideOnLoad()'
-          page.visual_effect(:highlight, "member-#{@membership.id}")
-        }
-      }
+      format.js
     end
   end
   
@@ -69,13 +53,7 @@ class OrganizationMembershipsController < ApplicationController
     @project = @membership.project
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :project_id => @project, :tab => 'members' }
-      format.js { 
-        render(:update) {|page| 
-          page.replace_html "tab-content-members", :partial => "projects/settings/members"
-          page << 'hideOnLoad()'
-          page.visual_effect(:highlight, "member-#{@membership.id}")
-        }
-      }
+      format.js
     end
   end
   
@@ -86,13 +64,7 @@ class OrganizationMembershipsController < ApplicationController
     @project = @membership.project
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :project_id => @project, :tab => 'members' }
-      format.js { 
-        render(:update) {|page| 
-          page.replace_html "tab-content-members", :partial => "projects/settings/members"
-          page << 'hideOnLoad()'
-          page.visual_effect(:highlight, "member-#{@membership.id}")
-        }
-      }
+      format.js
     end
   end
   
@@ -101,7 +73,7 @@ class OrganizationMembershipsController < ApplicationController
     @organization = membership.organization
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => membership.project, :tab => 'members' }
-      format.js { render(:update) {|page| page.replace_html "tab-content-members", :partial => "projects/settings/members"} }
+      format.js
     end
   end
 

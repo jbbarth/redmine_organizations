@@ -2,8 +2,7 @@
   <%= form_for(:organizations, :url => { :controller => 'organizations', :action => 'copy_user' }) do %>
   <%=l(:label_copy_organizations_and_involvements_from)%>
   #<%=text_field_tag 'copy[user_from]', '', :size=>"5", :style=>"width:3em;"%>
-  <%= observe_field :copy_user_from, :frequency => 1, :update => :user, :with => 'q',
-                    :url => {:controller => 'organizations', :action => 'autocomplete_user_from_id'} %>
+  <%= javascript_tag "observeAutocompleteField('copy_user_from', '#{escape_javascript autocomplete_user_from_id_organizations_path}')" %>
   <span id="user"></span>
   <%=hidden_field_tag 'copy[user_to]', @user.id%>
   <br/>

@@ -2,8 +2,8 @@ RedmineApp::Application.routes.draw do
   resources :organizations do
     member { post :add_users }
     member { post :remove_user }
-    member { post :autocomplete_for_user }
-    collection { post :autocomplete_user_from_id }
+    member { get :autocomplete_for_user }
+    collection { get :autocomplete_user_from_id }
     collection { post :copy_user }
   end
   resources :organization_memberships, :only => [:create,:update,:destroy] do

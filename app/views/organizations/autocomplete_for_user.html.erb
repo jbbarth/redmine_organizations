@@ -1,3 +1,1 @@
-<% @users.sort.each do |user| -%>
-  <label><%= check_box_tag 'user_ids[]', user.id, false %> <%= h user %></label>
-<% end -%>
+<%= principals_check_box_tags 'user_ids[]', @users %>

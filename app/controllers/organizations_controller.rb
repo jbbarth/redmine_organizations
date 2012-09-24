@@ -88,16 +88,11 @@ class OrganizationsController < ApplicationController
   
   def add_users
     @organization = Organization.find(params[:id])
-    users = User.find_all_by_id(params[:user_ids])
-    @organization.users << users if request.post?
+    @users = User.find_all_by_id(params[:user_ids])
+    @organization.users << @users if request.post?
     respond_to do |format|
       format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'users' }
-      format.js { 
-        render(:update) {|page| 
-          page.replace_html "tab-content-users", :partial => 'organizations/users'
-          users.each {|user| page.visual_effect(:highlight, "user-#{user.id}") }
-        }
-      }
+      format.js
     end
   end
   
@@ -106,7 +101,7 @@ class OrganizationsController < ApplicationController
     @organization.users.delete(User.find(params[:user_id])) if request.post?
     respond_to do |format|
       format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'users' }
-      format.js { render(:update) {|page| page.replace_html "tab-content-users", :partial => 'organizations/users'} }
+      format.js
     end
   end
   

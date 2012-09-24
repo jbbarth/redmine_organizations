@@ -72,4 +72,11 @@ class OrganizationsControllerTest < ActionController::TestCase
                                        :include => [:organization_membership]).any?
     assert User.find(3).member_of?(Project.find(2)) #user3/project2 don't work!
   end
+
+  test "autocomplete for users" do
+    get :autocomplete_for_user, :id => 1, :q => "adm"
+    assert_response :success
+    assert response.body.include?("Admin")
+    assert !response.body.include?("John")
+  end
 end
