@@ -16,6 +16,7 @@ require 'rspec'
 # beer or two.
 class RedmineOrganizationsSpecs < ActiveSupport::TestCase
   def test_specs
+    $:.unshift(File.expand_path('../../../spec', __FILE__))
     assert_equal 0, RSpec::Core::Runner::run([File.expand_path('../../../spec', __FILE__)], $stderr, $stdout)
   end
 end

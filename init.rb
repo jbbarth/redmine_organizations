@@ -11,6 +11,7 @@ Rails.application.paths["app/overrides"] << File.expand_path("../app/overrides",
 ActionDispatch::Callbacks.to_prepare do
   #patches
   require_dependency 'redmine_organizations/patches/user_patch'
+  require_dependency 'redmine_organizations/patches/group_patch'
   require_dependency 'redmine_organizations/patches/project_patch'
   require_dependency 'redmine_organizations/patches/users_helper_patch'
   require_dependency 'redmine_organizations/patches/member_role_patch'
