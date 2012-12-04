@@ -1,7 +1,10 @@
 class Organization < ActiveRecord::Base
   unloadable
   acts_as_nested_set
-  
+
+  validates_presence_of :name
+  validates_uniqueness_of :name
+
   has_many :users
   has_many :memberships, :class_name => 'OrganizationMembership', :dependent => :delete_all
                         #:include => [:project], :conditions => "#{Project.table_name}.status<>#{Project::STATUS_ARCHIVED}"
