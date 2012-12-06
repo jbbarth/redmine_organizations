@@ -4,6 +4,7 @@ class Organization < ActiveRecord::Base
   
   has_many :users
   has_many :memberships, :class_name => 'OrganizationMembership', :dependent => :delete_all
+                        #:include => [:project], :conditions => "#{Project.table_name}.status<>#{Project::STATUS_ARCHIVED}"
   has_many :projects, :through => :memberships
   
   SEPARATOR = '/'
