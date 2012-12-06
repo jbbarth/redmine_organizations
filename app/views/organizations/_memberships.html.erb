@@ -13,7 +13,10 @@
 	<% @organization.memberships.each do |membership| %>
 	<% next if membership.new_record? %>
 	<tr id="member-<%= membership.id %>" class="<%= cycle 'odd', 'even' %> class">
-	<td class="project"><%=link_to membership.project, membership.project %></td>
+	<td class="project">
+    <%=link_to_if membership.project.active?, membership.project, membership.project %>
+    <%= content_tag(:em, "(#{l(:project_status_archived)})", :class=>"info", :style=>"display:inline") unless membership.project.active? %>
+  </td>
   <td class="roles">
     <span id="member-<%= membership.id %>-roles"><%=h membership.roles.sort.collect(&:to_s).join(', ') %></span>
     <%= form_for(:membership, :remote => true,
