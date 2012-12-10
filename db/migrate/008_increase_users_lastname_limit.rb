@@ -1,6 +1,8 @@
 class IncreaseUsersLastnameLimit < ActiveRecord::Migration
   def self.up
-    change_column :users, :lastname, :string, :limit => nil, :default => "", :null => false
+    unless Rails.env.test?
+      change_column :users, :lastname, :string, :limit => nil, :default => "", :null => false
+    end
   end
 
   def self.down
