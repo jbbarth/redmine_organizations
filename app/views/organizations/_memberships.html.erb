@@ -11,7 +11,7 @@
 	</tr></thead>
 	<tbody>
 	<% @organization.memberships.each do |membership| %>
-	<% next if membership.new_record? %>
+	<% next if membership.new_record? || membership.project.blank? %>
 	<tr id="member-<%= membership.id %>" class="<%= cycle 'odd', 'even' %> class">
 	<td class="project">
     <%=link_to_if membership.project.active?, membership.project, membership.project %>
