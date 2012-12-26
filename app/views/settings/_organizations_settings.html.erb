@@ -1,5 +1,5 @@
 <% Redmine::MenuManager.map :admin_menu do |menu|
-  if Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] == "1"
+  if @settings['hide_groups_admin_menu'] == '1'
     menu.delete :groups
   elsif !menu.find(:groups)
     menu.push :groups, {:controller => 'groups'}, :caption => :label_group_plural, :after => :users
@@ -9,6 +9,6 @@ end -%>
 <p>
   <label><%= l(:text_hide_groups_admin_menu) %></label> 
   <%= check_box_tag 'settings[hide_groups_admin_menu]', 1,
-                    Setting[:plugin_redmine_organizations][:hide_groups_admin_menu] %>
+                    @settings['hide_groups_admin_menu'] %>
 </p>
 </fieldset>
