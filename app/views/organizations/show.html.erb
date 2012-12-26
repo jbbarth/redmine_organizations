@@ -14,9 +14,14 @@
 <div class="splitcontentleft organization">
 <h3><%=l(:label_project_plural)%></h3>
 <ul>
-<% for membership in @memberships %>
-	<li><%= link_to_organization_membership(membership) %></li>
-<% end %>
+  <li><%= link_to_organization @organization, :link_ancestors => false %></li>
+  <% if @memberships.any? %>
+  <ul>
+    <% for membership in @memberships %>
+	    <li><%= link_to_organization_membership(membership) %></li>
+    <% end %>
+  </ul>
+  <% end %>
 <% @submemberships.keys.sort_by(&:fullname).each do |suborganization| %>
   <% memberships = @submemberships[suborganization] %>
   <li>
