@@ -13,15 +13,17 @@
 
 <div class="splitcontentleft organization">
 <h3><%=l(:label_project_plural)%></h3>
-<ul>
-  <li><%= link_to_organization @organization, :link_ancestors => false %></li>
-  <% if @memberships.any? %>
-  <ul>
-    <% for membership in @memberships %>
-	    <li><%= link_to_organization_membership(membership) %></li>
+<ul class=root>
+  <li class=selected-organization>
+    <%= link_to_organization @organization, :link_ancestors => false %>
+    <% if @memberships.any? %>
+    <ul>
+      <% for membership in @memberships %>
+	      <li><%= link_to_organization_membership(membership) %></li>
+      <% end %>
+    </ul>
     <% end %>
-  </ul>
-  <% end %>
+  </li>
 <% @submemberships.keys.sort_by(&:fullname).each do |suborganization| %>
   <% memberships = @submemberships[suborganization] %>
   <li>
@@ -38,8 +40,8 @@
 </ul>
 
 <h3><%=l(:label_user_plural)%></h3>
-<ul>
-  <li>
+<ul class=root>
+  <li class=selected-organization>
     <%= link_to_organization @organization, :link_ancestors => false %>
     <%= ":" if @users.any? %>
     <%= @users.map{|u| link_to_user(u)}.join(", ").html_safe %>

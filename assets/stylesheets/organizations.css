@@ -16,3 +16,6 @@ div.right { float:right; }
 table.memberships .buttons .icon-edit { display:none; }
 .organization.splitcontentleft { width:34%; }
 .organization.splitcontentright { width:64%; }
+.organization ul { padding-left:25px; }
+.organization li { padding:2px 5px; }
+.selected-organization { background-color:#f3f6fe; padding:4px 7px !important; border-radius:4px; }
