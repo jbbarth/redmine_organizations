@@ -39,9 +39,11 @@
 
 <h3><%=l(:label_user_plural)%></h3>
 <ul>
-<% for user in @users %>
-	<li><%= link_to_user(user) %></li>
-<% end %>
+  <li>
+    <%= link_to_organization @organization, :link_ancestors => false %>
+    <%= ":" if @users.any? %>
+    <%= @users.map{|u| link_to_user(u)}.join(", ").html_safe %>
+  </li>
 <% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
   <% users = @subusers[suborganization] %>
   <li>
