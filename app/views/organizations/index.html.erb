@@ -38,4 +38,10 @@
 <p class="nodata"><%= l(:label_no_data) %></p>
 <% end -%>
 
+<% if Redmine::Plugin.installed?(:redmine_better_crossprojects) %>
+  <% content_for :sidebar do -%>
+    <%= render 'common/cross_sidebar' %>
+  <% end -%>
+<% end %>
+
 <% html_title(l(:label_organization_plural)) -%>
