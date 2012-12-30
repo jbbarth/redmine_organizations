@@ -9,3 +9,29 @@ function toggleOrgaForms(id) {
     else { $forms.show() }
   })
 }
+
+//filter organizations on organizations/index page
+//TODO: merge it with the one in redmine_better_crossprojects plugin
+$(function(){
+  //focus on search field on load
+  $("#filter-by-name").focus()
+  //filter projects depending on input value
+  $("#filter-by-name").on("keyup", function() {
+    var needle = $.trim($(this).val().toLowerCase())
+    var count = 0
+    $(this).closest("table").find("td.name").each(function() {
+      var name = $(this).data('filterValue').toLowerCase()
+      var $elem = $(this).closest('tr')
+      if (name.indexOf(needle) >= 0) {
+        $elem.show()
+        //restablish even/odd alternance
+        $elem.removeClass("even")
+        $elem.removeClass("odd")
+        $elem.addClass(["odd", "even"][count % 2])
+        count++
+      } else {
+        $elem.hide()
+      }
+    })
+  })
+})

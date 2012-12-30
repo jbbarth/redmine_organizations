@@ -11,7 +11,10 @@
 <table class="list attributes">
   <thead>
     <tr>
-      <th class=left><%= l(:field_name)%></th>
+      <th class=left>
+        <%= l(:field_name)%><br>
+        <input type=text name=filter-by-name id=filter-by-name class=filter>
+      </th>
       <th><%= l(:field_description)%></th>
       <th> </th>
     </tr>
@@ -19,7 +22,9 @@
   <tbody>
   <% @organizations.each do |organization| -%>
     <tr class="organization <%= cycle("odd", "even") %> <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
-      <td class="name"><%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %></td>
+      <td class="name" data-filter-value="<%= organization.fullname %>">
+        <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
+      </td>
       <td class="description"><%=h organization.description %></td>
       <td class="buttons">
       <% if User.current.admin? %>
