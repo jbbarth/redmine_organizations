@@ -14,9 +14,9 @@ function toggleOrgaForms(id) {
 //TODO: merge it with the one in redmine_better_crossprojects plugin
 $(function(){
   //focus on search field on load
-  $("#filter-by-name").focus()
+  $("#filter-by-org-name").focus()
   //filter projects depending on input value
-  $("#filter-by-name").on("keyup", function() {
+  $("#filter-by-org-name").on("keyup", function() {
     var needle = $.trim($(this).val().toLowerCase())
     var count = 0
     $(this).closest("table").find("td.name").each(function() {
