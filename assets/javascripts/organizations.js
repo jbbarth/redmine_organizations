@@ -13,6 +13,14 @@ function toggleOrgaForms(id) {
 //filter organizations on organizations/index page
 //TODO: merge it with the one in redmine_better_crossprojects plugin
 $(function(){
+  //use jQuery.select2 if available
+  var $select = $(".orga-select2")
+  if ($select.select2) {
+    $select.select2({
+      containerCss: {minWidth: '300px'},
+      formatNoMatches: function(term) { return $('#label-no-data').html() }
+    });
+  }
   //focus on search field on load
   $("#filter-by-org-name").focus()
   //filter projects depending on input value
