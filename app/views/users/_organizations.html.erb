@@ -9,16 +9,11 @@
   <%= submit_tag l(:button_copy) %>
   <% end %>
 </div>
-<%= form_for @user, :url => { :controller => 'users', :action => "update", :tab => nil }, :html => { :method => :put, :class => nil } do %>
-<div class="box">
-<% Organization.all(:order=>'lft').each do |organization| %>
-  <p class="organization idnt <%= organization.level > 0 ? "idnt-#{organization.level}" : nil %>">
-    <label>
-      <%= radio_button_tag 'user[organization_id]', organization.id, @user.organization == organization %> 
-      <%= organization.direction? ? content_tag(:strong, organization.name) : h(organization.name) %>
-    </label>
-  </p>
-<% end %>
-</div>
-<%= submit_tag l(:button_save) %>
+<%= form_for @user, :url => { :controller => 'users', :action => "update", :tab => nil }, :html => { :method => :put, :class => nil } do |f| %>
+  <div class="box">
+  <%= f.select "organization_id", nested_set_options(Organization) { |i| "#{'--' * i.level} #{i.name}" }, 
+               { :include_blank => true },
+               { :class => "orga-select2" } %>
+  </div>
+  <%= submit_tag l(:button_save) %>
 <% end %>
