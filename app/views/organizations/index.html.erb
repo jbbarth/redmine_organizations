@@ -7,46 +7,47 @@
 
 <h2><%=l(:label_organization_plural)%></h2>
 
-<% if @organizations.any? -%>
-<table class="list attributes">
-  <thead>
-    <tr>
-      <th class=left style="width:270px">
-        <%= l(:field_name)%><br>
-        <input type=text name=filter-by-name id=filter-by-org-name class=filter>
-      </th>
-      <th><%= l(:field_description)%></th>
-      <th> </th>
-    </tr>
-  </thead>
-  <tbody>
-  <% @organizations.each do |organization| -%>
-    <tr class="organization <%= cycle("odd", "even") %> <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
-      <td class="name" data-filter-value="<%= organization.fullname %>">
-        <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
-      </td>
-      <td class="description"><%=h organization.description %></td>
-      <td class="buttons">
-      <% if User.current.admin? %>
-        <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
-            :class => 'icon icon-edit' %>
-        <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
-            :class => 'icon icon-del', :data => { :confirm => l(:text_are_you_sure) }, :method => :delete %>
+<% if last_org = Organization.order("updated_at desc").first %>
+  <% cache ["organizations-index-v1", last_org, "admin-#{User.current.admin? ? 1 : 0}"] do %>
+    <table class="list attributes">
+      <thead>
+        <tr>
+          <th class=left style="width:270px">
+            <%= l(:field_name)%><br>
+            <input type=text name=filter-by-name id=filter-by-org-name class=filter>
+          </th>
+          <th><%= l(:field_description)%></th>
+          <th> </th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @organizations.each do |organization| %>
+        <tr class="organization <%= cycle("odd", "even") %> <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
+          <td class="name" data-filter-value="<%= organization.fullname %>">
+            <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
+          </td>
+          <td class="description"><%=h organization.description %></td>
+          <td class="buttons">
+          <% if User.current.admin? %>
+            <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
+                :class => 'icon icon-edit' %>
+            <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
+                :class => 'icon icon-del', :data => { :confirm => l(:text_are_you_sure) }, :method => :delete %>
+          <% end %>
+          </td>
+        </tr>
       <% end %>
-      </td>
-    </tr>
-  <% end -%>
-  </tbody>
-</table>
-
-<% else -%>
-<p class="nodata"><%= l(:label_no_data) %></p>
-<% end -%>
-
-<% if Redmine::Plugin.installed?(:redmine_better_crossprojects) %>
-  <% content_for :sidebar do -%>
-    <%= render 'common/cross_sidebar' %>
-  <% end -%>
+      </tbody>
+    </table>
+  <% end %>
+<% else %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
 <% end %>
 
-<% html_title(l(:label_organization_plural)) -%>
+<% if Redmine::Plugin.installed?(:redmine_better_crossprojects) %>
+  <% content_for :sidebar do %>
+    <%= render 'common/cross_sidebar' %>
+  <% end %>
+<% end %>
+
+<% html_title(l(:label_organization_plural)) %>
