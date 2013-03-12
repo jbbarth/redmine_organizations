@@ -1,0 +1,9 @@
+<% unless @user.organization.blank? %>
+<h3><%=l(:label_organization)%></h3>
+<ul>
+  <li>
+    <%= link_to_organization @user.organization %>
+    <%= "(#{@user.organization.description})" if @user.organization.description.present? %>
+  </li>
+</ul>
+<% end %>
