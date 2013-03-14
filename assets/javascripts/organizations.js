@@ -10,10 +10,8 @@ function toggleOrgaForms(id) {
   })
 }
 
-//filter organizations on organizations/index page
-//TODO: merge it with the one in redmine_better_crossprojects plugin
-$(function(){
-  //use jQuery.select2 if available
+//initialize big <selects> with jQuery.select2 if available
+function initOrgasSelect2() {
   var $select = $(".orga-select2")
   if ($select.select2) {
     $select.select2({
@@ -21,6 +19,13 @@ $(function(){
       formatNoMatches: function(term) { return $('#label-no-data').html() }
     });
   }
+}
+
+//filter organizations on organizations/index page
+//TODO: merge it with the one in redmine_better_crossprojects plugin
+$(function(){
+  //use jQuery.select2 if available
+  initOrgasSelect2()
   //focus on search field on load
   $("#filter-by-org-name").focus()
   //filter projects depending on input value
