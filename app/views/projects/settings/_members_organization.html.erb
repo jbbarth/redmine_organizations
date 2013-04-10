@@ -9,7 +9,7 @@
   <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
                :url => { :controller => 'organization_memberships', :action => 'update_roles', :project_id => @project, :id => m },
                :html => { :id => "orga-#{m.id}-roles-form", :class => 'hol' }) do |f| -%>
-    <p><% roles.each do |role| %>
+    <p><% roles.sort_by(&:name).each do |role| %>
       <label><%= check_box_tag 'membership[role_ids][]', role.id, m.roles.include?(role) %> <%=h role %></label><br />
     <% end %></p>
     <%= hidden_field_tag 'membership[role_ids][]', '' %>
@@ -18,11 +18,11 @@
   <% end -%>
 </td>
 <td>
-  <span id="orga-<%= m.id %>-members"><%= m.users.map(&:to_s).join(", ") %></span>
+  <span id="orga-<%= m.id %>-members"><%= m.users.sort_by(&:to_s).map(&:to_s).join(", ") %></span>
   <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
                :url => { :controller => 'organization_memberships', :action => 'update_users', :project_id => @project, :id => m },
                :html => { :id => "orga-#{m.id}-members-form", :class => 'hol' }) do |f| -%>
-    <p><% m.organization.users.each do |user| %>
+    <p><% m.organization.users.sort_by(&:to_s).each do |user| %>
       <label><%= check_box_tag 'membership[user_ids][]', user.id, m.users.include?(user) %> <%=h user %></label><br />
     <% end %></p>
     <%= hidden_field_tag 'membership[user_ids][]', '' %>

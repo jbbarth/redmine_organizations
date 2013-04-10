@@ -17,7 +17,9 @@
     <th style="width:15%"> </th>
   </tr></thead>
   <tbody>
-  <% @project.organization_memberships.all(:include => [:organization, :roles]).each do |m| %>
+  <% @project.organization_memberships.all(:include => [:organization, :roles]).sort_by do |m|
+       m.organization.fullname
+     end.each do |m| %>
     <tr id="orga-<%= m.id %>">
       <%= render :partial => 'projects/settings/members_organization', :locals => {:m => m, :roles => roles} %>
     </tr>
