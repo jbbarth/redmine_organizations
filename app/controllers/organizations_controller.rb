@@ -24,9 +24,9 @@ class OrganizationsController < ApplicationController
       memo
     end
     
-    @users = @organization.users
+    @users = @organization.users.active
     @subusers = @organization.descendants.all(:order => "lft").inject({}) do |memo, organization|
-      memo[organization] = organization.users
+      memo[organization] = organization.users.active
       memo
     end
     
@@ -88,7 +88,7 @@ class OrganizationsController < ApplicationController
   
   def add_users
     @organization = Organization.find(params[:id])
-    @users = User.find_all_by_id(params[:user_ids])
+    @users = User.find_all_by_id(params[:user_ids]).active
     @organization.users << @users if request.post?
     respond_to do |format|
       format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'users' }
