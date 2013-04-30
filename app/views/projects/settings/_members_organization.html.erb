@@ -5,7 +5,13 @@
 <% if m.organization %>
 <td><%= link_to_organization m.organization %></td>
 <td>
-  <span id="orga-<%= m.id %>-roles"><%= m.roles.map(&:name).join(", ") %></span>
+  <span id="orga-<%= m.id %>-roles">
+    <% if m.roles.any? #hack to make jquery see the <span> %>
+      <%= m.roles.map(&:name).join(", ") %>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
   <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
                :url => { :controller => 'organization_memberships', :action => 'update_roles', :project_id => @project, :id => m },
                :html => { :id => "orga-#{m.id}-roles-form", :class => 'hol' }) do |f| -%>
@@ -19,7 +25,11 @@
 </td>
 <td>
   <span id="orga-<%= m.id %>-members">
-    <%= m.users.active.sort_by(&:to_s).map{|u|link_to_user(u)}.join(", ").html_safe %>
+    <% if m.users.active.any? #hack to make jquery see the <span> %>
+      <%= m.users.active.sort_by(&:to_s).map{|u|link_to_user(u)}.join(", ").html_safe %>
+    <% else %>
+      &nbsp;
+    <% end %>
   </span>
   <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
                :url => { :controller => 'organization_memberships', :action => 'update_users', :project_id => @project, :id => m },
