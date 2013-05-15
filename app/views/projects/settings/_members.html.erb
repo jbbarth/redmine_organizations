@@ -17,8 +17,8 @@
     <th class="buttons"> </th>
   </tr></thead>
   <tbody>
-  <% @project.organization_memberships.all(:include => [:organization, :roles]).compact.sort_by do |m|
-       m.organization.fullname
+  <% @project.organization_memberships.all(:include => [:organization, :roles]).sort_by do |m|
+       "#{m.organization.try(:fullname)}"
      end.each do |m| %>
     <tr id="orga-<%= m.id %>">
       <%= render :partial => 'projects/settings/members_organization', :locals => {:m => m, :roles => roles} %>
