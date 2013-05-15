@@ -17,7 +17,7 @@
     <th class="buttons"> </th>
   </tr></thead>
   <tbody>
-  <% @project.organization_memberships.all(:include => [:organization, :roles]).sort_by do |m|
+  <% @project.organization_memberships.all(:include => [:organization, :roles]).compact.sort_by do |m|
        m.organization.fullname
      end.each do |m| %>
     <tr id="orga-<%= m.id %>">
