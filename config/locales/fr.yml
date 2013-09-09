@@ -4,7 +4,6 @@ fr:
   label_organization_plural: "Organisations"
   label_organization_new: "Nouvelle organisation"
   label_organization_children: "Sous-organisations"
-  label_copy_organizations_and_involvements_from: "Copier les organisations et affiliations de"
   label_missing_target_user: "L'utilisateur cible ne peut pas être vide"
   field_parent_organization: "Organisation parent"
   field_hidden_on_overview: "Cacher sur l'aperçu des projets"

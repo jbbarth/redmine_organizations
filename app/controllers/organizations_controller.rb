@@ -105,26 +105,6 @@ class OrganizationsController < ApplicationController
     end
   end
   
-  def copy_user
-    user_from = User.find_by_id(params[:copy][:user_from])
-    user_to = User.find_by_id(params[:copy][:user_to])
-    if user_from && user_to
-      orga = user_from.organization
-      unless orga.users.include?(user_to)
-        orga.users << user_to
-        orga.save
-      end
-      orga.memberships.each do |om|
-        om.users << user_to unless om.users.include?(user_to)
-        om.update_users_memberships
-        #om.save
-      end
-    else
-      flash[:error] = l(:label_missing_target_user)
-    end
-    redirect_to :controller => "users", :action => "edit", :id => user_to, :tab => "organizations"
-  end
-
   def autocomplete_for_user
     @organization = Organization.find(params[:id])
     @users = User.active.like(params[:q]).find(:all, :limit => 100) - @organization.users

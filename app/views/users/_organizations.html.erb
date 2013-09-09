@@ -1,14 +1,3 @@
-<div class="box">
-  <%= form_for(:organizations, :url => { :controller => 'organizations', :action => 'copy_user' }) do %>
-  <%=l(:label_copy_organizations_and_involvements_from)%>
-  #<%=text_field_tag 'copy[user_from]', '', :size=>"5", :style=>"width:3em;"%>
-  <%= javascript_tag "observeSearchfield('copy_user_from', 'user', '#{escape_javascript autocomplete_user_from_id_organizations_path}')" %>
-  <span id="user"></span>
-  <%=hidden_field_tag 'copy[user_to]', @user.id%>
-  <br/>
-  <%= submit_tag l(:button_copy) %>
-  <% end %>
-</div>
 <%= form_for @user, :url => { :controller => 'users', :action => "update", :tab => nil }, :html => { :method => :put, :class => nil } do |f| %>
   <div class="box">
   <%= f.select "organization_id", nested_set_options(Organization) { |i| i.fullname }, 
