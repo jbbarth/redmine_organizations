@@ -4,26 +4,34 @@ class Project
   unloadable
   has_many :organization_memberships
   has_many :organizations, :through => :organization_memberships
-  
+
+  # Builds a nested hash of users sorted by role and organization
+  # => { Role(1) => { Org(1) => [ User(1), User(2), ... ] } }
+  #
+  # TODO: simplify / refactor / test it correctly !!!
   def users_by_role_and_organization
-    #{user1=>org1,user2=>org2,user3=>org1}
-    org_users = organizations.all(:include => :users).inject({}) do |h,o|
-      o.user_ids.each do |u|
-        h[u] = o unless h[u]
-      end
-      h
-    end
-    #{org1=>[user1,user2],org2=>[],?=>[user3]}
     dummy_org = Organization.new(:name => l(:label_others))
-    members.find(:all, :include => [:user, :roles]).inject({}) do |h, m|
-      m.roles.each do |r|
-        next if r.hidden_on_overview?
-        ou = org_users[m.user_id] || dummy_org
-        h[r] ||= {}
-        h[r][ou] ||= []
-        h[r][ou] << m.user
+    self.members.map do |member|
+      member.roles.map do |role|
+        { :user => member.user, :role => role, :organization => member.user.organization }
       end
-      h
+    end.flatten.group_by do |hsh|
+      hsh[:role]
+    end.inject({}) do |memo, (role, users)|
+      if role.hidden_on_overview?
+        #do nothing
+        memo
+      else
+        #build a hash for that role
+        hsh = users.group_by do |user|
+          user[:organization] || dummy_org
+        end
+        hsh.each do |org, users_hsh|
+          hsh[org] = users_hsh.map{|h| h[:user]}.sort
+        end
+        memo[role] = hsh
+        memo
+      end
     end
   end
 end

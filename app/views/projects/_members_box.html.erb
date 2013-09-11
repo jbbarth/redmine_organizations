@@ -7,10 +7,10 @@
     <%=h role %>: 
     <%= @users_by_role_and_organization[role].keys.sort_by(&:name).map do |org|
       if org.new_record?
-          @users_by_role_and_organization[role][org].sort.map{|u| link_to_user u}.join(", ").html_safe
+          @users_by_role_and_organization[role][org].map{|u| link_to_user u}.join(", ").html_safe
       else
         link_to_organization(org, {:link_ancestors=>false, :fullname=>true}) +
-          content_tag(:span, " (#{@users_by_role_and_organization[role][org].sort.map{|u| link_to_user u}.join(", ")})".html_safe,
+          content_tag(:span, " (#{@users_by_role_and_organization[role][org].map{|u| link_to_user u}.join(", ")})".html_safe,
                       :class => "organization-members")
       end
     end.join(", ").html_safe -%>
