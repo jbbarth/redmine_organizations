@@ -1,21 +1,26 @@
 require_dependency 'project' #see: http://www.redmine.org/issues/11035
 require_dependency 'principal'
 
-# It is not possible to "require 'group'" now because at this point,
-# it's possible we don't even have a proper DB. In this case, loading
-# Group scopes is not possible, since ":order" scope is defined without
-# a lambda, so AR tries to find the "users" table layout and fails.
+# This ugly patch is only useful in db:migrate/redmine:plugin:migrate
+# when the database is not fully ready. Then when Redmine loads this
+# plugin it tries to load project, principal, then group models, but
+# one scope defined in the original model breaks because it uses the
+# the "users" table directly, which may not exist at this point.
 #
-# So we have to override/fake it and make like we're smarter.
+# So basically loading Group scoped at this point is not possible, so
+# we mock the "order" method in order to neutralize this behaviour (we
+# don't need "order" in migrations...).
 #
-# Not fun. Will try to propose a patch..
-class Group < Principal
-  def self.order(*args)
-    if table_exists?
-      super
-    else
-      #we don't care, we're in a db:migrate or so..
-      lambda{}
+# This is *not* fun. Will try to propose a patch..
+if File.basename($0) == "rake" && ARGV.first.match(/^db:|^redmine:/)
+  class Group < Principal
+    def self.order(*args)
+      if table_exists?
+        super
+      else
+        #we don't care, we're in a db:migrate or so..
+        lambda{}
+      end
     end
   end
 end
