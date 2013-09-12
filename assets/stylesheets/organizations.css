@@ -22,3 +22,5 @@ table.memberships .buttons .icon-edit { display:none; }
 .organizations .buttons { width:160px !important; }
 .organizations .organization { width:220px; }
 .organizations .role { width:180px; }
+.list.members .buttons { text-align:left; }
+table.members td.group { background-position: 0 4px; }
