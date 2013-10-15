@@ -31,7 +31,7 @@ class Organization < ActiveRecord::Base
   end
   
   def fullname
-    ancestors.all(:order => 'lft').map do |ancestor|
+    @fullname ||= ancestors.all(:order => 'lft').map do |ancestor|
       ancestor.name+Organization::SEPARATOR
     end.join("") + name
   end
