@@ -7,7 +7,7 @@ class OrganizationInvolvementTest < ActiveSupport::TestCase
   def setup
     @organization = Organization.find(1)
     @project = Project.find(5)
-    @user = User.find(1)
+    @user = User.find(3)
     @role1 = Role.find(1)
     @role2 = Role.find(2)
   end
