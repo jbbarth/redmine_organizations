@@ -88,7 +88,7 @@ class OrganizationsController < ApplicationController
   
   def add_users
     @organization = Organization.find(params[:id])
-    @users = User.find_all_by_id(params[:user_ids]).active
+    @users = User.active.find_all_by_id(params[:user_ids])
     @organization.users << @users if request.post?
     respond_to do |format|
       format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'users' }
