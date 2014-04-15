@@ -53,4 +53,17 @@ class OrganizationsControllerTest < ActionController::TestCase
     assert response.body.include?("Admin")
     assert !response.body.include?("John")
   end
+
+  test "should NOT create organizations with same names and parents" do
+    assert_no_difference('Organization.count') do
+      post :create, organization: {name: "Team A", parent_id: 1}
+    end
+  end
+
+  test "should create organizations with same names but different parents" do
+    assert_difference('Organization.count') do
+      post :create, organization: {name: "Team A", parent_id: 3}
+    end
+  end
+
 end
