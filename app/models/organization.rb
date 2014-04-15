@@ -3,7 +3,7 @@ class Organization < ActiveRecord::Base
   acts_as_nested_set
 
   validates_presence_of :name
-  validates_uniqueness_of :name
+  validates :name, :uniqueness => {:scope => :parent_id}
 
   has_many :users
   has_many :memberships, :class_name => 'OrganizationMembership', :dependent => :delete_all
