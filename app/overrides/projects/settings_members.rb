@@ -18,7 +18,7 @@ Deface::Override.new :virtual_path  => 'projects/settings/_members',
 
 Deface::Override.new :virtual_path  => 'projects/settings/_members',
                      :name          => 'indent-members-inherited-from-groups',
-                     :insert_before => 'code[erb-loud]:contains("link_to_user")',
+                     :insert_before => 'erb[loud]:contains("link_to_user")',
                      :text          => '<%=
   content_tag(:span, "", :style => "display:inline-block;width:25px") if member.principal.is_a?(User) && !member.deletable?
 %>'

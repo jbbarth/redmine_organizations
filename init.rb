@@ -31,7 +31,7 @@ Redmine::Plugin.register :redmine_organizations do
   url 'http://github.com/jbbarth/redmine_organizations'
   author_url 'mailto:jeanbaptiste.barth@gmail.com'
   version '0.2'
-  requires_redmine :version_or_higher => '2.0.0'
+  requires_redmine :version_or_higher => '2.5.0'
   settings :default => {
     'hide_groups_admin_menu' => "0",
   }, :partial => 'settings/organizations_settings'
