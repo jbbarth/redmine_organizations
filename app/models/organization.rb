@@ -4,6 +4,7 @@ class Organization < ActiveRecord::Base
 
   validates_presence_of :name
   validates :name, :uniqueness => {:scope => :parent_id}
+  validates_format_of :mail, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, :allow_blank => true
 
   has_many :users
   has_many :memberships, :class_name => 'OrganizationMembership', :dependent => :delete_all
