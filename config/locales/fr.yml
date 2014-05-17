@@ -9,3 +9,4 @@ fr:
   field_hidden_on_overview: "Cacher sur l'aperçu des projets"
   field_direction: "Est une direction"
   text_hide_groups_admin_menu: "Cacher les 'Groupes'"
+  text_organization_mail_notice: "Cette adresse sera notifiée pour toutes les demandes"
