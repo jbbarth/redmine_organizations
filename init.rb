@@ -33,6 +33,7 @@ Redmine::Plugin.register :redmine_organizations do
   author_url 'mailto:jeanbaptiste.barth@gmail.com'
   version '0.2'
   requires_redmine :version_or_higher => '2.5.0'
+  requires_redmine_plugin :redmine_base_rspec, :version_or_higher => '0.0.1'
   settings :default => {
     'hide_groups_admin_menu' => "0",
   }, :partial => 'settings/organizations_settings'
