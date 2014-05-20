@@ -4,7 +4,7 @@
 
 <% if m.organization %>
 <td><%= link_to_organization m.organization %></td>
-<td>
+<td class='role'>
   <span id="orga-<%= m.id %>-roles">
     <% if m.roles.any? #hack to make jquery see the <span> %>
       <%= m.roles.map(&:name).join(", ") %>
