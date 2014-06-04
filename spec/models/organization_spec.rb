@@ -1,8 +1,7 @@
 require "spec_helper"
 
 describe "Organization" do
-  fixtures :organizations, :organization_memberships, :organization_involvements, :organization_roles,
-           :users, :roles, :projects, :members, :member_roles
+  fixtures :organizations, :users, :roles, :projects, :members, :member_roles
 
   it "should test_organization_tree_sorting" do
     o = Organization.create(:name => "Team C", :parent_id => 1)
