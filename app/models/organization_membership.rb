@@ -3,14 +3,16 @@ class OrganizationMembership < ActiveRecord::Base
   belongs_to :project
   has_many :organization_roles, :dependent => :destroy
   has_many :roles, :through => :organization_roles
-  has_many :organization_involvements
-  has_many :users, :through => :organization_involvements
-  
+
   validates_presence_of :organization, :project
   validates_uniqueness_of :organization_id, :scope => :project_id
 
   after_save :update_users_memberships
   after_destroy :delete_old_members
+
+  def users
+    User.member_of(self.project).where("organization_id = ?", self.organization_id)
+  end
 
   def update_users_memberships
     #update users roles
