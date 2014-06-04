@@ -1,9 +1,0 @@
---- 
-organization_involvements_001:
-  id: 1
-  user_id: 1
-  organization_membership_id: 3
-organization_involvements_002:
-  id: 2
-  user_id: 2
-  organization_membership_id: 3

@@ -14,6 +14,16 @@ class OrganizationMembership < ActiveRecord::Base
     User.member_of(self.project).where("organization_id = ?", self.organization_id)
   end
 
+  def add_member(user, role_ids)
+    member = Member.where(user_id: user.id, project_id: self.project_id).first_or_initialize
+    role_ids.each do |new_role_id|
+      unless member.roles.map(&:id).include?(new_role_id)
+        member.roles << Role.find(new_role_id)
+      end
+    end
+    member.save! if member.project.present? && member.user.present?
+  end
+
   def update_users_memberships
     #update users roles
     self.users.each do |user|
@@ -39,8 +49,4 @@ class OrganizationMembership < ActiveRecord::Base
     end
   end
 
-  def user_ids=(*args)
-    @old_user_ids = self.user_ids
-    super
-  end
 end
