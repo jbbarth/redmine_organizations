@@ -33,13 +33,6 @@ class OrganizationMembership < ActiveRecord::Base
     (self.organization.users - self.users).each do |user|
       user.destroy_membership_through_organization(self)
     end
-    #delete old involvements/memberships for deleted users
-    if @old_user_ids.present?
-      (@old_user_ids - self.user_ids).each do |user_id|
-        user = User.find(user_id)
-        user.destroy_membership_through_organization(self)
-      end
-    end
   end
 
   def delete_old_members(excluded = [])
