@@ -59,9 +59,15 @@ class OrganizationMembershipsController < ApplicationController
   
   def update_users
     @membership = OrganizationMembership.find(params[:id])
-    @membership.update_attributes(params[:membership])
     @organization = @membership.organization
     @project = @membership.project
+
+    new_members = User.find(params[:membership][:user_ids].reject!(&:empty?))
+    @membership.delete_old_members(@organization.users - new_members)
+    new_members.each do |user|
+      @membership.add_member(user, @membership.roles)
+    end
+
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :project_id => @project, :tab => 'members' }
       format.js
