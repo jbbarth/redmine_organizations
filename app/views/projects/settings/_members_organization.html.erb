@@ -1,52 +1,54 @@
-<% m ||= @membership %>
+<% o ||= @organization %>
 <% roles ||= Role.find_all_givable %>
+<% selected_roles = Role.joins(:member_roles => {:member => :user}).where("organization_id = ? AND project_id = ?", o.id, @project.id).uniq %>
+<% selected_users = User.joins(:members).where("organization_id = ? AND project_id = ?", o.id, @project.id).uniq %>
 <% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project, :tab=>"members") %>
 
-<% if m.organization %>
-<td><%= link_to_organization m.organization %></td>
+<% if o %>
+<td><%= link_to_organization o %></td>
 <td class='role'>
-  <span id="orga-<%= m.id %>-roles">
-    <% if m.roles.any? #hack to make jquery see the <span> %>
-      <%= m.roles.map(&:name).join(", ") %>
+  <span id="orga-<%= o.id %>-roles">
+    <% if selected_roles.any? #hack to make jquery see the <span> %>
+      <%= selected_roles.map(&:name).join(", ") %>
     <% else %>
       &nbsp;
     <% end %>
   </span>
-  <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
-               :url => { :controller => 'organization_memberships', :action => 'update_roles', :project_id => @project, :id => m },
-               :html => { :id => "orga-#{m.id}-roles-form", :class => 'hol' }) do |f| -%>
+  <%= form_for(o, :as => :membership, :remote => true, :method => :put,
+               :url => { :controller => 'organization_memberships', :action => 'update_roles', :project_id => @project, :id => o.id },
+               :html => { :id => "orga-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
     <p><% roles.sort_by(&:name).each do |role| %>
-      <label><%= check_box_tag 'membership[role_ids][]', role.id, m.roles.include?(role) %> <%=h role %></label><br />
+      <label><%= check_box_tag 'membership[role_ids][]', role.id, selected_roles.include?(role) %> <%=h role %></label><br />
     <% end %></p>
     <%= hidden_field_tag 'membership[role_ids][]', '' %>
     <p><%= submit_tag l(:button_change), :class => "small" %>
-    <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{m.id}); return false;" %></p>
+    <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{o.id}); return false;" %></p>
   <% end -%>
 </td>
 <td>
-  <span id="orga-<%= m.id %>-members">
-    <% if m.users.active.any? #hack to make jquery see the <span> %>
-      <%= m.users.active.sort_by(&:to_s).map{|u|link_to_user(u)}.join(", ").html_safe %>
+  <span id="orga-<%= o.id %>-members">
+    <% if selected_users.active.any? #hack to make jquery see the <span> %>
+      <%= selected_users.active.sort_by(&:to_s).map{|u|link_to_user(u)}.join(", ").html_safe %>
     <% else %>
       &nbsp;
     <% end %>
   </span>
-  <%= form_for(m.organization, :as => :membership, :remote => true, :method => :put,
-               :url => { :controller => 'organization_memberships', :action => 'update_users', :project_id => @project, :id => m },
-               :html => { :id => "orga-#{m.id}-members-form", :class => 'hol' }) do |f| -%>
-    <p><% m.organization.users.active.sort_by(&:to_s).each do |user| %>
-      <label><%= check_box_tag 'membership[user_ids][]', user.id, m.users.include?(user) %> <%=h user %></label><br />
+  <%= form_for(o, :as => :membership, :remote => true, :method => :put,
+               :url => { :controller => 'organization_memberships', :action => 'update_users', :project_id => @project, :organization_id => o.id },
+               :html => { :id => "orga-#{o.id}-members-form", :class => 'hol' }) do |f| -%>
+    <p><% o.users.active.sort_by(&:to_s).each do |user| %>
+      <label><%= check_box_tag 'membership[user_ids][]', user.id, selected_users.include?(user) %> <%=h user %></label><br />
     <% end %></p>
     <%= hidden_field_tag 'membership[user_ids][]', '' %>
     <p><%= submit_tag l(:button_change), :class => "small" %>
-    <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{m.id}); return false;" %></p>
+    <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{o.id}); return false;" %></p>
   <% end -%>
 </td>
 <td class="buttons">
-  <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{m.id}); return false;",
+  <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{o.id}); return false;",
                        :class => 'icon icon-edit') %>
   <%= link_to(l(:button_delete),
-              {:controller => 'organization_memberships', :action => 'destroy_in_project', :project_id => @project, :id => m, :back_url => @back},
+              {:controller => 'organization_memberships', :action => 'destroy_in_project', :project_id => @project, :id => o.id, :back_url => @back},
               :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
 </td>
 <% end %>

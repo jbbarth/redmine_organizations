@@ -7,8 +7,8 @@ RedmineApp::Application.routes.draw do
   end
   resources :organization_memberships, :only => [:create,:update,:destroy] do
     new { post :create_in_project }
-    member { put :update_roles }
-    member { put :update_users }
+    collection { put :update_roles }
+    collection { put :update_users }
     member { delete :destroy_in_project }
   end
 end

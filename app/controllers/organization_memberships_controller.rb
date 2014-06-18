@@ -58,14 +58,15 @@ class OrganizationMembershipsController < ApplicationController
   end
   
   def update_users
-    @membership = OrganizationMembership.find(params[:id])
-    @organization = @membership.organization
-    @project = @membership.project
+    @organization = Organization.find(params[:organization_id])
+    @project = Project.find(params[:project_id])
 
     new_members = User.find(params[:membership][:user_ids].reject!(&:empty?))
-    @membership.delete_old_members(@organization.users - new_members)
+    old_members = User.joins(:members).where("organization_id = ? AND project_id = ?", @organization.id, @project.id).uniq
+    OrganizationMembership.delete_old_members(@organization.id, @project.id, old_members)
+    roles = Role.joins(:member_roles => {:member => :user}).where("organization_id = ? AND project_id = ?", @organization.id, @project.id).uniq
     new_members.each do |user|
-      @membership.add_member(user, @membership.roles)
+      OrganizationMembership.add_member(user, @project.id, roles)
     end
 
     respond_to do |format|

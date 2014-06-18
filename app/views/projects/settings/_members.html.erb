@@ -23,7 +23,8 @@
   </p>
 <% end -%>
 
-<% if @project.organization_memberships.any? %>
+<% organizations = Organization.joins(:users => :members).where("project_id = ?", @project.id).uniq %>
+<% if organizations.any? %>
 <table class="list organizations">
   <thead><tr>
     <th class="organization"><%= l(:label_organization) %></th>
@@ -32,11 +33,11 @@
     <th class="buttons"> </th>
   </tr></thead>
   <tbody>
-  <% @project.organization_memberships.all(:include => [:organization, :roles]).sort_by do |m|
-       "#{m.organization.try(:fullname)}"
-     end.each do |m| %>
-    <tr id="orga-<%= m.id %>">
-      <%= render :partial => 'projects/settings/members_organization', :locals => {:m => m, :roles => roles} %>
+  <% organizations.sort_by do |o|
+       "#{o.try(:fullname)}"
+     end.each do |o| %>
+    <tr id="orga-<%= o.id %>">
+      <%= render :partial => 'projects/settings/members_organization', :locals => {:o => o, :roles => roles} %>
     </tr>
   <% end %>
   </tbody>
