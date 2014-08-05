@@ -40,4 +40,16 @@ class Organization < ActiveRecord::Base
   def direction_organization
     @direction_organization ||= (direction? || root? ? self : parent.direction_organization)
   end
+
+  # Yields the given block for each organization with its level in the tree
+  def self.organization_tree(organizations, &block)
+    ancestors = []
+    organizations.sort_by(&:lft).each do |organization|
+      while (ancestors.any? && !organization.is_descendant_of?(ancestors.last))
+        ancestors.pop
+      end
+      yield organization, ancestors.size
+      ancestors << organization
+    end
+  end
 end
