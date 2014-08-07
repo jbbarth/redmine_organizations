@@ -16,14 +16,12 @@
                  { :disabled => @project.organizations.map(&:id), :include_blank => true,
                    :label => :field_parent_organization },
                  { :class => "orga-select2" } %>
-    <% roles.each do |role| %>
-      <label><%= check_box_tag 'membership[role_ids][]', role.id %> <%=h role %></label>
-    <% end %>
-    <%= submit_tag l(:button_save) %>
+    <%= submit_tag l(:button_add) %>
   </p>
 <% end -%>
 
 <% organizations = Organization.joins(:users => :members).where("project_id = ?", @project.id).uniq %>
+<% organizations = organizations | Organization.joins(:memberships).where("project_id = ?", @project.id).uniq %>
 <% if organizations.any? %>
 <table class="list organizations">
   <thead><tr>

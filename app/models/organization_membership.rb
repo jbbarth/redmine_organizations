@@ -35,6 +35,10 @@ class OrganizationMembership < ActiveRecord::Base
     end
   end
 
+  def delete_old_members(excluded = [])
+    OrganizationMembership.delete_old_members(organization_id, project_id, excluded)
+  end
+
   def self.delete_old_members(organization_id, project_id, excluded = [])
     members = User.joins(:members).where("organization_id = ? AND project_id = ?", organization_id, project_id).uniq
     members.each do |user|
