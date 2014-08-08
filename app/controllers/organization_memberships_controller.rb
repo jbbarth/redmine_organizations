@@ -51,8 +51,8 @@ class OrganizationMembershipsController < ApplicationController
     @project = Project.find(params[:project_id])
     new_members = User.find(params[:membership][:user_ids].reject(&:empty?))
     new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
-    old_members = User.joins(:members).where("organization_id = ? AND project_id = ?", @organization.id, @project.id).uniq
-    OrganizationMembership.delete_old_members(@organization.id, @project.id, old_members) # TODO Refactor - Do not destroy everything if old members = new members
+    current_members = User.joins(:members).where("organization_id = ? AND project_id = ?", @organization.id, @project.id).uniq
+    OrganizationMembership.delete_old_members(@organization.id, @project.id, current_members)
     new_members.each do |user|
       OrganizationMembership.add_member(user, @project.id, new_roles)
     end if new_roles.present?
@@ -63,11 +63,11 @@ class OrganizationMembershipsController < ApplicationController
   end
   
   def destroy_in_project
-    membership = OrganizationMembership.where(project_id: params[:project_id], organization_id: params[:organization_id]).first
-    membership.destroy if membership
-    @organization = membership.organization
+    OrganizationMembership.where(project_id: params[:project_id], organization_id: params[:organization_id]).first.try(:destroy)
+    OrganizationMembership.delete_old_members(params[:organization_id], params[:project_id])
+    @organization = Organization.find(params[:organization_id])
     respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => membership.project, :tab => 'members' }
+      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => params[:project_id], :tab => 'members' }
       format.js
     end
   end

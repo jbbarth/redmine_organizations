@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class OrganizationMembershipTest < ActiveSupport::TestCase
-  fixtures :organizations, :organization_memberships, :organization_roles,
+  fixtures :organizations, :organization_memberships,
            :users, :roles, :projects, :members, :member_roles
 
   def setup
@@ -17,19 +17,15 @@ class OrganizationMembershipTest < ActiveSupport::TestCase
   test "OrganizationMembership#after_save updates correctly memberships" do
     assert ! @user.member_of?(@project)
     #create an organization membership
-    m = OrganizationMembership.create!(:organization => @organization, :project => @project, :roles => [@role1, @role2])
+    m = OrganizationMembership.create!(:organization => @organization, :project => @project)
     assert ! @user.reload.member_of?(@project)
     #add a user
     assert_difference "Member.count", +1 do
-      OrganizationMembership.add_member(@user, @project.id, m.roles.map(&:id))
+      OrganizationMembership.add_member(@user, @project.id, [@role1.id, @role2.id])
     end
     assert_include @user, m.users
     assert @user.reload.member_of?(@project), "User #{@user.id} should be member of project #{@project.id}"
     assert_equal [1,2], @user.roles_for_project(@project).map(&:id)
-    #update its roles
-    m.roles = [@role1]
-    m.save
-    assert_equal [1], @user.reload.roles_for_project(@project).map(&:id)
   end
 
   test "test_organization_tree_sorting" do

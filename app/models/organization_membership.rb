@@ -1,14 +1,15 @@
 class OrganizationMembership < ActiveRecord::Base
   belongs_to :organization
   belongs_to :project
-  has_many :organization_roles, :dependent => :destroy
-  has_many :roles, :through => :organization_roles
 
   validates_presence_of :organization, :project
   validates_uniqueness_of :organization_id, :scope => :project_id
 
-  after_save :update_users_memberships
   after_destroy :delete_old_members
+
+  def roles
+    Role.joins(:member_roles => :member).where("user_id IN (?) AND project_id = ?", self.users.map(&:id), self.project.id)
+  end
 
   def users
     User.member_of(self.project).where("organization_id = ?", self.organization_id)
@@ -22,17 +23,6 @@ class OrganizationMembership < ActiveRecord::Base
       end
     end
     member.save! if member.project.present? && member.user.present?
-  end
-
-  def update_users_memberships
-    #update users roles
-    self.users.each do |user|
-      user.update_membership_through_organization(self)
-    end
-    #delete old involvements/memberships
-    (self.organization.users - self.users).each do |user|
-      user.destroy_membership_through_organization(self)
-    end
   end
 
   def delete_old_members(excluded = [])

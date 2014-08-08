@@ -18,9 +18,8 @@ class OrganizationsController < ApplicationController
                                                  :conditions => Project.visible_condition(User.current))
     
     @submemberships = @organization.descendants.all(:order => "lft").inject({}) do |memo, organization|
-      memo[organization] = organization.memberships.all(:include => [:project, :organization, :roles],
-                                                        :conditions => [ Project.visible_condition(User.current) +
-                                                          " AND #{Role.table_name}.hidden_on_overview = ?", false])
+      memo[organization] = organization.memberships.all(:include => [:project],
+                                                        :conditions => [Project.visible_condition(User.current)])
       memo
     end
     

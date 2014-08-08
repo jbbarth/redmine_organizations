@@ -12,15 +12,6 @@ class User < Principal
   belongs_to :organization
 
   safe_attributes 'organization_id'
-
-  def update_membership_through_organization(organization_membership)
-    if id && project_id = organization_membership.project_id
-      attributes = {:user_id => id, :project_id => project_id}
-      member = Member.first(:conditions => attributes) || Member.new(attributes)
-      member.roles = organization_membership.roles
-      member.save!
-    end
-  end
   
   def destroy_membership_through_organization(project_id)
     if id
