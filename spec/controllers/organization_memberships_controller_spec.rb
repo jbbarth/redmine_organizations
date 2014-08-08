@@ -26,7 +26,7 @@ describe OrganizationMembershipsController do
   it "should should destroy membership inside a project" do
     @request.session[:user_id] = 2
     assert_difference 'Organization.find(1).projects.count', -1 do
-      delete :destroy_in_project, :project_id => 2, :id => 3
+      delete :destroy_in_project, :project_id => 2, :organization_id => 1
     end
     response.should redirect_to('/projects/onlinestore/settings/members')
   end

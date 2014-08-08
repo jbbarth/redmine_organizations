@@ -63,7 +63,8 @@ class OrganizationMembershipsController < ApplicationController
   end
   
   def destroy_in_project
-    membership = OrganizationMembership.where(project_id: params[:project_id], organization_id: params[:organization_id]).first.destroy
+    membership = OrganizationMembership.where(project_id: params[:project_id], organization_id: params[:organization_id]).first
+    membership.destroy if membership
     @organization = membership.organization
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => membership.project, :tab => 'members' }
