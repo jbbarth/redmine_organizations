@@ -1,18 +1,18 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require "spec_helper"
 
-class OrganizationInvolvementTest < ActiveSupport::TestCase
+describe "OrganizationInvolvement" do
   fixtures :organizations, :organization_memberships, :organization_involvements, :organization_roles,
            :users, :roles, :projects, :members, :member_roles
 
-  def setup
+  before do
     @organization = Organization.find(1)
     @project = Project.find(5)
     @user = User.find(3)
     @role1 = Role.find(1)
     @role2 = Role.find(2)
   end
-  
-  test "OrganizationInvolvement#after_save updates correctly memberships" do
+
+  it "should OrganizationInvolvement#after_save updates correctly memberships" do
     assert ! @user.member_of?(@project)
     #create an organization membership
     m = OrganizationMembership.create!(:organization => @organization, :project => @project, :roles => [@role1, @role2])
@@ -21,11 +21,11 @@ class OrganizationInvolvementTest < ActiveSupport::TestCase
     m.users << @user
     m.save
     assert @user.reload.member_of?(@project)
-    assert_equal [1,2], @user.roles_for_project(@project).map(&:id)
+    @user.roles_for_project(@project).map(&:id).should == [1,2]
     #update its roles
     m.roles = [@role1]
     m.save
-    assert_equal [1], @user.reload.roles_for_project(@project).map(&:id)
+    @user.reload.roles_for_project(@project).map(&:id).should == [1]
     #remove involved users
     m.user_ids = []
     m.save

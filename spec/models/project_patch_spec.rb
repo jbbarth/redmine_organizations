@@ -1,14 +1,14 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require "spec_helper"
 require File.dirname(__FILE__) + '/../../lib/redmine_organizations/patches/project_patch'
 
-class ProjectPatchTest < ActiveSupport::TestCase
+describe "ProjectPatch" do
   fixtures :organizations, :organization_memberships, :organization_involvements, :organization_roles,
            :users, :roles, :projects, :members, :member_roles
-  
-  test "Project#users_by_role_and_organization" do
+
+  it "should Project#users_by_role_and_organization" do
     u = Project.find(1).users_by_role_and_organization
-    assert_equal 2, u.keys.length
+    u.keys.length.should == 2
     assert u.keys.include?(Role.find(1))
-    assert_equal 1, u[Role.find(1)].keys.length
+    u[Role.find(1)].keys.length.should == 1
   end
 end
