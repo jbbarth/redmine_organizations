@@ -33,4 +33,13 @@ describe "Organization" do
     same_name_orga = Organization.new(name: "Team A", parent_id: 3) #same name but different parent : OK
     assert same_name_orga.valid?
   end
+
+  it "should test organization_tree class method" do
+    result = []
+    Organization.organization_tree(Organization.all) do |organization, level|
+      result << {level => organization.name}
+    end
+    assert_equal result, [{0=>"Org A"}, {1=>"Team A"}, {1=>"Team B"}]
+  end
+
 end
