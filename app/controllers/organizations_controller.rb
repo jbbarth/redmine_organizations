@@ -120,9 +120,8 @@ class OrganizationsController < ApplicationController
 
   def create_membership_in_project
     @organization = Organization.find(params['membership']['organization_id']) if params['membership']['organization_id'].present?
-    @project = Project.find(params['membership']['project_id']) if params['membership']['project_id'].present?
     respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :project_id => @project, :tab => 'members' }
+      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js
     end
   end
@@ -133,7 +132,7 @@ class OrganizationsController < ApplicationController
     @organization = Organization.find(params[:organization_id])
     @organization.update_project_members(params[:project_id], new_members, new_roles)
     respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :project_id => params[:project_id], :tab => 'members' }
+      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js
     end
   end
@@ -142,7 +141,7 @@ class OrganizationsController < ApplicationController
     @organization = Organization.find(params[:organization_id])
     @organization.delete_old_project_members(params[:project_id])
     respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => params[:project_id], :tab => 'members' }
+      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js
     end
   end

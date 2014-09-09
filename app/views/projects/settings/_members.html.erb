@@ -11,7 +11,6 @@
 <%= form_for :membership, :url => { :controller => 'organizations', :action => 'create_membership_in_project', :project_id => @project },
              :remote => true, :html => {:id => 'organization-form', :style => 'display:none;'} do |f| -%>
   <p>
-    <%= hidden_field_tag "membership[project_id]", @project.id %>
     <%= f.select "organization_id", nested_set_options(Organization) { |i| i.fullname }, 
                  { :disabled => @project.organizations.map(&:id), :include_blank => true,
                    :label => :field_parent_organization },
