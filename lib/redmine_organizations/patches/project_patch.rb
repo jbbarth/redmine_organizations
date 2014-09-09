@@ -2,8 +2,10 @@ require_dependency 'project'
 
 class Project
   unloadable
-  has_many :organization_memberships
-  has_many :organizations, :through => :organization_memberships
+
+  def organizations
+    Organization.joins(:users => :members).where("project_id = ?", self.id).uniq
+  end
 
   # Builds a nested hash of users sorted by role and organization
   # => { Role(1) => { Org(1) => [ User(1), User(2), ... ] } }

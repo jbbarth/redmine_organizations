@@ -1,5 +1,5 @@
-<% roles = Role.find_all_givable %>
-<% projects = Project.active.find(:all, :order => 'lft') %>
+<% all_projects = Project.active.find(:all, :order => 'lft') %>
+<% current_projects = @organization.projects.active %>
 
 <div class="splitcontentleft">
 <% if @organization.memberships.any? %>
@@ -7,35 +7,21 @@
 	<thead><tr>
 	  <th><%= l(:label_project) %></th>
 	  <th><%= l(:label_role_plural) %></th>
-	  <th style="width:15%"></th>
 	</tr></thead>
 	<tbody>
-	<% @organization.memberships.each do |membership| %>
-	<% next if membership.new_record? || membership.project.blank? %>
-	<tr id="member-<%= membership.id %>" class="<%= cycle 'odd', 'even' %> class">
-	<td class="project">
-    <%=link_to_if membership.project.active?, membership.project, membership.project %>
-    <%= content_tag(:em, "(#{l(:project_status_archived)})", :class=>"info", :style=>"display:inline") unless membership.project.active? %>
-  </td>
-  <td class="roles">
-    <span id="member-<%= membership.id %>-roles"><%=h membership.roles.sort.collect(&:to_s).join(', ') %></span>
-    <%= form_for(:membership, :remote => true,
-                 :url => { :controller => 'organization_memberships', :action => 'update', :id => membership },
-                 :html => { :method => :put, :id => "member-#{membership.id}-roles-form", :style => 'display:none;'}) do %>
-      	<p><% roles.each do |role| %>
-        <label><%= check_box_tag 'membership[role_ids][]', role.id, membership.roles.include?(role) %> <%=h role %></label><br />
-        <% end %></p>
-        <p><%= submit_tag l(:button_change) %>
-        <%= link_to_function l(:button_cancel), "$('#member-#{membership.id}-roles').show(); $('#member-#{membership.id}-roles-form').hide(); return false;" %></p>
-    <% end %>
-  </td>
-  <td class="buttons">
-      <%= link_to_function l(:button_edit), "$('#member-#{membership.id}-roles').hide(); $('#member-#{membership.id}-roles-form').show(); return false;", :class => 'icon icon-edit' %>
-      <%= link_to l(:button_delete), organization_membership_path(membership), :method => :delete, :remote => true, :class => 'icon icon-del' %>
-  </td>
-	</tr>
-	</tbody>
-<% end %>
+	<% current_projects.each do |project| %>
+    <% next if project.blank? %>
+    <tr id="member-<%= project.id %>" class="<%= cycle 'odd', 'even' %> class">
+      <td class="project">
+        <%=link_to_if project.active?, project, project %>
+        <%= content_tag(:em, "(#{l(:project_status_archived)})", :class=>"info", :style=>"display:inline") unless project.active? %>
+      </td>
+      <td class="roles">
+        <span id="member-<%= project.id %>-roles"><%=h @organization.roles_by_project(project).sort.collect(&:to_s).join(', ') %></span>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
 <% reset_cycle %>
 </table>
 <% else %>
@@ -44,18 +30,14 @@
 </div>
 
 <div class="splitcontentright">
-<% if projects.any? %>
-<fieldset>
-<legend><%=l(:label_project_new)%></legend>
-<%= form_for(:membership, :remote => true, :url => { :controller => 'organization_memberships', :action => 'create' }) do %>
-  <%= hidden_field_tag 'membership[organization_id]', @organization.id %>
-  <%= select_tag 'membership[project_id]', options_for_membership_project_select(@organization, projects) %>
-  <p><%= l(:label_role_plural) %>:
-  <% roles.each do |role| %>
-    <label><%= check_box_tag 'membership[role_ids][]', role.id %> <%=h role %></label>
-  <% end %></p>
-  <p><%= submit_tag l(:button_add) %></p>
-<% end %>
-</fieldset>
-<% end %>
+  <% if all_projects.any? %>
+    <fieldset>
+      <legend><%=l(:label_project_new)%></legend>
+      <%= form_for(:membership, :remote => true) do %>
+        <% options = ("<option value=''>--- #{l(:actionview_instancetag_blank_option)} ---</option>").html_safe %>
+        <% options << project_tree_options_for_select(all_projects) { |p| { :value => project_path(:id => p, :jump => 'settings'), :disabled => (current_projects.include?(p)) } } %>
+        <%= select_tag 'project_box', options, :onchange => 'if (this.value != \'\') { window.location = this.value; }' %>
+      <% end %>
+    </fieldset>
+  <% end %>
 </div>

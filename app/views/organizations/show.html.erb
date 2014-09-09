@@ -16,22 +16,22 @@
 <ul class=root>
   <li class=selected-organization>
     <%= link_to_organization @organization, :link_ancestors => false %>
-    <% if @memberships.any? %>
+    <% if @projects.any? %>
     <ul>
-      <% for membership in @memberships %>
-	      <li><%= link_to_organization_membership(membership) %></li>
+      <% for project in @projects %>
+	      <li><%= link_to_organization_membership(project, @organization.roles_by_project(project)) %></li>
       <% end %>
     </ul>
     <% end %>
   </li>
-<% @submemberships.keys.sort_by(&:fullname).each do |suborganization| %>
-  <% memberships = @submemberships[suborganization] %>
+<% @subprojects_by_organization.keys.sort_by(&:fullname).each do |suborganization| %>
+  <% subprojects = @subprojects_by_organization[suborganization] %>
   <li>
     <%= link_to_organization suborganization, :link_ancestors => false %>
-    <% if memberships.any? %>
+    <% if subprojects.any? %>
     <ul>
-      <% for membership in memberships %>
-        <li><%= link_to_organization_membership(membership) %></li>
+      <% for project in subprojects %>
+        <li><%= link_to_organization_membership(project, suborganization.roles_by_project(project)) %></li>
       <% end %>
     </ul>
     <% end %>

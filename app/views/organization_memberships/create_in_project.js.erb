@@ -1,6 +1,0 @@
-$("#tab-content-members").html("<%= j render 'projects/settings/members' %>")
-hideOnLoad()
-initOrgasSelect2()
-<% if @organization %>
-  $("#orga-<%= @organization.id %>").effect("highlight")
-<% end %>

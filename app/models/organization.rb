@@ -7,10 +7,7 @@ class Organization < ActiveRecord::Base
   validates_format_of :mail, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, :allow_blank => true
 
   has_many :users
-  has_many :memberships, :class_name => 'OrganizationMembership', :dependent => :delete_all
-                        #:include => [:project], :conditions => "#{Project.table_name}.status<>#{Project::STATUS_ARCHIVED}"
-  has_many :projects, :through => :memberships
-  
+
   SEPARATOR = '/'
 
   # Reorder tree after save on the fly
@@ -41,6 +38,18 @@ class Organization < ActiveRecord::Base
     @direction_organization ||= (direction? || root? ? self : parent.direction_organization)
   end
 
+  def memberships
+    Member.joins(:user).where("users.organization_id = ?", self.id)
+  end
+
+  def projects
+    Project.where("id IN (?)", self.memberships.pluck(:project_id).uniq)
+  end
+
+  def roles_by_project(project)
+    Role.joins(:member_roles => :member).where("user_id IN (?) AND project_id = ?", self.users.map(&:id), project.id).uniq
+  end
+
   # Yields the given block for each organization with its level in the tree
   def self.organization_tree(organizations, &block)
     ancestors = []
@@ -52,4 +61,33 @@ class Organization < ActiveRecord::Base
       ancestors << organization
     end
   end
+
+  def update_project_members(project_id, members, new_roles)
+    current_members = User.joins(:members).where("organization_id = ? AND project_id = ?", self.id, project_id).uniq
+    delete_old_project_members(project_id, current_members)
+    members.each do |user|
+      add_member(user, project_id, new_roles)
+    end if new_roles.present?
+  end
+
+  def delete_old_project_members(project_id, excluded = [])
+    members = User.joins(:members).where("organization_id = ? AND project_id = ?", self.id, project_id).uniq
+    members.each do |user|
+      next if excluded.include?(user.id)
+      user.destroy_membership_through_organization(project_id)
+    end
+  end
+
+  private
+
+    def add_member(user, project_id, role_ids)
+      member = Member.where(user_id: user.id, project_id: project_id).first_or_initialize
+      role_ids.each do |new_role_id|
+        unless member.roles.map(&:id).include?(new_role_id)
+          member.roles << Role.find(new_role_id)
+        end
+      end
+      member.save! if member.project.present? && member.user.present?
+    end
+
 end

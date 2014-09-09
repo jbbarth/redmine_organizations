@@ -1,8 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class OrganizationTest < ActiveSupport::TestCase
-  fixtures :organizations, :organization_memberships,
-           :users, :roles, :projects, :members, :member_roles
+  fixtures :organizations, :users, :roles, :projects, :members, :member_roles
 
   test "test_organization_tree_sorting" do
     o = Organization.create(:name => "Team C", :parent_id => 1)
@@ -13,7 +12,7 @@ class OrganizationTest < ActiveSupport::TestCase
     o.update_attributes(:name => "A new org", :parent_id => nil)
     assert_equal "Org A", o.right_sibling.name
   end
-  
+
   test "Organization#fullname" do
     assert_equal "Org A", Organization.find(1).fullname
     assert_equal "Org A/Team A", Organization.find(2).fullname

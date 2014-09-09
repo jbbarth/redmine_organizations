@@ -1,0 +1,6 @@
+<% if @organization %>
+  $('.list.organizations > tbody:first').prepend("<%= j render :partial => 'projects/settings/members_organization', :locals => {:o => @organization} %>");
+  hideOnLoad();
+  initOrgasSelect2();
+  $("#orga-<%= @organization.id %>").effect("highlight");
+<% end %>

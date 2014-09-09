@@ -1,12 +1,4 @@
 module OrganizationsHelper
-  def options_for_membership_project_select(user, projects)
-    options = content_tag('option', "--- #{l(:actionview_instancetag_blank_option)} ---")
-    options << project_tree_options_for_select(projects) do |p|
-      {:disabled => (user.projects.include?(p))}
-    end
-    options
-  end
-  
   def organization_settings_tabs
     tabs = [{:name => 'general', :partial => 'organizations/general', :label => :label_general},
             {:name => 'users', :partial => 'organizations/users', :label => :label_user_plural},
@@ -37,8 +29,8 @@ module OrganizationsHelper
     end
   end
   
-  def link_to_organization_membership(membership, options={})
-    html = link_to_project(membership.project)
-    html << " (#{membership.roles.sort.map(&:to_s).join(', ')})" if membership.roles.any?
+  def link_to_organization_membership(project, roles=nil, options={})
+    html = link_to_project(project)
+    html << " (#{roles.sort.map(&:to_s).join(', ')})" if roles.any?
   end
 end

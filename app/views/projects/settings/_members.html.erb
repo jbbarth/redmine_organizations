@@ -8,7 +8,7 @@
 
 <h3><%= l(:label_organization_plural) %></h3>
 
-<%= form_for :membership, :url => { :controller => 'organization_memberships', :action => 'create_in_project', :project_id => @project },
+<%= form_for :membership, :url => { :controller => 'organizations', :action => 'create_membership_in_project', :project_id => @project },
              :remote => true, :html => {:id => 'organization-form', :style => 'display:none;'} do |f| -%>
   <p>
     <%= hidden_field_tag "membership[project_id]", @project.id %>
@@ -20,8 +20,7 @@
   </p>
 <% end -%>
 
-<% organizations = Organization.joins(:users => :members).where("project_id = ?", @project.id).uniq %>
-<% organizations = organizations | Organization.joins(:memberships).where("project_id = ?", @project.id).uniq %>
+<% organizations = @project.organizations %>
 <% if organizations.any? %>
 <table class="list organizations">
   <thead><tr>
@@ -34,9 +33,7 @@
   <% organizations.sort_by do |o|
        "#{o.try(:fullname)}"
      end.each do |o| %>
-    <tr id="orga-<%= o.id %>">
-      <%= render :partial => 'projects/settings/members_organization', :locals => {:o => o, :roles => roles} %>
-    </tr>
+    <%= render :partial => 'projects/settings/members_organization', :locals => {:o => o, :roles => roles} %>
   <% end %>
   </tbody>
 </table>
