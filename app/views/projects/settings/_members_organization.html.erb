@@ -7,7 +7,7 @@
 <% if o %>
 <tr id="orga-<%= o.id %>">
   <td><%= link_to_organization o %></td>
-  <td colspan="2">
+  <td colspan="2" id="all_roles">
     <span class='role' style="float: left;">
       <span id="orga-<%= o.id %>-roles">
         <% if selected_roles.any? #hack to make jquery see the <span> %>
@@ -29,7 +29,7 @@
     <%= form_for(o, :as => :membership, :remote => true, :method => :put,
                  :url => { :controller => 'organizations', :action => 'update_roles', :project_id => @project.id, :organization_id => o.id },
                  :html => { :id => "orga-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
-    <span class='role' style="float: left;">
+    <span class='roles_checkboxes' style="float: left;">
       <p><% roles.sort_by(&:name).each do |role| %>
           <label><%= check_box_tag 'membership[role_ids][]', role.id, selected_roles.include?(role) %> <%=h role %></label><br />
         <% end %></p>
