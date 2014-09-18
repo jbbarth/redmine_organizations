@@ -8,7 +8,7 @@
 <tr id="orga-<%= o.id %>">
   <td><%= link_to_organization o %></td>
   <td colspan="2" id="all_roles">
-    <span class='role' style="float: left;">
+    <div class='role' style="float: left;">
       <span id="orga-<%= o.id %>-roles">
         <% if selected_roles.any? #hack to make jquery see the <span> %>
           <%= selected_roles.map(&:name).join(", ") %>
@@ -16,8 +16,8 @@
           &nbsp;
         <% end %>
       </span>
-    </span>
-    <span style="display: inherit;">
+    </div>
+    <div style="display: inherit;">
       <span id="orga-<%= o.id %>-members">
         <% if selected_users.active.any? #hack to make jquery see the <span> %>
           <%= selected_users.active.sort_by(&:to_s).map{|u|link_to_user(u)}.join(", ").html_safe %>
@@ -25,24 +25,24 @@
           &nbsp;
         <% end %>
       </span>
-    </span>
+    </div>
     <%= form_for(o, :as => :membership, :remote => true, :method => :put,
                  :url => { :controller => 'organizations', :action => 'update_roles', :project_id => @project.id, :organization_id => o.id },
                  :html => { :id => "orga-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
-    <span class='roles_checkboxes' style="float: left;">
+    <div class='roles_checkboxes' style="float: left;">
       <p><% roles.sort_by(&:name).each do |role| %>
           <label><%= check_box_tag 'membership[role_ids][]', role.id, selected_roles.include?(role) %> <%=h role %></label><br />
         <% end %></p>
       <%= hidden_field_tag 'membership[role_ids][]', '' %>
-    </span>
-    <span style="display: inherit;">
+    </div>
+    <div style="float: left;">
       <p><% o.users.active.sort_by(&:to_s).each do |user| %>
           <label><%= check_box_tag 'membership[user_ids][]', user.id, selected_users.include?(user) %> <%=h user %></label><br />
         <% end %></p>
       <%= hidden_field_tag 'membership[user_ids][]', '' %>
       <p><%= submit_tag l(:button_change), :class => "small" %>
         <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{o.id}); return false;" %></p>
-    </span>
+    </div>
     <% end -%>
   </td>
   <td class="buttons">
