@@ -1,0 +1,7 @@
+<%= select_tag :assigned_organization_to_id,
+               options_for_select(@issue.project.organizations.map(&:fullname), @issue.assigned_to.try(:organization).try(:fullname)),
+               :include_blank => true,
+               disabled: true %>
+<BR/>
+<%= f.select :assigned_to_id, principals_options_for_select(@issue.assignable_users, @issue.assigned_to), {:include_blank => true, :required => @issue.required_attribute?('assigned_to_id')},
+             :onchange => "updateIssueFrom('#{escape_javascript project_issue_form_path(@project, :id => @issue, :format => 'js')}')" %>
