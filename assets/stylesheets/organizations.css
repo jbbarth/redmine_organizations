@@ -27,3 +27,4 @@ table.list.organizations td {text-align:left;}
 .list.members .buttons { text-align:left; }
 table.members td.group { background-position: 0 4px; }
 #assigned_organization_to_id { width: 100%; }
+#issue_assigned_to_id option:disabled { display: none;}
