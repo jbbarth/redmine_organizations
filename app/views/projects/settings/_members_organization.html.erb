@@ -11,7 +11,7 @@
     <div class='role' style="float: left;">
       <span id="orga-<%= o.id %>-roles">
         <% if selected_roles.any? #hack to make jquery see the <span> %>
-          <%= selected_roles.map(&:name).join(", ") %>
+          <%= selected_roles.sort_by(&:name).map(&:name).join(", ") %>
         <% else %>
           &nbsp;
         <% end %>
