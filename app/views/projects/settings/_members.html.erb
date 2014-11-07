@@ -18,7 +18,7 @@
 <% end -%>
 
 <% organizations = @project.organizations %>
-<% if organizations.any? %>
+
 <table class="list organizations">
   <thead><tr>
     <th class="organization"><%= l(:label_organization) %></th>
@@ -34,6 +34,5 @@
   <% end %>
   </tbody>
 </table>
-<% end %>
 
 </div>
