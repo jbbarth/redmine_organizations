@@ -33,22 +33,4 @@ module OrganizationsHelper
     html = link_to_project(project)
     html << " (#{roles.sort.map(&:to_s).join(', ')})" if roles.any?
   end
-
-  # Returns a string for users/groups option tags
-  def principals_options_for_select_with_organizations_data(collection, selected=nil)
-    s = ''
-    if collection.include?(User.current)
-      s << content_tag('option', "<< #{l(:label_me)} >>", {:value => User.current.id, 'data-organization'=>User.current.organization_id})
-    end
-    groups = ''
-    collection.sort.each do |element|
-      selected_attribute = ' selected="selected"' if option_value_selected?(element, selected) || element.id.to_s == selected
-      disabled_attribute = ' disabled="disabled"' if selected.present? && element.try(:organization_id) != selected.try(:organization_id)
-      (element.is_a?(Group) ? groups : s) << %(<option value="#{element.id}"#{selected_attribute}#{disabled_attribute} data-organization="#{element.try(:organization_id)}">#{h element.name}</option>)
-    end
-    unless groups.empty?
-      s << %(<optgroup label="#{h(l(:label_group_plural))}">#{groups}</optgroup>)
-    end
-    s.html_safe
-  end
 end
