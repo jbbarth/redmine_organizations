@@ -29,7 +29,8 @@
   <% organizations.sort_by do |o|
        "#{o.try(:fullname)}"
      end.each do |o| %>
-    <%= render :partial => 'projects/settings/members_organization', :locals => {:o => o} %>
+    <% @o = o %>
+    <%= render :partial => 'projects/settings/members_organization' %>
   <% end %>
   </tbody>
 </table>

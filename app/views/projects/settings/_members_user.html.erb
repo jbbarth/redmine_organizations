@@ -1,0 +1,43 @@
+<% user_roles = Role.joins(:member_roles).where("member_id = ?", member.id).sorted.uniq %>
+<tr id="member-<%= member.id %>" class="odd member">
+  <td><span style="display:inline-block;width:25px"></span><%= link_to_user member.principal %></td>
+  <td id="all_roles">
+    <div class='role' style="float: left;">
+          <span id="member-<%= member.id %>-roles">
+            <% if user_roles.any? #hack to make jquery see the <span> %>
+              <%= user_roles.sort_by(&:name).map(&:name).join(", ") %>
+            <% else %>
+              &nbsp;
+            <% end %>
+          </span>
+    </div>
+    <%= form_for(member, :as => :membership, :remote => true, :method => :put,
+                 :url => { :controller => 'organizations', :action => 'update_user_roles', :project_id => @project.id, :member_id => member.id },
+                 :html => { :id => "member-#{member.id}-roles-form", :class => 'hol' }) do |f| -%>
+      <div class='roles_checkboxes' style="float: left;">
+        <p><% roles.sort_by(&:name).each do |role| %>
+            <label>
+              <%= check_box_tag 'membership[role_ids][]',
+                                role.id,
+                                user_roles.include?(role),
+                                :disabled => organization_roles.detect {
+                                    |r| r.id == role.id
+                                }
+              %>
+              <%= h role %>
+            </label><br />
+          <% end %></p>
+        <%= hidden_field_tag 'membership[role_ids][]', '' %>
+        <p><%= submit_tag l(:button_change), :class => "small" %>
+          <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{member.id}, 'member'); return false;" %></p>
+      </div>
+    <% end -%>
+  </td>
+  <td class="buttons">
+    <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{member.id}, 'member'); return false;",
+                         :class => 'icon icon-edit') %>
+    <%= link_to(l(:button_delete),
+                {:controller => 'organizations', :action => 'destroy_membership_in_project', :project_id => @project.id, :member_id => member.id, :back_url => @back},
+                :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
+  </td>
+</tr>

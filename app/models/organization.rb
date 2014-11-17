@@ -52,7 +52,7 @@ class Organization < ActiveRecord::Base
   end
 
   def default_roles_by_project(project)
-    organization_roles.where("project_id = ?", project.id).map(&:role).uniq
+    organization_roles.where("project_id = ?", project.id).map(&:role).sort_by { |r| r.position}.uniq
   end
 
   # Yields the given block for each organization with its level in the tree
