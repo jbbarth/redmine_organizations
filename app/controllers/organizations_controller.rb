@@ -130,6 +130,7 @@ class OrganizationsController < ApplicationController
     new_members = User.find(params[:membership][:user_ids].reject(&:empty?))
     new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
     @organization = Organization.find(params[:organization_id])
+    old_organization_roles = @organization.default_roles_by_project(@project)
 
     @organization.delete_all_organization_roles(@project)
     organization_roles = new_roles.map{ |role| OrganizationRole.new(role_id: role.id, project_id: @project.id) }
@@ -137,7 +138,7 @@ class OrganizationsController < ApplicationController
       @organization.organization_roles << r
     end
 
-    @organization.update_project_members(params[:project_id], new_members, new_roles)
+    @organization.update_project_members(params[:project_id], new_members, new_roles, old_organization_roles)
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js
@@ -155,8 +156,12 @@ class OrganizationsController < ApplicationController
   end
 
   def destroy_membership_in_project
-    @organization = Organization.find(params[:organization_id])
-    @organization.delete_old_project_members(params[:project_id])
+    @organization = Organization.find(params[:organization_id]) if params[:organization_id]
+    @organization.delete_old_project_members(params[:project_id]) if @organization
+
+    @member = Member.find(params[:member_id]) if params[:member_id]
+    @member.try(:destroy) if @member
+
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js

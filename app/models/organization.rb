@@ -67,18 +67,18 @@ class Organization < ActiveRecord::Base
     end
   end
 
-  def update_project_members(project_id, members, new_roles)
-    current_members = User.joins(:members).where("organization_id = ? AND project_id = ?", self.id, project_id).uniq
-    delete_old_project_members(project_id, current_members)
-    members.each do |user|
-      add_member(user, project_id, new_roles)
+  def update_project_members(project_id, new_members, new_roles, old_organization_roles)
+    delete_old_project_members(project_id, new_members)
+
+    new_members.each do |user|
+      add_member_through_organization(user, project_id, new_roles, old_organization_roles)
     end if new_roles.present?
   end
 
   def delete_old_project_members(project_id, excluded = [])
-    members = User.joins(:members).where("organization_id = ? AND project_id = ?", self.id, project_id).uniq
-    members.each do |user|
-      next if excluded.include?(user.id)
+    current_members = User.joins(:members).where("organization_id = ? AND project_id = ?", self.id, project_id).uniq
+    current_members.each do |user|
+      next if excluded.include?(user)
       user.destroy_membership_through_organization(project_id)
     end
   end
@@ -92,11 +92,13 @@ class Organization < ActiveRecord::Base
 
   private
 
-    def add_member(user, project_id, role_ids)
+    def add_member_through_organization(user, project_id, new_roles, old_organization_roles)
       member = Member.where(user_id: user.id, project_id: project_id).first_or_initialize
-      role_ids.each do |new_role_id|
-        unless member.roles.map(&:id).include?(new_role_id)
-          member.roles << Role.find(new_role_id)
+      old_personal_roles = member.roles - old_organization_roles
+      member.roles = []
+      (new_roles | old_personal_roles).each do |new_role|
+        unless member.roles.include?(new_role)
+          member.roles << new_role
         end
       end
       member.save! if member.project.present? && member.user.present?
