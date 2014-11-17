@@ -3,7 +3,7 @@ class OrganizationsController < ApplicationController
 
   before_filter :require_admin, :except => [:index, :show]
   before_filter :require_login, :only => [:index, :show]
-  before_filter :find_project_by_project_id, :can_manage_members, :only => [:create_membership_in_project, :update_roles, :destroy_membership_in_project]
+  before_filter :find_project_by_project_id, :can_manage_members, :only => [:create_membership_in_project, :update_roles, :update_user_roles, :destroy_membership_in_project]
   
   layout 'admin'
   
@@ -138,6 +138,16 @@ class OrganizationsController < ApplicationController
     end
 
     @organization.update_project_members(params[:project_id], new_members, new_roles)
+    respond_to do |format|
+      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
+      format.js
+    end
+  end
+
+  def update_user_roles
+    @member = Member.find(params[:member_id])
+    new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
+    @member.roles = new_roles | @member.principal.organization.default_roles_by_project(@project)
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js
