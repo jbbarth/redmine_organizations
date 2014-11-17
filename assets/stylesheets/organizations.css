@@ -21,8 +21,9 @@ table.memberships .buttons .icon-edit { display:none; }
 .selected-organization { background-color:#f3f6fe; padding:4px 7px !important; border-radius:4px; }
 .organizations .buttons { width:160px !important; }
 .organizations .organization { width:220px; }
-.organizations .role { width:180px; }
+.organizations .role { min-width:180px; }
 .organizations .roles_checkboxes { width:190px; }
 table.list.organizations td {text-align:left;}
 .list.members .buttons { text-align:left; }
 table.members td.group { background-position: 0 4px; }
+table.organizations td.orga {background: url('../../../images/group.png') no-repeat 2px 6px;padding-left: 23px;}

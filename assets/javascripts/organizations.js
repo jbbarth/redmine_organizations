@@ -1,6 +1,6 @@
 /* Organizations plugin javascripts */
-function toggleOrgaForms(id) {
-  var orga_id = "#orga-"+id
+function toggleOrgaForms(id, type) {
+  var orga_id = "#"+type+"-"+id
   var $texts = $(orga_id+"-roles,"+orga_id+"-members")
   //=> doesn't work with forms, don't know why ... :/
   $texts.toggle(0, function(){

@@ -130,6 +130,13 @@ class OrganizationsController < ApplicationController
     new_members = User.find(params[:membership][:user_ids].reject(&:empty?))
     new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
     @organization = Organization.find(params[:organization_id])
+
+    @organization.delete_all_organization_roles(@project)
+    organization_roles = new_roles.map{ |role| OrganizationRole.new(role_id: role.id, project_id: @project.id) }
+    organization_roles.each do |r|
+      @organization.organization_roles << r
+    end
+
     @organization.update_project_members(params[:project_id], new_members, new_roles)
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }

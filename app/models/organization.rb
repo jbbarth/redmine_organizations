@@ -7,6 +7,7 @@ class Organization < ActiveRecord::Base
   validates_format_of :mail, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, :allow_blank => true
 
   has_many :users
+  has_many :organization_roles
 
   SEPARATOR = '/'
 
@@ -50,6 +51,10 @@ class Organization < ActiveRecord::Base
     Role.joins(:member_roles => :member).where("user_id IN (?) AND project_id = ?", self.users.map(&:id), project.id).uniq
   end
 
+  def default_roles_by_project(project)
+    organization_roles.where("project_id = ?", project.id).map(&:role).uniq
+  end
+
   # Yields the given block for each organization with its level in the tree
   def self.organization_tree(organizations, &block)
     ancestors = []
@@ -75,6 +80,13 @@ class Organization < ActiveRecord::Base
     members.each do |user|
       next if excluded.include?(user.id)
       user.destroy_membership_through_organization(project_id)
+    end
+  end
+
+  def delete_all_organization_roles(project_id, excluded = [])
+    organization_roles.where(project_id: project_id).each do |r|
+      next if excluded.include?(r)
+      r.try(:destroy) if r.id
     end
   end
 

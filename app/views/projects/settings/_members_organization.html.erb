@@ -1,56 +1,94 @@
 <% o ||= @organization %>
 <% roles ||= Role.find_all_givable %>
-<% selected_roles = Role.joins(:member_roles => {:member => :user}).where("organization_id = ? AND project_id = ?", o.id, @project.id).uniq %>
-<% selected_users = User.joins(:members).where("organization_id = ? AND project_id = ?", o.id, @project.id).uniq %>
+<% organization_roles = o.default_roles_by_project(@project) %>
+<% selected_users = User.joins(:members).where("organization_id = ? AND project_id = ?", o.id, @project.id).active.uniq %>
 <% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project.id, :tab=>"members") %>
 
 <% if o %>
-<tr id="orga-<%= o.id %>">
-  <td><%= link_to_organization o %></td>
-  <td colspan="2" id="all_roles">
-    <div class='role' style="float: left;">
-      <span id="orga-<%= o.id %>-roles">
-        <% if selected_roles.any? #hack to make jquery see the <span> %>
-          <%= selected_roles.sort_by(&:name).map(&:name).join(", ") %>
-        <% else %>
-          &nbsp;
-        <% end %>
-      </span>
-    </div>
-    <div style="display: inherit;">
-      <span id="orga-<%= o.id %>-members">
-        <% if selected_users.active.any? #hack to make jquery see the <span> %>
-          <%= selected_users.active.sort_by(&:to_s).map{|u|link_to_user(u)}.join(", ").html_safe %>
-        <% else %>
-          &nbsp;
-        <% end %>
-      </span>
-    </div>
-    <%= form_for(o, :as => :membership, :remote => true, :method => :put,
-                 :url => { :controller => 'organizations', :action => 'update_roles', :project_id => @project.id, :organization_id => o.id },
-                 :html => { :id => "orga-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
-    <div class='roles_checkboxes' style="float: left;">
-      <p><% roles.sort_by(&:name).each do |role| %>
-          <label><%= check_box_tag 'membership[role_ids][]', role.id, selected_roles.include?(role) %> <%=h role %></label><br />
-        <% end %></p>
-      <%= hidden_field_tag 'membership[role_ids][]', '' %>
-    </div>
-    <div style="float: left;">
-      <p><% o.users.active.sort_by(&:to_s).each do |user| %>
-          <label><%= check_box_tag 'membership[user_ids][]', user.id, selected_users.include?(user) %> <%=h user %></label><br />
-        <% end %></p>
-      <%= hidden_field_tag 'membership[user_ids][]', '' %>
-      <p><%= submit_tag l(:button_change), :class => "small" %>
-        <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{o.id}); return false;" %></p>
-    </div>
-    <% end -%>
-  </td>
-  <td class="buttons">
-    <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{o.id}); return false;",
-                         :class => 'icon icon-edit') %>
-    <%= link_to(l(:button_delete),
-                {:controller => 'organizations', :action => 'destroy_membership_in_project', :project_id => @project.id, :organization_id => o.id, :back_url => @back},
-                :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
-  </td>
-</tr>
+  <tr id="orga-<%= o.id %>">
+    <td class="orga"><%= link_to_organization o %></td>
+    <td id="all_roles">
+      <div class='role' style="float: left;">
+        <span id="orga-<%= o.id %>-roles">
+          <% if organization_roles.any? #hack to make jquery see the <span> %>
+            <%= organization_roles.sort_by(&:name).map(&:name).join(", ") %>
+          <% else %>
+            &nbsp;
+          <% end %>
+        </span>
+      </div>
+      <%= form_for(o, :as => :membership, :remote => true, :method => :put,
+                   :url => { :controller => 'organizations', :action => 'update_roles', :project_id => @project.id, :organization_id => o.id },
+                   :html => { :id => "orga-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
+      <div class='roles_checkboxes' style="float: left;">
+        <p><% roles.sort_by(&:name).each do |role| %>
+            <label><%= check_box_tag 'membership[role_ids][]', role.id, organization_roles.include?(role) %> <%=h role %></label><br />
+          <% end %></p>
+        <%= hidden_field_tag 'membership[role_ids][]', '' %>
+      </div>
+      <div style="float: left;">
+        <p><% o.users.active.sort_by(&:to_s).each do |user| %>
+            <label><%= check_box_tag 'membership[user_ids][]', user.id, selected_users.include?(user) %> <%=h user %></label><br />
+          <% end %></p>
+        <%= hidden_field_tag 'membership[user_ids][]', '' %>
+        <p><%= submit_tag l(:button_change), :class => "small" %>
+          <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{o.id}, 'orga'); return false;" %></p>
+      </div>
+      <% end -%>
+    </td>
+    <td class="buttons">
+      <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{o.id}, 'orga'); return false;",
+                           :class => 'icon icon-edit') %>
+      <%= link_to(l(:button_delete),
+                  {:controller => 'organizations', :action => 'destroy_membership_in_project', :project_id => @project.id, :organization_id => o.id, :back_url => @back},
+                  :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
+    </td>
+  </tr>
+
+  <% selected_users.each do |user| %>
+    <% user_roles = Role.joins(:member_roles => :member).where("user_id = ? AND project_id = ?", user.id, @project.id).uniq %>
+    <tr id="user-<%= user.id %>" class="odd member">
+      <td><span style="display:inline-block;width:25px"></span><%= link_to_user user %></td>
+      <td id="all_roles">
+        <div class='role' style="float: left;">
+          <span id="user-<%= user.id %>-roles">
+            <% if user_roles.any? #hack to make jquery see the <span> %>
+              <%= user_roles.sort_by(&:name).map(&:name).join(", ") %>
+            <% else %>
+              &nbsp;
+            <% end %>
+          </span>
+        </div>
+        <%= form_for(user, :as => :membership, :remote => true, :method => :put,
+                     :url => { :controller => 'organizations', :action => 'update_roles', :project_id => @project.id, :user_id => user.id },
+                     :html => { :id => "user-#{user.id}-roles-form", :class => 'hol' }) do |f| -%>
+          <div class='roles_checkboxes' style="float: left;">
+            <p><% roles.sort_by(&:name).each do |role| %>
+                <label>
+                  <%= check_box_tag 'membership[role_ids][]',
+                                    role.id,
+                                    user_roles.include?(role),
+                                    :disabled => organization_roles.detect {
+                                        |r| r.id == role.id
+                                    }
+                  %>
+                  <%= h role %>
+                </label><br />
+              <% end %></p>
+            <%= hidden_field_tag 'membership[role_ids][]', '' %>
+            <p><%= submit_tag l(:button_change), :class => "small" %>
+              <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{user.id}, 'user'); return false;" %></p>
+          </div>
+        <% end -%>
+      </td>
+      <td class="buttons">
+        <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{user.id}, 'user'); return false;",
+                             :class => 'icon icon-edit') %>
+        <%= link_to(l(:button_delete),
+                    {:controller => 'organizations', :action => 'destroy_membership_in_project', :project_id => @project.id, :user_id => user.id, :back_url => @back},
+                    :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
+      </td>
+    </tr>
+  <% end %>
+
 <% end %>
