@@ -69,10 +69,9 @@ class Organization < ActiveRecord::Base
 
   def update_project_members(project_id, new_members, new_roles, old_organization_roles)
     delete_old_project_members(project_id, new_members)
-
     new_members.each do |user|
       add_member_through_organization(user, project_id, new_roles, old_organization_roles)
-    end if new_roles.present?
+    end
   end
 
   def delete_old_project_members(project_id, excluded = [])
