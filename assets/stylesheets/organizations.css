@@ -26,4 +26,5 @@ table.memberships .buttons .icon-edit { display:none; }
 table.list.organizations td {text-align:left;}
 .list.members .buttons { text-align:left; }
 table.members td.group { background-position: 0 4px; }
-table.organizations td.orga {background: url('../../../images/group.png') no-repeat 2px 6px;padding-left: 23px;}
+table.organizations td.orga, table.organizations td.group {background: url('../../../images/group.png') no-repeat 2px 6px;padding-left: 23px;}
+.role .undefined{color: #d3d3d3;font-style: italic;}

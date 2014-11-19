@@ -146,9 +146,21 @@ class OrganizationsController < ApplicationController
   end
 
   def update_user_roles
-    @member = Member.find(params[:member_id])
     new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
-    @member.roles = new_roles | @member.principal.organization.default_roles_by_project(@project)
+    if params[:member_id]
+      @member = Member.find(params[:member_id])
+      @member.roles = new_roles | @member.principal.organization.default_roles_by_project(@project)
+    end
+    if params[:group_id] # TODO Modify this hack - create a different action to make it cleaner
+      group = GroupBuiltin.find(params[:group_id])
+      membership = Member.where(user_id: group.id, project_id: @project.id).first_or_initialize
+      if new_roles.present?
+        membership.roles = new_roles
+        membership.save
+      else
+        membership.try(:destroy)
+      end
+    end
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js

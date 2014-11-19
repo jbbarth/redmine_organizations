@@ -1,0 +1,38 @@
+<% groups = GroupNonMember.all %>
+<% roles ||= Role.givable.sorted %>
+<% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project.id, :tab=>"members") %>
+
+<% groups.each do |group| %>
+  <% group_roles = Role.joins(:member_roles => :member).where("user_id = ? AND project_id = ?", group.id, @project.id).sorted.uniq %>
+  <tr id="group-<%= group.id %>" class="even">
+    <td class="group"><%= link_to_user group %></td>
+    <td id="all_roles">
+      <div class='role' style="float: left;">
+        <span id="group-<%= group.id %>-roles">
+          <% if group_roles.any? %>
+            <%= group_roles.map(&:name).join(", ") %>
+          <% else %>
+            <span class="undefined"><%= l('undefined') %></span>
+          <% end %>
+        </span>
+      </div>
+      <%= form_for(group, :as => :membership, :remote => true, :method => :put,
+                   :url => { :controller => 'organizations', :action => 'update_user_roles', :project_id => @project.id, :group_id => group.id },
+                   :html => { :id => "group-#{group.id}-roles-form", :class => 'hol' }) do |f| -%>
+        <div class='roles_checkboxes' style="float: left;">
+          <p><% roles.each do |role| %>
+              <label><%= check_box_tag 'membership[role_ids][]', role.id, group_roles.include?(role) %> <%=h role %></label><br />
+            <% end %></p>
+          <%= hidden_field_tag 'membership[role_ids][]', '' %>
+          <p><%= submit_tag l(:button_change), :class => "small" %>
+            <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{group.id}, 'group'); return false;" %></p>
+        </div>
+      <% end -%>
+    </td>
+    <td class="buttons">
+      <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{group.id}, 'group'); return false;",
+                           :class => 'icon icon-edit') %>
+    </td>
+  </tr>
+
+<% end %>

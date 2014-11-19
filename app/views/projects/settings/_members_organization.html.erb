@@ -1,5 +1,5 @@
 <% @o ||= @organization %>
-<% roles ||= Role.find_all_givable %>
+<% roles ||= Role.givable.sorted %>
 <% organization_roles = @o.default_roles_by_project(@project) %>
 <% selected_members = Member.joins(:user).where("organization_id = ? AND project_id = ?", @o.id, @project.id).select{ |m| m.principal.active? }.uniq %>
 <% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project.id, :tab=>"members") %>
@@ -10,10 +10,10 @@
     <td id="all_roles">
       <div class='role' style="float: left;">
         <span id="orga-<%= @o.id %>-roles">
-          <% if organization_roles.any? #hack to make jquery see the <span> %>
-            <%= organization_roles.sort_by(&:name).map(&:name).join(", ") %>
+          <% if organization_roles.any? %>
+            <%= organization_roles.map(&:name).join(", ") %>
           <% else %>
-            &nbsp;
+            <span class="undefined"><%= l('undefined') %></span>
           <% end %>
         </span>
       </div>
@@ -21,7 +21,7 @@
                    :url => { :controller => 'organizations', :action => 'update_roles', :project_id => @project.id, :organization_id => @o.id },
                    :html => { :id => "orga-#{@o.id}-roles-form", :class => 'hol' }) do |f| -%>
       <div class='roles_checkboxes' style="float: left;">
-        <p><% roles.sort_by(&:name).each do |role| %>
+        <p><% roles.each do |role| %>
             <label><%= check_box_tag 'membership[role_ids][]', role.id, organization_roles.include?(role) %> <%=h role %></label><br />
           <% end %></p>
         <%= hidden_field_tag 'membership[role_ids][]', '' %>
