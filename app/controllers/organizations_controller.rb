@@ -1,7 +1,7 @@
 class OrganizationsController < ApplicationController
   unloadable
 
-  before_filter :require_admin, :except => [:index, :show]
+  before_filter :require_admin, :only => [:new, :edit, :create, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id ]
   before_filter :require_login, :only => [:index, :show]
   before_filter :find_project_by_project_id, :can_manage_members, :only => [:create_membership_in_project, :update_roles, :update_user_roles, :destroy_membership_in_project]
   
