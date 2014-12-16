@@ -20,7 +20,7 @@
       <%= f.label :orga_update_method, l(:memberships_replace), :value => 'replace' %>
       <%= select_tag :copy_user,
                      options_from_collection_for_select(User.sorted.active.where("organization_id = ? AND id != ?",
-                                                                 @user.organization.id,
+                                                                 @user.organization.try(:id),
                                                                  @user.id), :id, :name ) %>
     </p>
 
@@ -30,8 +30,6 @@
 
 <script>
   function update_users_from_orga(){
-    $.post("fetch_users_by_orga.js", { orga_id: $('#user_organization_id').val() }, function() {
-
-    });
+    $.post("fetch_users_by_orga.js", { orga_id: $('#user_organization_id').val() }, function() {});
   }
 </script>
