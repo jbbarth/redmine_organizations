@@ -12,16 +12,16 @@
       <%= f.label :orga_update_method, l(:memberships_keep), :value => 'keep' %>
     </p>
     <p>
-      <%= f.radio_button :orga_update_method, 'remove', disabled: true %>
+      <%= f.radio_button :orga_update_method, 'remove' %>
       <%= f.label :orga_update_method, l(:memberships_remove), :value => 'remove' %>
     </p>
     <p>
-      <%= f.radio_button :orga_update_method, 'replace', disabled: true %>
+      <%= f.radio_button :orga_update_method, 'replace' %>
       <%= f.label :orga_update_method, l(:memberships_replace), :value => 'replace' %>
       <%= select_tag :copy_user,
-                     options_for_select(User.sorted.active.where("organization_id = ? AND id != ?",
+                     options_from_collection_for_select(User.sorted.active.where("organization_id = ? AND id != ?",
                                                                  @user.organization.id,
-                                                                 @user.id)) %>
+                                                                 @user.id), :id, :name ) %>
     </p>
 
   </div>
