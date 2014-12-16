@@ -12,6 +12,6 @@ fr:
   text_organization_mail_notice: "Cette adresse sera notifiée pour toutes les demandes"
   undefined: "Indéterminé"
   update_user_orga: "Modifier l'organisation de %{username} :"
-  memberships_keep: "Conserver les projets et les rôles actuels"
+  memberships_keep: "Conserver tous les projets et les rôles actuels"
   memberships_remove: "Supprimer tous ses rôles sur tous les projets"
-  memberships_replace: "Remplacer ses projets et ses rôles par ceux de "
+  memberships_replace: "Lui donner les mêmes projets et les mêmes rôles que "

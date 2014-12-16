@@ -1,3 +1,3 @@
 $('#copy_user').html("<%= escape_javascript(select_tag :copy_user,
-                         options_for_select(@users)) %>"
+                         options_from_collection_for_select(@users, :id, :name)) %>"
 );
