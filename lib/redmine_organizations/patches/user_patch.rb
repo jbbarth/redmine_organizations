@@ -12,6 +12,7 @@ class User < Principal
   belongs_to :organization
 
   safe_attributes 'organization_id'
+  attr_accessor :orga_update_method
   
   def destroy_membership_through_organization(project_id)
     if id

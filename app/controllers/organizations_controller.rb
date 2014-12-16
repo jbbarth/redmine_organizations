@@ -180,6 +180,10 @@ class OrganizationsController < ApplicationController
     end
   end
 
+  def fetch_users_by_orga
+    @users = User.active.sorted.where("organization_id = ? AND id != ?", params[:orga_id], params[:id])
+  end
+
   private
   def can_manage_members
     unless User.current.allowed_to?(:manage_members, @project)

@@ -11,3 +11,7 @@ fr:
   text_hide_groups_admin_menu: "Cacher les 'Groupes'"
   text_organization_mail_notice: "Cette adresse sera notifiée pour toutes les demandes"
   undefined: "Indéterminé"
+  update_user_orga: "Modifier l'organisation de %{username} :"
+  memberships_keep: "Conserver les projets et les rôles actuels"
+  memberships_remove: "Supprimer tous ses rôles sur tous les projets"
+  memberships_replace: "Remplacer ses projets et ses rôles par ceux de "

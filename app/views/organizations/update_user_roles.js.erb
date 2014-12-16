@@ -3,3 +3,7 @@ hideOnLoad();
 <% if @member %>
   $("#member-<%= @member.id %>").effect("highlight");
 <% end %>
+
+<% if @member.errors.present? %>
+  alert("<%= escape_javascript @member.errors.full_messages.join(', ') %>");
+<% end %>

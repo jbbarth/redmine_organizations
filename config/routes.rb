@@ -13,4 +13,5 @@ RedmineApp::Application.routes.draw do
       delete :destroy_membership_in_project
     end
   end
+  post 'users/:id/fetch_users_by_orga', :controller => 'organizations', :action => 'fetch_users_by_orga'
 end
