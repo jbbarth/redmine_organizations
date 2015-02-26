@@ -3,6 +3,8 @@ require_dependency 'project'
 class Project
   unloadable
 
+  has_many :organization_roles
+
   def organizations
     Organization.joins(:users => :members).where("project_id = ?", self.id).uniq
   end
