@@ -6,7 +6,7 @@ class CreateOrganizations < ActiveRecord::Migration
       t.column :parent_id, :integer
       t.column :lft, :integer
       t.column :rgt, :integer
-      t.timestamps
+      t.timestamps null: false
     end
   end
 

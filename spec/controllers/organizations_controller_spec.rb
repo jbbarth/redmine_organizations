@@ -10,13 +10,13 @@ describe OrganizationsController do
 
   it "should get index" do
     get :index
-    response.should be_success
-    assert_not_nil assigns(:organizations)
+    expect(response).to be_success
+    refute_nil assigns(:organizations)
   end
 
   it "should get new" do
     get :new
-    response.should be_success
+    expect(response).to be_success
   end
 
   it "should create organization" do
@@ -29,12 +29,12 @@ describe OrganizationsController do
 
   it "should show organization" do
     get :show, :id => Organization.find(1).to_param
-    response.should be_success
+    expect(response).to be_success
   end
 
   it "should get edit" do
     get :edit, :id => Organization.find(1).to_param
-    response.should be_success
+    expect(response).to be_success
   end
 
   it "should update organization" do
@@ -52,7 +52,7 @@ describe OrganizationsController do
 
   it "should autocomplete for users" do
     get :autocomplete_for_user, :id => 1, :q => "adm"
-    response.should be_success
+    expect(response).to be_success
     assert response.body.include?("Admin")
     assert !response.body.include?("John")
   end
