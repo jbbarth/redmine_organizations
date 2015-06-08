@@ -8,7 +8,7 @@ class OrganizationsController < ApplicationController
   layout 'admin'
   
   def index
-    @organizations = Organization.all(:order => 'lft')
+    @organizations = Organization.order('lft')
     render :layout => (User.current.admin? ? 'admin' : 'base')
   end
   
@@ -41,8 +41,7 @@ class OrganizationsController < ApplicationController
     #issues for projects of this organization + sub organizations
     organization_ids = @organization.self_and_descendants.map(&:id)
     project_ids = Member.joins(:user).where('users.organization_id IN (?)', organization_ids).map(&:project_id).uniq
-    opts = {:joins => :priority, :order => "enumerations.position desc", :limit => 50}
-    @issues = Issue.open.visible.on_active_project.find_all_by_project_id(project_ids, opts)
+    @issues = Issue.open.visible.on_active_project.where(project_id: project_ids).joins(:priority).order("enumerations.position desc").limit(50)
     
     render :layout => 'base'
 
@@ -57,7 +56,7 @@ class OrganizationsController < ApplicationController
   def edit
     @organization = Organization.find(params[:id])
     @roles = Role.find_all_givable
-    @projects = Project.active.all(:order => 'lft')
+    @projects = Project.active.order('lft')
   end
   
   def create
@@ -108,7 +107,7 @@ class OrganizationsController < ApplicationController
   
   def autocomplete_for_user
     @organization = Organization.find(params[:id])
-    @users = User.active.like(params[:q]).find(:all, :limit => 100) - @organization.users
+    @users = User.active.like(params[:q]).limit(100).to_a - @organization.users
     render :layout => false
   end
   

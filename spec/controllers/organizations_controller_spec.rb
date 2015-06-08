@@ -1,7 +1,7 @@
 require "spec_helper"
 require "active_support/testing/assertions"
 
-describe OrganizationsController do
+describe OrganizationsController, :type => :controller do
   render_views
   include ActiveSupport::Testing::Assertions
   before do
@@ -24,7 +24,7 @@ describe OrganizationsController do
       post :create, organization: { name: "orga-A" }
     end
 
-    response.should redirect_to(organization_path(assigns(:organization)))
+    expect(response).to redirect_to(organization_path(assigns(:organization)))
   end
 
   it "should show organization" do
@@ -39,7 +39,7 @@ describe OrganizationsController do
 
   it "should update organization" do
     put :update, :id => Organization.find(1).to_param, :organization => { }
-    response.should redirect_to(organization_path(assigns(:organization)))
+    expect(response).to redirect_to(organization_path(assigns(:organization)))
   end
 
   it "should destroy organization" do
@@ -47,7 +47,7 @@ describe OrganizationsController do
       delete :destroy, :id => Organization.find(3).to_param
     end
 
-    response.should redirect_to(organizations_path)
+    expect(response).to redirect_to(organizations_path)
   end
 
   it "should autocomplete for users" do
@@ -86,7 +86,7 @@ describe OrganizationsController do
       assert_no_difference 'Organization.find(1).projects.count' do
         post :create_membership_in_project, 'membership' => {:organization_id => 1}, :project_id => 3, :format => :js
       end
-      response.content_type.should == Mime::JS
+      expect(response.content_type).to eq Mime::JS
     end
 
     it "shoud update members roles in a project" do
@@ -95,14 +95,14 @@ describe OrganizationsController do
       assert_difference 'Project.find(2).members.count', +1 do
         put :update_roles, 'membership' => {user_ids: users_ids, role_ids: [2]}, :project_id => 2, organization_id: 1
       end
-      response.should redirect_to('/projects/2/settings/members')
+      expect(response).to redirect_to('/projects/2/settings/members')
     end
 
     it "should destroy membership inside a project" do
       assert_difference 'Organization.find(1).projects.count', -1 do
         delete :destroy_membership_in_project, :project_id => 2, :organization_id => 1
       end
-      response.should redirect_to('/projects/2/settings/members')
+      expect(response).to redirect_to('/projects/2/settings/members')
     end
 
   end

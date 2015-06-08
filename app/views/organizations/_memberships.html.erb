@@ -1,4 +1,4 @@
-<% all_projects = Project.active.find(:all, :order => 'lft') %>
+<% all_projects = Project.active.order('lft') %>
 <% current_projects = @organization.projects.active %>
 
 <div class="splitcontentleft">

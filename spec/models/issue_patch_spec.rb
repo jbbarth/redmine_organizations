@@ -19,21 +19,21 @@ describe "IssuePatch" do
     it "should be empty when a project has no org" do
       #user(1) is not on project(3)
       assert !@user.member_of?(Project.find(3)), "user should not be member of project 3 for the next assertion"
-      (Issue.new(:project_id => 3).organization_emails).should == []
+      expect(Issue.new(:project_id => 3).organization_emails).to eq []
     end
 
     it "should be empty when a project has an org but org no mail" do
       @orga.update_attribute(:mail, "")
       #user(1) is on project(3)
       assert @user.member_of?(Project.find(5)), "user should be member of project 5 for the next assertion"
-      (Issue.new(:project_id => 5).organization_emails).should == []
+      expect(Issue.new(:project_id => 5).organization_emails).to eq []
     end
 
     it "should contain mail of organizations for the project" do
       @orga.update_attribute(:mail, "org@example.net")
       #user(1) is on project(3)
       assert @user.member_of?(Project.find(5)), "user should be member of project 5 for the next assertion"
-      (Issue.new(:project_id => 5).organization_emails).should == ["org@example.net"]
+      expect(Issue.new(:project_id => 5).organization_emails).to eq ["org@example.net"]
     end
   end
 end

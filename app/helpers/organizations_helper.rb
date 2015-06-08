@@ -16,7 +16,7 @@ module OrganizationsHelper
 
     if options[:fullname] && options[:link_ancestors]
       h = ""
-      organization.ancestors.all(:order => 'lft').each do |o|
+      organization.ancestors.order('lft').each do |o|
         h << link_to_organization(o, :fullname => false)
         h << Organization::SEPARATOR
       end

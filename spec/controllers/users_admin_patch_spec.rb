@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "UsersAdminPatch" do
+describe "UsersAdminPatch", :type => :controller do
   render_views
   before do
     @controller = UsersController.new
@@ -13,12 +13,12 @@ describe "UsersAdminPatch" do
   it "should hide groups tab if option is selected" do
     Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = "1"
     get :edit, :id => 3
-    assert_no_tag :tag => 'a', :attributes => { :href => "/users/3/edit?tab=groups" }
+    assert_select "a[href='/users/3/edit?tab=groups']", false
   end
 
   it "should display groups tab if option is not selected" do
     Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = ""
     get :edit, :id => 3
-    assert_tag :tag => 'a', :attributes => { :href => "/users/3/edit?tab=groups" }
+    assert_select "a[href='/users/3/edit?tab=groups']"
   end
 end

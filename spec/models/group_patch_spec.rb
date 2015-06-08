@@ -5,8 +5,8 @@ describe "Group patch" do
     name = "a"*100
     Group.where(lastname: name).delete_all
     group = Group.new(lastname: name)
-    group.should be_valid
+    expect(group).to be_valid
     group.save
-    group.reload.name.length.should == 100
+    expect(group.reload.name.length).to eq 100
   end
 end

@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "AdminMenuPatch" do
+describe "AdminMenuPatch", :type => :controller do
   render_views
   before do
     @controller = AdminController.new
@@ -13,12 +13,12 @@ describe "AdminMenuPatch" do
   it "should hide groups menu if option is selected" do
     Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = "1"
     get :index
-    assert_no_tag :tag => 'a', :attributes => { :href => "/groups" }
+    assert_select "a[href='/groups']", false
   end
 
   it "should display groups menu if option is not selected" do
     Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = ""
     get :index
-    assert_tag :tag => 'a', :attributes => { :href => "/groups" }
+    assert_select "a[href='/groups']"
   end
 end

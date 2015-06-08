@@ -5,23 +5,23 @@ describe "Organization" do
 
   it "should test_organization_tree_sorting" do
     o = Organization.create(:name => "Team C", :parent_id => 1)
-    o.left_sibling.name.should == "Team B"
+    expect(o.left_sibling.name).to eq "Team B"
     o.update_attributes(:name => "Team 0")
-    o.right_sibling.name.should == "Team A"
+    expect(o.right_sibling.name).to eq "Team A"
     assert_nil o.left_sibling
     o.update_attributes(:name => "A new org", :parent_id => nil)
-    o.right_sibling.name.should == "Org A"
+    expect(o.right_sibling.name).to eq "Org A"
   end
 
   it "should Organization#fullname" do
-    Organization.find(1).fullname.should == "Org A"
-    Organization.find(2).fullname.should == "Org A/Team A"
+    expect(Organization.find(1).fullname).to eq "Org A"
+    expect(Organization.find(2).fullname).to eq "Org A/Team A"
   end
 
   it "should Organization#direction" do
     assert Organization.find(1).direction?
     assert ! Organization.find(2).direction?
-    Organization.find(2).direction_organization.id.should == 1
+    expect(Organization.find(2).direction_organization.id).to eq 1
   end
 
   it "should organization_validations" do

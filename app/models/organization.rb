@@ -9,6 +9,8 @@ class Organization < ActiveRecord::Base
   has_many :users
   has_many :organization_roles
 
+  attr_accessible :name, :parent_id
+
   SEPARATOR = '/'
 
   # Reorder tree after save on the fly

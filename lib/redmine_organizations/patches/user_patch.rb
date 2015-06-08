@@ -17,7 +17,7 @@ class User < Principal
   def destroy_membership_through_organization(project_id)
     if id
       attributes = {:user_id => id, :project_id => project_id}
-      Member.first(:conditions => attributes).try(:destroy)
+      Member.where(attributes).first.try(:destroy)
     end
   end
 end
