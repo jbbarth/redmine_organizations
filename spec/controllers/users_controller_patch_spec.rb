@@ -1,13 +1,16 @@
 require "spec_helper"
 require 'redmine_organizations/patches/users_controller_patch'
 
-describe UsersController do
+describe UsersController, type: :controller do
 
   describe :method_update_memberships_according_to_new_orga do
     fixtures :organizations, :users, :roles, :projects, :members, :member_roles
 
     before do
       @request.session[:user_id] = 1
+      @controller = UsersController.new
+      @request    = ActionController::TestRequest.new
+      @response   = ActionController::TestResponse.new
     end
 
     it "should not modify existing roles per projects if params == keep" do
