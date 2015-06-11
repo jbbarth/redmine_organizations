@@ -8,9 +8,6 @@ describe UsersController, type: :controller do
 
     before do
       @request.session[:user_id] = 1
-      @controller = UsersController.new
-      @request    = ActionController::TestRequest.new
-      @response   = ActionController::TestResponse.new
     end
 
     it "should not modify existing roles per projects if params == keep" do

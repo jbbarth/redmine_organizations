@@ -15,10 +15,10 @@ class UsersController < ApplicationController
 
         case params[:user][:orga_update_method]
           when "remove" # Remove all memberships for this user
-            @user.memberships.destroy_all
+            Member.destroy_all(user_id: @user.id)
           when "replace"
             other_memberships = User.find(params[:copy_user]).memberships
-            @user.memberships.destroy_all
+            Member.destroy_all(user_id: @user.id)
             other_memberships.each do |membership|
               new_membership = Member.new(project_id: membership.project_id)
               membership.roles.each do |role|
@@ -32,7 +32,6 @@ class UsersController < ApplicationController
               @user.memberships << new_membership
             end
         end
-
       end
     end
 end
