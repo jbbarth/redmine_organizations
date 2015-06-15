@@ -39,18 +39,18 @@
 <% end %>
 </ul>
 
-<h3><%=l(:label_user_plural)%></h3>
+<h3><%= "#{ l(:label_user_plural)} (#{@subusers_count})" %></h3>
 <ul class=root>
   <li class=selected-organization>
     <%= link_to_organization @organization, :link_ancestors => false %>
-    <%= ":" if @users.any? %>
+    <%= "(#{@users.count}) :" if @users.any? %>
     <%= @users.map{|u| link_to_user(u)}.join(", ").html_safe %>
   </li>
 <% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
   <% users = @subusers[suborganization] %>
   <li>
     <%= link_to_organization suborganization, :link_ancestors => false %>
-    <%= ":" if users.any? %>
+    <%= "(#{users.count}) :" if users.any? %>
     <%= users.map{|u| link_to_user(u)}.join(", ").html_safe %>
   </li>
 <% end %>

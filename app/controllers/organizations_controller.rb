@@ -17,19 +17,19 @@ class OrganizationsController < ApplicationController
 
     @projects = @organization.projects
 
-    @memberships = @organization.memberships.all(:include => :project,
-                                                 :conditions => Project.visible_condition(User.current))
-    
-    @subprojects_by_organization = @organization.descendants.all(:order => "lft").inject({}) do |memo, organization|
-      memo[organization] = organization.projects
-      memo
-    end
-    
+    @memberships = @organization.memberships.includes(:project).where(Project.visible_condition(User.current))
+
+    @subprojects_by_organization = {}
+    @subusers = {}
+
     @users = @organization.users.active
-    @subusers = @organization.descendants.all(:order => "lft").inject({}) do |memo, organization|
-      memo[organization] = organization.users.active
-      memo
+    
+    @organization.descendants.order("lft").each do |organization|
+      @subprojects_by_organization[organization] = organization.projects
+      @subusers[organization] = organization.users.active
     end
+
+    @subusers_count = (@organization.users | @subusers.values.flatten.uniq).count
     
     events = []
     #@users.each do |user|
