@@ -1,5 +1,5 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
+organization_001:
   id: 1
   name: Org A
   description: Description of organization A
@@ -7,14 +7,14 @@ one:
   direction: true
   lft: 1
   rgt: 6
-two:
+organization_002:
   id: 2
   name: Team A
   description: Team A in org A
   parent_id: 1
   lft: 2
   rgt: 3
-three:
+organization_003:
   id: 3
   name: Team B
   description: Team B in org B

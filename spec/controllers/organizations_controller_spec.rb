@@ -2,8 +2,13 @@ require "spec_helper"
 require "active_support/testing/assertions"
 
 describe OrganizationsController, :type => :controller do
+
+  fixtures :organizations
+
   render_views
+
   include ActiveSupport::Testing::Assertions
+
   before do
     @request.session[:user_id] = 1
   end
