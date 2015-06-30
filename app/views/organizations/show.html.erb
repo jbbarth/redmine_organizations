@@ -65,7 +65,7 @@
 <h3><%= link_to l(:label_activity), :controller => 'projects', :action => 'activity', :id => nil, :organization_id => @organization, :from => @events_by_day.keys.first %></h3>
 
 <p>
-<%=l(:label_reported_issues)%>: <%= Issue.count(:conditions => {:author_id => @organization.users.map(&:id)}) %>
+<%=l(:label_reported_issues)%>: <%= Issue.where(:author_id => @organization.users.map(&:id)).count %>
 </p>
 
 <div id="activity">
