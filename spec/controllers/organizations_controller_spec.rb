@@ -74,6 +74,19 @@ describe OrganizationsController, :type => :controller do
     end
   end
 
+  describe "add_users method" do
+    it "should add a user to the organization" do
+      assert_difference 'Organization.find(1).users.count', 1 do
+        post :add_users, id: 1, user_ids: ["8"]
+      end
+    end
+    it "should add several users at a time to the organization" do
+      assert_difference 'Organization.find(1).users.count', 2 do
+        post :add_users, id: 1, user_ids: ["7","8"]
+      end
+    end
+  end
+
   describe "memberships methods" do
 
     before do
