@@ -9,7 +9,7 @@ class Organization < ActiveRecord::Base
   has_many :users
   has_many :organization_roles
 
-  attr_accessible :name, :parent_id
+  attr_accessible :name, :parent_id, :description, :mail, :direction
 
   SEPARATOR = '/'
 
