@@ -26,6 +26,14 @@
     <th class="buttons"> </th>
   </tr></thead>
   <tbody>
+
+  <% @project.members.joins(:user).where('users.organization_id IS NULL').each do |member| %>
+    <%= render :partial => 'projects/settings/members_user',
+               :locals => {:member => member,
+                           :roles => Role.givable.sorted,
+                           :organization_roles => []} %>
+  <% end %>
+
   <% organizations.sort_by do |o|
        "#{o.try(:fullname)}"
      end.each do |o| %>
