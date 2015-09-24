@@ -1,0 +1,26 @@
+<% o ||= @organization %>
+<% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project.id, :tab=>"members") %>
+
+<% if o %>
+  <tr id="non-member-orga-<%= o.id %>" class="even">
+    <td><span style="display:inline-block;width:25px"></span><%= link_to_organization o %></td>
+    <td id="all_roles">
+      <div class='role' style="float: left;">
+        <span id="non-member-orga-<%= o.id %>-roles">
+          peut créer de nouvelles demandes
+        </span>
+      </div>
+    </td>
+    <td colspan="2"></td>
+    <td class="buttons">
+      <%= link_to(l(:button_delete),
+                  {:controller => 'organizations', :action => 'destroy_overriden_non_membership_in_project', :project_id => @project.id, :organization_id => o.id, :back_url => @back},
+                  :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
+    </td>
+  </tr>
+
+<% end %>
+
+<script type="application/javascript">
+  $('#non_member_orga_exception_select option[value="<%= o.id %>"]').attr("disabled", "disabled");
+</script>

@@ -35,4 +35,26 @@
     </td>
   </tr>
 
+  <tr class="even" id="non_member_orga_exception_select">
+    <td>
+      <%= form_for :membership, :url => { :controller => 'organizations', :action => 'create_membership_in_project', :project_id => @project, :override_non_member_roles => true },
+                   :remote => true, :html => {:id => 'organization-form'} do |f| -%>
+          <%= f.select "organization_id", nested_set_options(Organization) { |i| i.fullname },
+                       { :disabled => @project.organizations.map(&:id), :include_blank => true,
+                         :label => :field_parent_organization },
+                       { :class => "orga-select2" } %>
+          <%= submit_tag l(:button_add_exception) %>
+      <% end %>
+    </td>
+    <td id="all_roles"></td>
+    <td class="buttons">
+      <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{group.id}, 'group'); return false;",
+                           :class => 'icon icon-edit') %>
+    </td>
+  </tr>
+
+  <% OrganizationRole.where(project_id: @project.id, non_member_role: true).each do |orga_role| %>
+     <%= render :partial => 'projects/settings/non_member_organization', :locals => {:o => orga_role.organization} %>
+  <% end %>
+
 <% end %>

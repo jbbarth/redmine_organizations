@@ -3,7 +3,7 @@ class OrganizationsController < ApplicationController
 
   before_filter :require_admin, :only => [:new, :edit, :create, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id ]
   before_filter :require_login, :only => [:index, :show]
-  before_filter :find_project_by_project_id, :can_manage_members, :only => [:create_membership_in_project, :update_roles, :update_user_roles, :destroy_membership_in_project]
+  before_filter :find_project_by_project_id, :can_manage_members, :only => [:create_membership_in_project, :update_roles, :update_user_roles, :destroy_membership_in_project, :destroy_overriden_non_membership_in_project]
   
   layout 'admin'
   
@@ -119,6 +119,28 @@ class OrganizationsController < ApplicationController
 
   def create_membership_in_project
     @organization = Organization.find(params['membership']['organization_id']) if params['membership']['organization_id'].present?
+
+    @override_non_member_role = params['override_non_member_roles']
+    if @override_non_member_role
+      @current_organization_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id)
+      if @current_organization_roles.empty?
+        # TODO Set the default role in settings (role_id 4 => project_member in our case)
+        @current_organization_roles = [OrganizationRole.create!(project_id: @project.id, organization_id: @organization.id, non_member_role: true, role_id: 4)]
+      else
+        @current_organization_roles.update_all(non_member_role: true)
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
+      format.js
+    end
+  end
+
+  def destroy_overriden_non_membership_in_project
+    @organization = Organization.find(params[:organization_id]) if params[:organization_id]
+    @current_organization_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id)
+    @current_organization_roles.update_all(non_member_role: false)
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js

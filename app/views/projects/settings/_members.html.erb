@@ -33,7 +33,6 @@
                            :roles => Role.givable.sorted,
                            :organization_roles => []} %>
   <% end %>
-
   <% organizations.sort_by do |o|
        "#{o.try(:fullname)}"
      end.each do |o| %>

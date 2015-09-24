@@ -15,3 +15,4 @@ fr:
   memberships_keep: "Conserver tous les projets et les rôles actuels"
   memberships_remove: "Supprimer tous ses rôles sur tous les projets"
   memberships_replace: "Lui donner les mêmes projets et les mêmes rôles que "
+  button_add_exception: "Ajouter une exception"

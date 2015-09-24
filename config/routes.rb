@@ -11,6 +11,7 @@ RedmineApp::Application.routes.draw do
       put :update_roles
       put :update_user_roles
       delete :destroy_membership_in_project
+      delete :destroy_overriden_non_membership_in_project
     end
   end
   post 'users/:id/fetch_users_by_orga', :controller => 'organizations', :action => 'fetch_users_by_orga'

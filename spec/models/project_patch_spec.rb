@@ -10,4 +10,9 @@ describe "ProjectPatch" do
     assert u.keys.include?(Role.find(1))
     expect(u[Role.find(1)].keys.length).to eq 1
   end
+
+  it "should test allowed_to_condition class method" do
+    # test with and without exceptions through organizations memberships settings
+    # TODO
+  end
 end

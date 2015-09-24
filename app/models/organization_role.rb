@@ -5,5 +5,5 @@ class OrganizationRole < ActiveRecord::Base
   validates_uniqueness_of :role_id, scope: [:project_id, :organization_id]
   validates_presence_of :role_id, :project_id, :organization_id
 
-  attr_accessible :role_id, :project_id
+  attr_accessible :role_id, :project_id, :organization_id, :non_member_role
 end

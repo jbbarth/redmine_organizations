@@ -20,4 +20,34 @@ class User < Principal
       Member.where(attributes).first.try(:destroy)
     end
   end
+
+  unless instance_methods.include?(:allowed_to_with_organization_exceptions?)
+    def allowed_to_with_organization_exceptions?(action, context, options={}, &block)
+      if context && context.is_a?(Project)
+        return false unless context.allows_to?(action)
+        # Admin users are authorized for anything else
+        return true if admin?
+
+        roles = roles_for_project(context)
+
+        if roles.empty?
+          user_organization = User.current.try(:organization)
+          user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
+          organization_roles = OrganizationRole.where(project_id: context.id, organization_id: user_organization_and_parents_ids, non_member_role: true)
+          roles = organization_roles.map(&:role) if organization_roles.present?
+        end
+
+        return false unless roles
+        roles.any? {|role|
+          (context.is_public? || role.member?) &&
+              role.allowed_to?(action) &&
+              (block_given? ? yield(role, self) : true)
+        }
+      else
+        allowed_to_without_organization_exceptions?(action, context, options, &block)
+      end
+    end
+    alias_method_chain :allowed_to?, :organization_exceptions
+  end
+
 end
