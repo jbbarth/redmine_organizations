@@ -6,7 +6,7 @@ class Project
   has_many :organization_roles
 
   def organizations
-    Organization.joins(:users => :members).where("project_id = ?", self.id).uniq
+    Organization.joins(:users => :members).where("project_id = ? AND users.status = ?", self.id, User::STATUS_ACTIVE).uniq
   end
 
   # Builds a nested hash of users sorted by role and organization

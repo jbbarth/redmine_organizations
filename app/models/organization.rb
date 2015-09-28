@@ -42,7 +42,7 @@ class Organization < ActiveRecord::Base
   end
 
   def memberships
-    Member.joins(:user).where("users.organization_id = ?", self.id)
+    Member.joins(:user).where("users.organization_id = ? AND users.status = ?", self.id, User::STATUS_ACTIVE)
   end
 
   def projects
@@ -50,7 +50,7 @@ class Organization < ActiveRecord::Base
   end
 
   def roles_by_project(project)
-    Role.joins(:member_roles => :member).where("user_id IN (?) AND project_id = ?", self.users.map(&:id), project.id).uniq
+    Role.joins(:member_roles => :member).where("user_id IN (?) AND project_id = ?", self.users.active.map(&:id), project.id).uniq
   end
 
   def default_roles_by_project(project)

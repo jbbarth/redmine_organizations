@@ -19,24 +19,24 @@
     <% if @projects.any? %>
     <ul>
       <% for project in @projects %>
-	      <li><%= link_to_organization_membership(project, @organization.roles_by_project(project)) %></li>
+        <li><%= link_to_organization_membership(project, @organization.roles_by_project(project)) %></li>
       <% end %>
     </ul>
     <% end %>
   </li>
-<% @subprojects_by_organization.keys.sort_by(&:fullname).each do |suborganization| %>
-  <% subprojects = @subprojects_by_organization[suborganization] %>
-  <li>
-    <%= link_to_organization suborganization, :link_ancestors => false %>
-    <% if subprojects.any? %>
-    <ul>
-      <% for project in subprojects %>
-        <li><%= link_to_organization_membership(project, suborganization.roles_by_project(project)) %></li>
+  <% @subprojects_by_organization.keys.sort_by(&:fullname).each do |suborganization| %>
+    <% subprojects = @subprojects_by_organization[suborganization] %>
+    <li>
+      <%= link_to_organization suborganization, :link_ancestors => false %>
+      <% if subprojects.any? %>
+      <ul>
+        <% for project in subprojects %>
+          <li><%= link_to_organization_membership(project, suborganization.roles_by_project(project)) %></li>
+        <% end %>
+      </ul>
       <% end %>
-    </ul>
-    <% end %>
-  </li>
-<% end %>
+    </li>
+  <% end %>
 </ul>
 
 <h3><%= "#{ l(:label_user_plural)} (#{@subusers_count})" %></h3>
