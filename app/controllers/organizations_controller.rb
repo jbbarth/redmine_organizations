@@ -118,10 +118,9 @@ class OrganizationsController < ApplicationController
 
 
   def create_membership_in_project
-    @organization = Organization.find(params['membership']['organization_id']) if params['membership']['organization_id'].present?
-
+    @organization = Organization.find(params['membership']['organization_id']) if params['membership'].present? && params['membership']['organization_id'].present?
     @override_non_member_role = params['override_non_member_roles']
-    if @override_non_member_role
+    if @override_non_member_role && @organization.present?
       @current_organization_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id)
       if @current_organization_roles.empty?
         # TODO Set the default role in settings (role_id 4 => project_member in our case)
