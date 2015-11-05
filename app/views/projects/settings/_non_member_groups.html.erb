@@ -35,8 +35,8 @@
     </td>
   </tr>
 
-  <tr class="even" id="non_member_orga_exception_select">
-    <td>
+  <tr id="non_member_orga_exception_select">
+    <td colspan="3">
       <%= form_for :membership, :url => { :controller => 'organizations', :action => 'create_membership_in_project', :project_id => @project, :override_non_member_roles => true },
                    :remote => true, :html => {:id => 'organization-form'} do |f| -%>
           <%= f.select "organization_id", nested_set_options(Organization) { |i| i.fullname },
@@ -45,11 +45,6 @@
                        { :class => "orga-select2" } %>
           <%= submit_tag l(:button_add_exception) %>
       <% end %>
-    </td>
-    <td id="all_roles"></td>
-    <td class="buttons">
-      <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{group.id}, 'group'); return false;",
-                           :class => 'icon icon-edit') %>
     </td>
   </tr>
 

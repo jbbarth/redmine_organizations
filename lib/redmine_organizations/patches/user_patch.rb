@@ -30,17 +30,32 @@ class User < Principal
 
         roles = roles_for_project(context)
 
-        if roles.empty?
-          user_organization = User.current.try(:organization)
-          user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
-          organization_roles = OrganizationRole.where(project_id: context.id, organization_id: user_organization_and_parents_ids, non_member_role: true)
-          roles = organization_roles.map(&:role) if organization_roles.present?
-        end
+        user_organization = User.current.try(:organization)
+        user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
+        organization_roles = OrganizationRole.where(project_id: context.id, organization_id: user_organization_and_parents_ids, non_member_role: true)
+        roles += organization_roles.map(&:role) if organization_roles.present?
 
         return false unless roles
         roles.any? {|role|
           (context.is_public? || role.member?) &&
               role.allowed_to?(action) &&
+              (block_given? ? yield(role, self) : true)
+        }
+      elsif context==nil && options[:global]
+        # Admin users are always authorized
+        return true if admin?
+
+        # authorize if user has at least one role that has this permission
+        roles = memberships.collect {|m| m.roles}.flatten.uniq
+        roles << (self.logged? ? Role.non_member : Role.anonymous)
+
+        user_organization = User.current.try(:organization)
+        user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
+        organization_roles = OrganizationRole.where(organization_id: user_organization_and_parents_ids, non_member_role: true)
+        roles += organization_roles.map(&:role) if organization_roles.present?
+
+        roles.any? {|role|
+          role.allowed_to?(action) &&
               (block_given? ? yield(role, self) : true)
         }
       else
