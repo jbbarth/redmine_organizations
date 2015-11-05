@@ -10,6 +10,7 @@ RedmineApp::Application.routes.draw do
       post :create_membership_in_project
       put :update_roles
       put :update_user_roles
+      put :update_non_member_organization_roles
       delete :destroy_membership_in_project
       delete :destroy_overriden_non_membership_in_project
     end

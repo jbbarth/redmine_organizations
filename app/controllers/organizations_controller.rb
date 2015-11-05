@@ -3,7 +3,7 @@ class OrganizationsController < ApplicationController
 
   before_filter :require_admin, :only => [:new, :edit, :create, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id ]
   before_filter :require_login, :only => [:index, :show]
-  before_filter :find_project_by_project_id, :can_manage_members, :only => [:create_membership_in_project, :update_roles, :update_user_roles, :destroy_membership_in_project, :destroy_overriden_non_membership_in_project]
+  before_filter :find_project_by_project_id, :can_manage_members, :only => [:create_membership_in_project, :update_roles, :update_user_roles, :destroy_membership_in_project, :destroy_overriden_non_membership_in_project, :update_non_member_organization_roles]
   
   layout 'admin'
   
@@ -181,6 +181,37 @@ class OrganizationsController < ApplicationController
         membership.try(:destroy)
       end
     end
+    respond_to do |format|
+      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
+      format.js
+    end
+  end
+
+  def update_non_member_organization_roles
+    new_non_member_roles = params[:membership][:role_ids].reject(&:empty?).map(&:to_i)
+    @organization = Organization.find(params[:organization_id])
+    existing_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id).map(&:role_id)
+    deleted_roles = existing_roles-new_non_member_roles
+    brand_new_roles = new_non_member_roles-existing_roles
+
+    (existing_roles|new_non_member_roles).each do |role_id|
+      if deleted_roles.include?(role_id)
+        orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
+        orga_role.non_member_role = false
+        orga_role.save
+      else
+        if brand_new_roles.include?(role_id)
+          OrganizationRole.create(role_id: role_id, project_id: @project.id, organization_id: @organization.id, non_member_role: true)
+        else
+          orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
+          unless orga_role.non_member_role
+            orga_role.non_member_role = true
+            orga_role.save
+          end
+        end
+      end
+    end
+
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js
