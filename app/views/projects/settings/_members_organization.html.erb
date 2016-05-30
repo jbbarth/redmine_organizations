@@ -1,7 +1,7 @@
 <% @o ||= @organization %>
 <% roles ||= Role.givable.sorted %>
 <% organization_roles = @o.default_roles_by_project(@project) %>
-<% selected_members = Member.joins(:user).where("organization_id = ? AND project_id = ?", @o.id, @project.id).select{ |m| m.principal.active? }.uniq %>
+<% selected_members = Member.joins(:user).includes(:user).where("organization_id = ? AND project_id = ?", @o.id, @project.id).select{ |m| m.principal.active? }.uniq %>
 <% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project.id, :tab=>"members") %>
 
 <% if @o %>
