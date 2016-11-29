@@ -1,12 +1,6 @@
 require_dependency "issue"
 
-class Issue
-  # Monkey-patch recipients to add organization's addresses
-  def recipients_with_organization_emails
-    recipients_without_organization_emails + organization_emails
-  end
-  alias_method_chain :recipients, :organization_emails
-
+module IssuePatchWithOrganizations
   def organization_emails
     organization_ids = project.users.active.pluck(:organization_id)
     # here we use #where instead of #find because #find will throw an
@@ -18,3 +12,4 @@ class Issue
                 .select(&:present?)
   end
 end
+Issue.prepend IssuePatchWithOrganizations
