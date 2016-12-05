@@ -37,6 +37,10 @@ class Organization < ActiveRecord::Base
     end.join("") + name
   end
 
+  def to_s
+    fullname
+  end
+
   def direction_organization
     @direction_organization ||= (direction? || root? ? self : parent.direction_organization)
   end
