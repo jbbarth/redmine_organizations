@@ -9,7 +9,7 @@ class Organization < ActiveRecord::Base
   has_many :users
   has_many :organization_roles
 
-  attr_accessible :name, :parent_id, :description, :mail, :direction
+  attr_accessible :name, :parent_id, :description, :mail, :direction, :fullname
 
   SEPARATOR = '/'
 
@@ -30,8 +30,17 @@ class Organization < ActiveRecord::Base
   def name
     read_attribute(:name) || ""
   end
-  
+
   def fullname
+    if read_attribute(:fullname).blank?
+      fullname = calculated_fullname
+    else
+      fullname = read_attribute(:fullname)
+    end
+    fullname
+  end
+
+  def calculated_fullname
     @fullname ||= ancestors.order('lft').all.map do |ancestor|
       ancestor.name+Organization::SEPARATOR
     end.join("") + name
