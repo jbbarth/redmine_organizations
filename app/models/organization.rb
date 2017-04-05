@@ -9,7 +9,9 @@ class Organization < ActiveRecord::Base
   has_many :users
   has_many :organization_roles
 
-  attr_accessible :name, :parent_id, :description, :mail, :direction, :fullname
+  attr_accessible :name, :parent_id, :description, :mail, :direction, :name_with_parents
+
+  before_save :update_name_with_parents
 
   SEPARATOR = '/'
 
@@ -22,6 +24,10 @@ class Organization < ActiveRecord::Base
       org.move_left
     end
   end
+
+  def update_name_with_parents
+    self.name_with_parents = calculated_fullname
+  end
   
   def <=>(other)
     other.name.casecmp(self.name)
@@ -32,12 +38,11 @@ class Organization < ActiveRecord::Base
   end
 
   def fullname
-    if read_attribute(:fullname).blank?
-      fullname = calculated_fullname
+    if read_attribute(:name_with_parents).blank?
+      calculated_fullname
     else
-      fullname = read_attribute(:fullname)
+      read_attribute(:name_with_parents)
     end
-    fullname
   end
 
   def calculated_fullname
