@@ -1,7 +1,7 @@
 <% @o ||= @organization %>
 <% roles ||= Role.givable.sorted %>
 <% organization_roles = @o.default_roles_by_project(@project) %>
-<% selected_members = Member.joins(:user).includes(:user).where("organization_id = ? AND project_id = ?", @o.id, @project.id).select{ |m| m.principal.active? }.uniq %>
+<% selected_members = Member.joins(:user).includes(:user).where("organization_id = ? AND project_id = ?", @o.id, @project.id).uniq %>
 <% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project.id, :tab=>"members") %>
 
 <% if @o %>
@@ -27,7 +27,7 @@
         <%= hidden_field_tag 'membership[role_ids][]', '' %>
       </div>
       <div style="float: left;">
-        <p><% @o.users.active.sort_by(&:to_s).each do |user| %>
+        <p><% @o.users.sort_by(&:to_s).each do |user| %>
             <label><%= check_box_tag 'membership[user_ids][]', user.id, selected_members.map{|m| m.principal}.include?(user) %> <%=h user %></label><br />
           <% end %></p>
         <%= hidden_field_tag 'membership[user_ids][]', '' %>
