@@ -8,7 +8,7 @@ describe "Organization" do
     expect(o.left_sibling.name).to eq "Team B"
     o.update_attributes(:name => "Team 0")
     expect(o.right_sibling.name).to eq "Team A"
-    assert_nil o.left_sibling
+    expect(o.left_sibling).to be_nil
     o.update_attributes(:name => "A new org", :parent_id => nil)
     expect(o.right_sibling.name).to eq "Org A"
   end
