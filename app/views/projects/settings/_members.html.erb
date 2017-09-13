@@ -27,7 +27,7 @@
   </tr></thead>
   <tbody>
 
-  <% Member.where('project_id = ?', @project.id).joins(:principal).where('users.organization_id IS NULL').each do |member| %>
+  <% Member.active.where('project_id = ?', @project.id).joins(:principal).where('users.organization_id IS NULL').each do |member| %>
     <%= render :partial => 'projects/settings/members_user',
                :locals => {:member => member,
                            :roles => Role.givable.sorted,
