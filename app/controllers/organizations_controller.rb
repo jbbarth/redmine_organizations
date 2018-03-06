@@ -15,7 +15,9 @@ class OrganizationsController < ApplicationController
   def show
     @organization = Organization.find(params[:id])
 
-    @projects = @organization.projects
+    @projects = @organization.projects.active
+
+    @projects_not_active = @organization.projects.where(:status => [Project::STATUS_CLOSED, Project::STATUS_ARCHIVED])
 
     @memberships = @organization.memberships.includes(:project).where(Project.visible_condition(User.current))
 
