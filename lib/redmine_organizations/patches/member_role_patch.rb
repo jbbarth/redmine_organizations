@@ -1,8 +1,11 @@
 require_dependency 'member_role'
 
-class MemberRole
-  def add_role_to_group_users_with_not_nil_member
-    add_role_to_group_users_without_not_nil_member unless self.member.nil?
+module PluginOrganization
+  module MemberRole
+    # NO nil member
+    def add_role_to_group_users
+      super unless self.member.nil?
+    end
   end
-  alias_method_chain :add_role_to_group_users, :not_nil_member
 end
+MemberRole.prepend PluginOrganization::MemberRole

@@ -20,9 +20,12 @@ class User < Principal
       Member.where(attributes).first.try(:destroy)
     end
   end
+end
 
-  unless instance_methods.include?(:allowed_to_with_organization_exceptions?)
-    def allowed_to_with_organization_exceptions?(action, context, options={}, &block)
+# with organization exceptions TODO Test it
+module PluginOrganizations
+  module UserModel
+    def allowed_to?(action, context, options={}, &block)
       if context && context.is_a?(Project)
         return false unless context.allows_to?(action)
         # Admin users are authorized for anything else
@@ -59,10 +62,9 @@ class User < Principal
               (block_given? ? yield(role, self) : true)
         }
       else
-        allowed_to_without_organization_exceptions?(action, context, options, &block)
+        super
       end
     end
-    alias_method_chain :allowed_to?, :organization_exceptions
   end
-
 end
+User.prepend PluginOrganizations::UserModel

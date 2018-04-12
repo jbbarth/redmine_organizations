@@ -1,19 +1,46 @@
 require "spec_helper"
-require "active_support/testing/assertions"
 
 describe IssuesController, :type => :controller do
 
-  fixtures :organizations
+  fixtures :projects,
+           :users, :email_addresses, :user_preferences,
+           :roles,
+           :members,
+           :member_roles,
+           :issues,
+           :issue_statuses,
+           :issue_relations,
+           :versions,
+           :trackers,
+           :projects_trackers,
+           :issue_categories,
+           :enabled_modules,
+           :enumerations,
+           :attachments,
+           :workflows,
+           :custom_fields,
+           :custom_values,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :time_entries,
+           :journals,
+           :journal_details,
+           :queries,
+           :repositories,
+           :changesets,
+           :organizations, :organization_roles
 
   render_views
 
   it 'should allow member to create new issue' do
     @request.session[:user_id] = 2
     expect User.find(2).member_of?(Project.find(4))
+
     expect {
       post :create, :project_id => 1, :copy_from => 1,
            :issue => {:project_id => '4', :tracker_id => '3', :status_id => '1', :subject => 'Copy'}
     }.to change {Issue.count}
+
     issue = Issue.order('id DESC').first
     expect(issue.project_id).to eq(1)
   end
