@@ -5,6 +5,8 @@ class Project
 
   has_many :organization_roles
 
+  safe_attributes "notify_organizations"
+
   def organizations
     Organization.joins(:users => :members).where("project_id = ? AND users.status = ?", self.id, User::STATUS_ACTIVE).uniq
   end

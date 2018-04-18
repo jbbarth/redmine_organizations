@@ -16,3 +16,5 @@ fr:
   memberships_remove: "Supprimer tous ses rôles sur tous les projets"
   memberships_replace: "Lui donner les mêmes projets et les mêmes rôles que "
   button_add_exception: "Ajouter une exception"
+  field_notified: "Activer l'envoi de mails"
+  field_notify_organizations: "Notifier les organisations membres"

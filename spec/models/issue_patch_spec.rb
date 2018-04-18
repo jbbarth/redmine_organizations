@@ -29,8 +29,28 @@ describe "IssuePatch" do
       expect(Issue.new(:project_id => 5).organization_emails).to eq []
     end
 
-    it "should contain mail of organizations for the project" do
+    it "should NOT contain mail of organizations for the project if the organization don't want to be notified" do
       @orga.update_attribute(:mail, "org@example.net")
+      @orga.update_attribute(:notified, false)
+      Project.find(5).update_attribute(:notify_organizations, true)
+      #user(1) is on project(3)
+      expect(@user.member_of? Project.find(5) ).to be_truthy, "user should be member of project 5 for the next assertion"
+      expect(Issue.new(:project_id => 5).organization_emails).to_not include "org@example.net"
+    end
+
+    it "should NOT contain mail of organizations for the project if the project disabled mail notifications to organizations" do
+      @orga.update_attribute(:mail, "org@example.net")
+      @orga.update_attribute(:notified, true)
+      Project.find(5).update_attribute(:notify_organizations, false)
+      #user(1) is on project(3)
+      expect(@user.member_of? Project.find(5) ).to be_truthy, "user should be member of project 5 for the next assertion"
+      expect(Issue.new(:project_id => 5).organization_emails).to_not include "org@example.net"
+    end
+
+    it "should contain mail of organizations for the project if settings are all true" do
+      @orga.update_attribute(:mail, "org@example.net")
+      @orga.update_attribute(:notified, true)
+      Project.find(5).update_attribute(:notify_organizations, true)
       #user(1) is on project(3)
       expect(@user.member_of? Project.find(5) ).to be_truthy, "user should be member of project 5 for the next assertion"
       expect(Issue.new(:project_id => 5).organization_emails).to eq ["org@example.net"]

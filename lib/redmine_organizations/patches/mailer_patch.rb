@@ -1,6 +1,5 @@
 require_dependency 'mailer'
 
-=begin
 module MailerPatchWithOrganizations
 
   # Monkey-patch recipients to add organization's addresses
@@ -20,4 +19,3 @@ module MailerPatchWithOrganizations
 end
 
 Mailer.prepend MailerPatchWithOrganizations
-=end

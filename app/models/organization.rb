@@ -9,7 +9,7 @@ class Organization < ActiveRecord::Base
   has_many :users
   has_many :organization_roles
 
-  attr_accessible :name, :parent_id, :description, :mail, :direction, :name_with_parents
+  attr_accessible :name, :parent_id, :description, :mail, :direction, :name_with_parents, :notified
 
   before_save :update_name_with_parents
 
