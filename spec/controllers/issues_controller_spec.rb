@@ -22,4 +22,34 @@ describe IssuesController, :type => :controller do
     # TODO
   end
 
+  it 'should send a notification to the organization address' do
+    @request.session[:user_id] = 2
+    expect User.find(2).member_of?(Project.find(4))
+
+    ActionMailer::Base.deliveries.clear
+
+    user = User.find(2)
+    project = Project.find(1)
+    orga = Organization.find(2)
+
+    user.update_attribute('organization_id', orga.id)
+    project.update_attribute('notify_organizations', true)
+    
+    expect(orga.mail).to_not be_nil
+
+    expect {
+      post :create, :project_id => 1,
+           :issue => {:tracker_id => '3', :status_id => '1', :subject => 'Subject for test'}
+    }.to change {Issue.count}
+    issue = Issue.last
+    expect(issue.organization_emails).to_not be_empty
+    expect(ActionMailer::Base.deliveries.size).to eq 1
+
+    mail = ActionMailer::Base.deliveries.last
+    expect(mail['bcc'].to_s).to include(User.find(2).mail)
+    expect(mail['bcc'].to_s).to include(User.find(3).mail)
+
+    expect(mail['bcc'].to_s).to include(orga.mail) # Organization email is notified!
+  end
+
 end

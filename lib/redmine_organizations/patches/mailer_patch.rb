@@ -13,7 +13,7 @@ module MailerPatchWithOrganizations
   private
   def add_organizations_mails(headers, issue)
     headers[:cc] ||= []
-    headers[:cc] << issue.organization_emails
+    headers[:cc].push issue.organization_emails
     headers
   end
 end

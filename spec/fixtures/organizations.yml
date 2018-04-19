@@ -5,6 +5,8 @@ organization_001:
   description: Description of organization A
   parent_id: 
   direction: true
+  mail: org-a@example.com
+  notified: true
   lft: 1
   rgt: 6
 organization_002:
@@ -12,6 +14,8 @@ organization_002:
   name: Team A
   description: Team A in org A
   parent_id: 1
+  mail: team-a@example.com
+  notified: true
   lft: 2
   rgt: 3
 organization_003:
@@ -19,5 +23,7 @@ organization_003:
   name: Team B
   description: Team B in org B
   parent_id: 1
+  mail: team-b@example.com
+  notified: true
   lft: 4
   rgt: 5
