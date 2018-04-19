@@ -1,5 +1,6 @@
 $("#tab-content-members").html("<%= j render 'projects/settings/members' %>");
 hideOnLoad();
+initOrgasSelect2();
 <% if @member %>
   $("#member-<%= @member.id %>").effect("highlight");
 <% end %>
