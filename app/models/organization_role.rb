@@ -6,4 +6,7 @@ class OrganizationRole < ActiveRecord::Base
   validates_presence_of :role_id, :project_id, :organization_id
 
   attr_accessible :role_id, :project_id, :organization_id, :non_member_role
+
+  scope :for_project, ->(project) { where("organization_roles.project_id = ?", project.id) if project.present? }
+
 end

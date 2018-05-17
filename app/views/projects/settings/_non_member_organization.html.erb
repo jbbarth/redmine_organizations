@@ -1,7 +1,6 @@
 <% o ||= @organization %>
-<% givable_roles ||= Role.givable.sorted %>
-<% roles = OrganizationRole.where(project_id: @project.id, organization_id: o.id, non_member_role: true).map(&:role) %>
-<% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project.id, :tab=>"members") %>
+<% @givable_roles ||= Role.givable.sorted %>
+<% roles = OrganizationRole.includes(:role).where(project_id: @project.id, organization_id: o.id, non_member_role: true).map(&:role) %>
 
 <% if o %>
   <tr id="non-member-orga-<%= o.id %>" class="even">
@@ -20,7 +19,7 @@
                    :url => { :controller => 'organizations', :action => 'update_non_member_organization_roles', :project_id => @project.id, :organization_id => o.id, :override_non_member_roles => true },
                    :html => { :id => "non-member-orga-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
         <div class='roles_checkboxes' style="float: left;">
-          <p><% givable_roles.each do |role| %>
+          <p><% @givable_roles.each do |role| %>
               <label><%= check_box_tag 'membership[role_ids][]', role.id, roles.include?(role) %> <%=h role %></label><br />
             <% end %></p>
           <%= hidden_field_tag 'membership[role_ids][]', '' %>

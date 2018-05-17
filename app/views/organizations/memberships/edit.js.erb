@@ -1,0 +1,2 @@
+$("#organization-<%= @organization.id %>-roles").hide();
+$("#organization-<%= @organization.id %>-form").html("<%= escape_javascript(render :partial => "edit") %>");

@@ -16,4 +16,7 @@ RedmineApp::Application.routes.draw do
     end
   end
   post 'users/:id/fetch_users_by_orga', :controller => 'organizations', :action => 'fetch_users_by_orga'
+  namespace :organizations do
+    resources :memberships, only: [:edit, :update]
+  end
 end

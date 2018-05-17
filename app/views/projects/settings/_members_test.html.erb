@@ -1,0 +1,65 @@
+<% @givable_roles = Role.givable.sorted %>
+<% @organizations = @project.organizations.includes(:users) %>
+<% @organizations_ids = @organizations.map(&:id) %>
+<% @members = Member.active.includes(:principal, :roles).where("project_id = ?", @project.id).uniq %>
+<% @members_user_ids = @members.map{|m| m.user_id} %>
+<% @roles_per_member = Hash[@members.collect {|member| [member, member.roles.sorted]}] %>
+<% @back = url_for(:controller => "projects", :action => "settings", :id => @project.id, :tab => "members") %>
+
+<div class="box">
+
+  <div class="contextual">
+    <%= toggle_link l(:button_add), 'organization-form', {:focus => 'membership_organization_id'} %>
+  </div>
+
+  <h3><%= l(:label_members_per_organization) %></h3>
+
+  <%= form_for :membership, :url => { :controller => 'organizations', :action => 'create_membership_in_project', :project_id => @project },
+               :remote => true, :html => {:id => 'organization-form', :style => 'display:none;'} do |f| -%>
+    <p>
+      <%= f.select "organization_id", nested_set_options(Organization) { |i| i.fullname },
+                   { :disabled => @organizations_ids, :include_blank => true,
+                     :label => :field_parent_organization },
+                   { :class => "orga-select2" } %>
+      <%= submit_tag l(:button_add) %>
+    </p>
+  <% end -%>
+
+  <table class="list organizations">
+    <thead><tr>
+      <th class="organization"><%= l(:label_organization) %></th>
+      <th class="role"><%= l(:label_role_plural) %></th>
+      <th class="buttons"> </th>
+    </tr></thead>
+    <tbody>
+
+    <% Member.active.where('project_id = ?', @project.id).joins(:principal).where('users.organization_id IS NULL').each do |member| %>
+      <%= render partial: 'projects/settings/members_user',
+                 locals: {member: member,
+                             organization_roles: []} %>
+    <% end %>
+    <% @organizations.sort_by(&:fullname)[1..1].each do |o| %>
+      <% @o = o %>
+      <%= render :partial => 'projects/settings/members_organization' %>
+    <% end %>
+
+    </tbody>
+  </table>
+
+</div>
+
+<div class="box">
+  <h3><%= l(:label_group_non_member) %></h3>
+  <table class="list organizations">
+    <thead>
+    <tr>
+      <th class="organization"><%= l(:label_organization) %></th>
+      <th class="role"><%= l(:label_role_plural) %></th>
+      <th class="buttons"></th>
+    </tr>
+    </thead>
+    <tbody>
+      <%= render :partial => 'projects/settings/non_member_groups' %>
+    </tbody>
+  </table>
+</div>

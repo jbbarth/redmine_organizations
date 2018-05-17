@@ -1,6 +1,5 @@
 <% groups = GroupNonMember.all %>
-<% roles ||= Role.givable.sorted %>
-<% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project.id, :tab=>"members") %>
+<% @givable_roles ||= Role.givable.sorted %>
 
 <% groups.each do |group| %>
   <% group_roles = Role.joins(:member_roles => :member).where("user_id = ? AND project_id = ?", group.id, @project.id).sorted.uniq %>
@@ -20,7 +19,7 @@
                    :url => { :controller => 'organizations', :action => 'update_user_roles', :project_id => @project.id, :group_id => group.id },
                    :html => { :id => "group-#{group.id}-roles-form", :class => 'hol' }) do |f| -%>
         <div class='roles_checkboxes' style="float: left;">
-          <p><% roles.each do |role| %>
+          <p><% @givable_roles.each do |role| %>
               <label><%= check_box_tag 'membership[role_ids][]', role.id, group_roles.include?(role) %> <%=h role %></label><br />
             <% end %></p>
           <%= hidden_field_tag 'membership[role_ids][]', '' %>
@@ -49,7 +48,7 @@
   </tr>
 
   <% Organization.joins(:organization_roles).where("project_id = ? AND non_member_role = ?", @project.id, true).uniq.each do |orga| %>
-     <%= render :partial => 'projects/settings/non_member_organization', :locals => {:o => orga, :givable_roles => roles} %>
+     <%= render :partial => 'projects/settings/non_member_organization', :locals => {:o => orga} %>
   <% end %>
 
 <% end %>

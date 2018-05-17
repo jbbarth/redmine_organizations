@@ -5,6 +5,7 @@ fr:
   label_organization_new: "Nouvelle organisation"
   label_organization_children: "Sous-organisations"
   label_missing_target_user: "L'utilisateur cible ne peut pas être vide"
+  label_members_per_organization: "Membres par organisation"
   field_parent_organization: "Organisation parent"
   field_hidden_on_overview: "Cacher sur l'aperçu des projets"
   field_direction: "Est une direction"

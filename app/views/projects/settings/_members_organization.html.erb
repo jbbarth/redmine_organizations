@@ -1,8 +1,5 @@
 <% @o ||= @organization %>
-<% roles ||= Role.givable.sorted %>
 <% organization_roles = @o.default_roles_by_project(@project) %>
-<% selected_members = Member.active.joins(:user).includes(:user).where("users.organization_id = ? AND project_id = ?", @o.id, @project.id).uniq %>
-<% @back = url_for(:controller=>"projects", :action=>"settings", :id=>@project.id, :tab=>"members") %>
 
 <% if @o %>
   <tr id="orga-<%= @o.id %>" class="even">
@@ -21,14 +18,14 @@
                    :url => { :controller => 'organizations', :action => 'update_roles', :project_id => @project.id, :organization_id => @o.id },
                    :html => { :id => "orga-#{@o.id}-roles-form", :class => 'hol' }) do |f| -%>
       <div class='roles_checkboxes' style="float: left;">
-        <p><% roles.each do |role| %>
+        <p><% @givable_roles.each do |role| %>
             <label><%= check_box_tag 'membership[role_ids][]', role.id, organization_roles.include?(role) %> <%=h role %></label><br />
           <% end %></p>
         <%= hidden_field_tag 'membership[role_ids][]', '' %>
       </div>
       <div style="float: left;">
         <p><% @o.users.active.sort_by(&:to_s).each do |user| %>
-            <label><%= check_box_tag 'membership[user_ids][]', user.id, selected_members.map{|m| m.principal}.include?(user) %> <%=h user %></label><br />
+            <label><%= check_box_tag 'membership[user_ids][]', user.id, @members_user_ids.include?(user.id) %> <%=h user %></label><br />
           <% end %></p>
         <%= hidden_field_tag 'membership[user_ids][]', '' %>
         <p><%= submit_tag l(:button_change), :class => "small" %>
@@ -45,10 +42,9 @@
     </td>
   </tr>
 
-  <% selected_members.each do |member| %>
+  <% @o.users.select{|user|@members_user_ids.include?(user.id)}.each do |user| %>
     <%= render :partial => 'projects/settings/members_user',
-               :locals => {:member => member,
-                           :roles => roles,
+               :locals => {:member => @members.detect{|member| member.user_id == user.id},
                            :organization_roles => organization_roles} %>
   <% end %>
 

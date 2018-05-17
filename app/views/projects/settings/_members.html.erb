@@ -1,46 +1,86 @@
-<div class="box">
+<%
+  members = @project.memberships.joins(:user).includes(:user => [:organization]).active.sorted
 
-<div class="contextual">
-  <%= toggle_link l(:button_add), 'organization-form', {:focus => 'membership_organization_id'} %>
-</div>
+  members_per_organization = {}
+  members.each { |member|
+    members_per_organization[member.principal.organization] ||= []
+    members_per_organization[member.principal.organization] << member }
+    members_per_organization = members_per_organization.sort_by{|k,v|k.try(:fullname).to_s}
+%>
 
-<h3><%= l(:label_organization_plural) %></h3>
+<p><%= link_to l(:label_member_new), new_project_membership_path(@project), :remote => true, :class => "icon icon-add" %></p>
 
-<%= form_for :membership, :url => { :controller => 'organizations', :action => 'create_membership_in_project', :project_id => @project },
-             :remote => true, :html => {:id => 'organization-form', :style => 'display:none;'} do |f| -%>
-  <p>
-    <%= f.select "organization_id", nested_set_options(Organization) { |i| i.fullname }, 
-                 { :disabled => @project.organizations.map(&:id), :include_blank => true,
-                   :label => :field_parent_organization },
-                 { :class => "orga-select2" } %>
-    <%= submit_tag l(:button_add) %>
-  </p>
-<% end -%>
+<% if members.any? %>
+  <table class="list members organizations">
+    <thead>
+    <tr>
+      <th><%= l(:label_organization) %> / <%= l(:label_user) %></th>
+      <th><%= l(:label_technical_role_plural) %></th>
+      <th style="width:15%"></th>
+    </tr>
+    </thead>
+    <tbody>
+      <% members_per_organization.each do |organization, members| %>
+        <% if organization.present? %>
+          <tr id="organization-<%= organization.id %>" class="organization">
+            <td class="name icon icon-group"><%= link_to_organization organization %></td>
+            <td class="roles">
+              <% organization_roles = organization.default_roles_by_project(@project) %>
+              <% if organization_roles.any? %>
+                <span id="organization-<%= organization.id %>-roles">
+                  <%= organization_roles.collect(&:to_s).join(', ') %>
+                </span>
+              <% else %>
+                <span class="undefined"><%= l('undefined') %></span>
+              <% end %>
+              <div id="organization-<%= organization.id %>-form"></div>
+            </td>
+            <td class="buttons">
+              <%= link_to l(:button_edit),
+                          edit_organizations_membership_path(id: organization.id, project_id: @project.id),
+                          :remote => true,
+                          :class => 'icon icon-edit' %>
+            </td>
+          </tr>
+        <% end %>
+        <% members.each do |member| %>
+          <% next if member.new_record? %>
+          <tr id="member-<%= member.id %>" class="member">
+            <td class="name icon icon-<%= member.principal.class.name.downcase %>"><%= link_to_user member.principal %></td>
+            <td class="roles">
+              <span id="member-<%= member.id %>-roles"><%= member.roles.sort.collect(&:to_s).join(', ') %></span>
+              <div id="member-<%= member.id %>-form"></div>
+            </td>
+            <td class="buttons">
+              <%= link_to l(:button_edit),
+                          edit_membership_path(member),
+                          :remote => true,
+                          :class => 'icon icon-edit' %>
+              <%= delete_link membership_path(member),
+                              :remote => true,
+                              :data => (!User.current.admin? && member.include?(User.current) ? {:confirm => l(:text_own_membership_delete_confirmation)} : {}) if member.deletable? %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% end %>
 
-<% organizations = @project.organizations %>
-
-<table class="list organizations">
-  <thead><tr>
-    <th class="organization"><%= l(:label_organization) %></th>
-    <th class="role"><%= l(:label_role_plural) %></th>
-    <th class="buttons"> </th>
-  </tr></thead>
-  <tbody>
-
-  <% Member.active.where('project_id = ?', @project.id).joins(:principal).where('users.organization_id IS NULL').each do |member| %>
-    <%= render :partial => 'projects/settings/members_user',
-               :locals => {:member => member,
-                           :roles => Role.givable.sorted,
-                           :organization_roles => []} %>
-  <% end %>
-  <% organizations.sort_by do |o|
-       "#{o.try(:fullname)}"
-     end.each do |o| %>
-    <% @o = o %>
-    <%= render :partial => 'projects/settings/members_organization' %>
-  <% end %>
-  <%= render :partial => 'projects/settings/non_member_groups' %>
-  </tbody>
-</table>
-
+<div style="margin-top: 10px;border: 1px lightgrey solid;padding: 10px;">
+  <h3><%= l(:label_group_non_member) %></h3>
+  <table class="list organizations">
+    <thead>
+      <tr>
+        <th class="organization"><%= l(:label_organization) %></th>
+        <th class="role"><%= l(:label_role_plural) %></th>
+        <th class="buttons"></th>
+    </tr>
+    </thead>
+    <tbody>
+      <%= render :partial => 'projects/settings/non_member_groups' %>
+    </tbody>
+  </table>
 </div>

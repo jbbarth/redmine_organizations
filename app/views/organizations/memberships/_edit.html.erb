@@ -1,0 +1,20 @@
+<%= form_for(@organization, :url => organizations_membership_path(id: @organization.id, project_id: @project.id),
+                      :as => :membership,
+                      :remote => request.xhr?,
+                      :method => :patch) do |f| %>
+  <p>
+    <% @roles.each do |role| %>
+    <label>
+      <%= check_box_tag('membership[role_ids][]',
+                        role.id, @organization_roles.include?(role),
+                        :id => nil) %> <%= role %>
+    </label><br />
+    <% end %>
+  </p>
+  <%= hidden_field_tag 'membership[role_ids][]', '', :id => nil %>
+  <p>
+    <%= submit_tag l(:button_save), :class => "small" %>
+    <%= link_to_function l(:button_cancel),
+                         "$('#organization-#{@organization.id}-roles').show(); $('#organization-#{@organization.id}-form').empty(); return false;" if request.xhr? %>
+  </p>
+<% end %>
