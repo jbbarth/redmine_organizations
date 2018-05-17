@@ -3,7 +3,6 @@ class OrganizationsController < ApplicationController
 
   before_filter :require_admin, :only => [:new, :edit, :create, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id ]
   before_filter :require_login, :only => [:index, :show]
-  before_filter :find_project_by_project_id, :can_manage_members, :only => [:create_membership_in_project, :update_roles, :update_user_roles, :destroy_membership_in_project, :destroy_overriden_non_membership_in_project, :update_non_member_organization_roles]
   
   layout 'admin'
   
@@ -118,115 +117,12 @@ class OrganizationsController < ApplicationController
     render :layout => false
   end
 
-
-  def create_membership_in_project
-    @organization = Organization.find(params['membership']['organization_id']) if params['membership'].present? && params['membership']['organization_id'].present?
-    @override_non_member_role = params['override_non_member_roles']
-    if @override_non_member_role && @organization.present?
-      @current_organization_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id)
-      if @current_organization_roles.empty?
-        # TODO Set the default role in settings (role_id 4 => project_member in our case)
-        @current_organization_roles = [OrganizationRole.create!(project_id: @project.id, organization_id: @organization.id, non_member_role: true, role_id: 4)]
-      else
-        @current_organization_roles.update_all(non_member_role: true)
-      end
-    end
-
-    respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
-      format.js
-    end
-  end
-
-  def destroy_overriden_non_membership_in_project
-    @organization = Organization.find(params[:organization_id]) if params[:organization_id]
-    @current_organization_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id)
-    @current_organization_roles.update_all(non_member_role: false)
-    respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
-      format.js
-    end
-  end
-
-  def update_roles
-    new_members = User.find(params[:membership][:user_ids].reject(&:empty?))
-    new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
-    @organization = Organization.find(params[:organization_id])
-    old_organization_roles = @organization.default_roles_by_project(@project)
-
-    @organization.delete_all_organization_roles(@project)
-    organization_roles = new_roles.map{ |role| OrganizationRole.new(role_id: role.id, project_id: @project.id) }
-    organization_roles.each do |r|
-      @organization.organization_roles << r
-    end
-
-    @organization.update_project_members(params[:project_id], new_members, new_roles, old_organization_roles)
-    respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
-      format.js
-    end
-  end
-
   def update_user_roles
     new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
     if params[:member_id]
       @member = Member.find(params[:member_id])
       @member.roles = new_roles | @member.principal.organization.default_roles_by_project(@project)
     end
-    if params[:group_id] # TODO Modify this hack - create a different action to make it cleaner
-      group = GroupBuiltin.find(params[:group_id])
-      membership = Member.where(user_id: group.id, project_id: @project.id).first_or_initialize
-      if new_roles.present?
-        membership.roles = new_roles
-        membership.save
-      else
-        membership.try(:destroy)
-      end
-    end
-    respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
-      format.js
-    end
-  end
-
-  def update_non_member_organization_roles
-    new_non_member_roles = params[:membership][:role_ids].reject(&:empty?).map(&:to_i)
-    @organization = Organization.find(params[:organization_id])
-    existing_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id).map(&:role_id)
-    deleted_roles = existing_roles-new_non_member_roles
-    brand_new_roles = new_non_member_roles-existing_roles
-
-    (existing_roles|new_non_member_roles).each do |role_id|
-      if deleted_roles.include?(role_id)
-        orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
-        orga_role.non_member_role = false
-        orga_role.save
-      else
-        if brand_new_roles.include?(role_id)
-          OrganizationRole.create(role_id: role_id, project_id: @project.id, organization_id: @organization.id, non_member_role: true)
-        else
-          orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
-          unless orga_role.non_member_role
-            orga_role.non_member_role = true
-            orga_role.save
-          end
-        end
-      end
-    end
-
-    respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
-      format.js
-    end
-  end
-
-  def destroy_membership_in_project
-    @organization = Organization.find(params[:organization_id]) if params[:organization_id]
-    @organization.delete_old_project_members(params[:project_id]) if @organization
-
-    @member = Member.find(params[:member_id]) if params[:member_id]
-    @member.try(:destroy) if @member
-
     respond_to do |format|
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
       format.js
@@ -235,14 +131,6 @@ class OrganizationsController < ApplicationController
 
   def fetch_users_by_orga
     @users = User.active.sorted.where("organization_id = ? AND id != ?", params[:orga_id], params[:id])
-  end
-
-  private
-  def can_manage_members
-    unless User.current.allowed_to?(:manage_members, @project)
-      deny_access
-      return
-    end
   end
 
 end

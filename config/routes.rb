@@ -7,16 +7,19 @@ RedmineApp::Application.routes.draw do
     end
     collection do
       get :autocomplete_user_from_id
-      post :create_membership_in_project
-      put :update_roles
-      put :update_user_roles
-      put :update_non_member_organization_roles
-      delete :destroy_membership_in_project
-      delete :destroy_overriden_non_membership_in_project
+    end
+  end
+  namespace :organizations do
+    resources :memberships, only: [:edit, :update] do
+      collection do
+        post :create_non_members_roles
+        put :update_group_non_member_roles
+      end
+      member do
+        put :update_non_members_roles
+        delete :destroy_non_members_roles
+      end
     end
   end
   post 'users/:id/fetch_users_by_orga', :controller => 'organizations', :action => 'fetch_users_by_orga'
-  namespace :organizations do
-    resources :memberships, only: [:edit, :update]
-  end
 end

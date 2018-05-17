@@ -16,7 +16,7 @@
         </span>
       </div>
       <%= form_for(group, :as => :membership, :remote => true, :method => :put,
-                   :url => { :controller => 'organizations', :action => 'update_user_roles', :project_id => @project.id, :group_id => group.id },
+                   :url => update_group_non_member_roles_organizations_memberships_path(:project_id => @project.id, :group_id => group.id),
                    :html => { :id => "group-#{group.id}-roles-form", :class => 'hol' }) do |f| -%>
         <div class='roles_checkboxes' style="float: left;">
           <p><% @givable_roles.each do |role| %>
@@ -36,7 +36,7 @@
 
   <tr id="non_member_orga_exception_select">
     <td colspan="3">
-      <%= form_for :membership, :url => { :controller => 'organizations', :action => 'create_membership_in_project', :project_id => @project, :override_non_member_roles => true },
+      <%= form_for :membership, :url => create_non_members_roles_organizations_memberships_path(:project_id => @project),
                    :remote => true, :html => {:id => 'organization-form'} do |f| -%>
           <%= f.select "organization_id", nested_set_options(Organization) { |i| i.fullname },
                        { :disabled => @project.organizations.map(&:id), :include_blank => true,

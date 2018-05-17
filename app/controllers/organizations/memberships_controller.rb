@@ -1,7 +1,9 @@
 class Organizations::MembershipsController < ApplicationController
 
-  before_filter :find_organization
-  before_filter :find_project_by_project_id
+  DEFAULT_ROLE_ID = 4 # role_id = 4 => project_member in our case #TODO Make it customizable in settings
+
+  before_filter :find_project_by_project_id, :is_allowed_to_manage_members?
+  before_filter :find_organization, except: [:create_non_members_roles, :update_group_non_member_roles]
 
   def edit
     @roles = Role.givable.to_a
@@ -41,6 +43,82 @@ class Organizations::MembershipsController < ApplicationController
     end
   end
 
+  def create_non_members_roles
+    @organization = Organization.find(params['membership']['organization_id'])
+    if @organization.present?
+      @current_organization_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id)
+      if @current_organization_roles.empty?
+        @current_organization_roles = [OrganizationRole.create!(project_id: @project.id,
+                                                                organization_id: @organization.id,
+                                                                non_member_role: true,
+                                                                role_id: DEFAULT_ROLE_ID)]
+      else
+        @current_organization_roles.update_all(non_member_role: true)
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to settings_project_path(@project, :tab => 'members') }
+      format.js
+    end
+  end
+
+
+  def update_non_members_roles
+    new_non_member_roles = params[:membership][:role_ids].reject(&:empty?).map(&:to_i)
+    existing_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id).map(&:role_id)
+    deleted_roles = existing_roles-new_non_member_roles
+    brand_new_roles = new_non_member_roles-existing_roles
+
+    (existing_roles|new_non_member_roles).each do |role_id|
+      if deleted_roles.include?(role_id)
+        orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
+        orga_role.non_member_role = false
+        orga_role.save
+      else
+        if brand_new_roles.include?(role_id)
+          OrganizationRole.create(role_id: role_id, project_id: @project.id, organization_id: @organization.id, non_member_role: true)
+        else
+          orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
+          unless orga_role.non_member_role
+            orga_role.non_member_role = true
+            orga_role.save
+          end
+        end
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to settings_project_path(@project, :tab => 'members') }
+      format.js {render :update}
+    end
+  end
+
+  def update_group_non_member_roles
+    new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
+    group = GroupBuiltin.find(params[:group_id])
+    membership = Member.where(user_id: group.id, project_id: @project.id).first_or_initialize
+    if new_roles.present?
+      membership.roles = new_roles
+      membership.save
+    else
+      membership.try(:destroy)
+    end
+    respond_to do |format|
+      format.html { redirect_to settings_project_path(@project, :tab => 'members') }
+      format.js {render :update}
+    end
+  end
+
+  def destroy_non_members_roles
+    @current_organization_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id)
+    @current_organization_roles.update_all(non_member_role: false)
+    respond_to do |format|
+      format.html { redirect_to settings_project_path(@project, :tab => 'members') }
+      format.js
+    end
+  end
+
   private
 
   def find_organization
@@ -55,4 +133,12 @@ class Organizations::MembershipsController < ApplicationController
       member.save!
     end
   end
+
+  def is_allowed_to_manage_members?
+    unless User.current.allowed_to?(:manage_members, @project)
+      deny_access
+      return
+    end
+  end
+
 end

@@ -87,13 +87,6 @@ class Organization < ActiveRecord::Base
     end
   end
 
-  def update_project_members(project_id, new_members, new_roles, old_organization_roles)
-    delete_old_project_members(project_id, new_members)
-    new_members.each do |user|
-      add_member_through_organization(user, project_id, new_roles, old_organization_roles)
-    end
-  end
-
   def delete_old_project_members(project_id, excluded = [])
     current_members = User.joins(:members).where("organization_id = ? AND project_id = ?", self.id, project_id).uniq
     current_members.each do |user|
@@ -108,19 +101,5 @@ class Organization < ActiveRecord::Base
       r.try(:destroy) if r.id
     end
   end
-
-  private
-
-    def add_member_through_organization(user, project_id, new_roles, old_organization_roles)
-      member = Member.where(user_id: user.id, project_id: project_id).first_or_initialize
-      old_personal_roles = member.roles - old_organization_roles
-      member.roles = []
-      (new_roles | old_personal_roles).each do |new_role|
-        unless member.roles.include?(new_role)
-          member.roles << new_role
-        end
-      end
-      member.save! if member.project.present? && member.user.present?
-    end
 
 end

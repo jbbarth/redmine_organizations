@@ -16,7 +16,7 @@
         </span>
       </div>
       <%= form_for(o, :as => :membership, :remote => true, :method => :put,
-                   :url => { :controller => 'organizations', :action => 'update_non_member_organization_roles', :project_id => @project.id, :organization_id => o.id, :override_non_member_roles => true },
+                   :url => update_non_members_roles_organizations_membership_path(id: o.id, project_id: @project.id),
                    :html => { :id => "non-member-orga-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
         <div class='roles_checkboxes' style="float: left;">
           <p><% @givable_roles.each do |role| %>
@@ -33,7 +33,7 @@
       <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{o.id}, 'non-member-orga'); return false;",
                            :class => 'icon icon-edit') %>
       <%= link_to(l(:button_delete),
-                  {:controller => 'organizations', :action => 'destroy_overriden_non_membership_in_project', :project_id => @project.id, :organization_id => o.id, :back_url => @back},
+                  destroy_non_members_roles_organizations_membership_path(id: o.id, :project_id => @project.id, :back_url => @back),
                   :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
     </td>
   </tr>

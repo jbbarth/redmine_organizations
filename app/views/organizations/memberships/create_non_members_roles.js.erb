@@ -1,0 +1,8 @@
+if ($('#non-member-orga-<%= @organization.id %>').length==0){
+  $('.list.non-members.organizations > tbody:first').append("<%= j render :partial => 'projects/settings/non_member_organization', :locals => {:o => @organization} %>");
+}
+hideOnLoad();
+$("#orga-<%= @organization.id %>").effect("highlight");
+$('#non_member_orga_exception_select option[value="<%= @organization.id %>"]').attr("disabled", "disabled").prop("selected", false);
+$('#non_member_orga_exception_select').trigger('change');
+initOrgasSelect2();

@@ -1,3 +1,8 @@
-$('#tab-content-members').html('<%= escape_javascript(render :partial => 'projects/settings/members') %>');
+$("#tab-content-members").html("<%= j render 'projects/settings/members' %>");
 hideOnLoad();
-$("#organization-<%= @organization.id %>").effect("highlight");
+initOrgasSelect2();
+<% if @organization %>
+  $("#organization-<%= @organization.id %>").effect("highlight");
+  $("#non-member-orga-<%= @organization.id %>").effect("highlight");
+<% end %>
+

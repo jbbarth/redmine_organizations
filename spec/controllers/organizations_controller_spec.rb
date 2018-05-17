@@ -100,28 +100,20 @@ describe OrganizationsController, :type => :controller do
       end
     end
 
-    it "shoud display a new organization in a project" do
-      assert_no_difference 'Organization.find(1).projects.count' do
-        post :create_membership_in_project, 'membership' => {:organization_id => 1}, :project_id => 3, :format => :js
-      end
-      expect(response.content_type).to eq Mime::JS
-    end
+    it "shoud display the organization when adding a user"
 
-    it "shoud update members roles in a project" do
+    it "shoud update organization roles in a project"
+=begin
+    do
       users_ids = Project.find(2).members.map(&:user_id)
       users_ids << 1
       assert_difference 'Project.find(2).members.count', +1 do
         put :update_roles, 'membership' => {user_ids: users_ids, role_ids: [2]}, :project_id => 2, organization_id: 1
       end
+      # TODO Test presence of new roles
       expect(response).to redirect_to('/projects/2/settings/members')
     end
-
-    it "should destroy membership inside a project" do
-      assert_difference 'Organization.find(1).projects.count', -1 do
-        delete :destroy_membership_in_project, :project_id => 2, :organization_id => 1
-      end
-      expect(response).to redirect_to('/projects/2/settings/members')
-    end
+=end
 
   end
 
