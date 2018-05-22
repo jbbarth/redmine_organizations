@@ -117,18 +117,6 @@ class OrganizationsController < ApplicationController
     render :layout => false
   end
 
-  def update_user_roles
-    new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
-    if params[:member_id]
-      @member = Member.find(params[:member_id])
-      @member.roles = new_roles | @member.principal.organization.default_roles_by_project(@project)
-    end
-    respond_to do |format|
-      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => @project.id, :tab => 'members' }
-      format.js
-    end
-  end
-
   def fetch_users_by_orga
     @users = User.active.sorted.where("organization_id = ? AND id != ?", params[:orga_id], params[:id])
   end
