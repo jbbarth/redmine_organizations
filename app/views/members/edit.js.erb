@@ -1,0 +1,5 @@
+$(".member-<%= @member.id %>-roles").hide();
+$("#member-<%= @member.id %>-form").html("<%= escape_javascript(render :partial => "edit") %>");
+<% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
+  $("#member-<%= @member.id %>-visibility-form").html("<%= escape_javascript(render :partial => "members/edit_visibility") %>");
+<% end %>

@@ -1,4 +1,4 @@
-<% organization_roles = @member.user.organization.default_roles_by_project(@project) %>
+<% organization_roles = @member.principal.organization ? @member.principal.organization.default_roles_by_project(@project) : []  %>
 <%= form_for(@member, :url => membership_path(@member),
                       :as => :membership,
                       :remote => request.xhr?,
@@ -21,6 +21,9 @@
   <p>
     <%= submit_tag l(:button_save), :class => "small" %>
     <%= link_to_function l(:button_cancel),
-                         "$('#member-#{@member.id}-roles').show(); $('#member-#{@member.id}-form').empty(); return false;" if request.xhr? %>
+                         "$('.member-#{@member.id}-roles').show();
+                         $('#member-#{@member.id}-form').empty();
+                         $('#member-#{@member.id}-visibility-form').empty();
+                         return false;" if request.xhr? %>
   </p>
 <% end %>

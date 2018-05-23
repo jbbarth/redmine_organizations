@@ -8,12 +8,10 @@ class Member
     ids = (ids || []).collect(&:to_i) - [0]
     editable_role_ids = user.managed_roles(project).map(&:id)
     ### PATCH: Add organization roles
-    organization_role_ids = self.user.organization ? self.user.organization.default_roles_by_project(self.project).map(&:id) : []
+    organization_role_ids = self.principal.organization ? self.principal.organization.default_roles_by_project(self.project).map(&:id) : []
     untouched_role_ids = self.role_ids - editable_role_ids
     touched_role_ids = ids & editable_role_ids
     self.role_ids = untouched_role_ids | touched_role_ids | organization_role_ids
   end
 
 end
-
-

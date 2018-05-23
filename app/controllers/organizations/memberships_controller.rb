@@ -8,6 +8,11 @@ class Organizations::MembershipsController < ApplicationController
   def edit
     @roles = Role.givable.to_a
     @organization_roles = @organization.default_roles_by_project(@project)
+    if Redmine::Plugin.installed?(:redmine_limited_visibility)
+      @functions = Function.available_functions_for(@project).sorted
+      @functions = Function.active_by_default.sorted if @functions.blank?
+      @organization_functions = @organization.default_functions_by_project(@project)
+    end
   end
 
   def update

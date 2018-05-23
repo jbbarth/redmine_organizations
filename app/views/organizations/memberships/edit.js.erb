@@ -1,2 +1,5 @@
-$("#organization-<%= @organization.id %>-roles").hide();
-$("#organization-<%= @organization.id %>-form").html("<%= escape_javascript(render :partial => "edit") %>");
+$(".organization-<%= @organization.id %>-roles").hide();
+$("#organization-<%= @organization.id %>-form").html("<%= escape_javascript(render :partial => "edit_organization") %>");
+<% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
+  $("#organization-<%= @organization.id %>-visibility-form").html("<%= escape_javascript(render :partial => "edit_organization_visibility") %>");
+<% end %>

@@ -1,12 +1,9 @@
-<%
-  members = @project.memberships.joins(:user).includes(:user => [:organization]).active.sorted
-
+<% members = @project.memberships.joins(:user).includes(:user => [:organization]).active.sorted
   members_per_organization = {}
   members.each { |member|
     members_per_organization[member.principal.organization] ||= []
     members_per_organization[member.principal.organization] << member }
-    members_per_organization = members_per_organization.sort_by{|k,v|k.try(:fullname).to_s}
-%>
+    members_per_organization = members_per_organization.sort_by{|k,v|k.try(:fullname).to_s} %>
 
 <p><%= link_to l(:label_member_new), new_project_membership_path(@project), :remote => true, :class => "icon icon-add" %></p>
 
@@ -15,7 +12,7 @@
     <thead>
     <tr>
       <th><%= l(:label_organization) %> / <%= l(:label_user) %></th>
-      <th><%= l(:label_technical_role_plural) %></th>
+      <th><%= l(:label_role_plural) %></th>
       <th style="width:15%"></th>
     </tr>
     </thead>
@@ -25,14 +22,14 @@
           <tr id="organization-<%= organization.id %>" class="organization">
             <td class="name icon icon-group"><%= link_to_organization organization %></td>
             <td class="roles">
+              <span class="organization-<%= organization.id %>-roles">
               <% organization_roles = organization.default_roles_by_project(@project) %>
-              <% if organization_roles.any? %>
-                <span id="organization-<%= organization.id %>-roles">
+                <% if organization_roles.any? %>
                   <%= organization_roles.collect(&:to_s).join(', ') %>
-                </span>
-              <% else %>
-                <span class="undefined"><%= l('undefined') %></span>
-              <% end %>
+                <% else %>
+                  <span class="undefined"><%= l('undefined') %></span>
+                <% end %>
+              </span>
               <div id="organization-<%= organization.id %>-form"></div>
             </td>
             <td class="buttons">
@@ -48,7 +45,7 @@
           <tr id="member-<%= member.id %>" class="member">
             <td class="name icon icon-<%= member.principal.class.name.downcase %>"><%= link_to_user member.principal %></td>
             <td class="roles">
-              <span id="member-<%= member.id %>-roles"><%= member.roles.sort.collect(&:to_s).join(', ') %></span>
+              <span class="member-<%= member.id %>-roles"><%= member.roles.collect(&:to_s).join(', ') %></span>
               <div id="member-<%= member.id %>-form"></div>
             </td>
             <td class="buttons">

@@ -15,6 +15,9 @@
   <p>
     <%= submit_tag l(:button_save), :class => "small" %>
     <%= link_to_function l(:button_cancel),
-                         "$('#organization-#{@organization.id}-roles').show(); $('#organization-#{@organization.id}-form').empty(); return false;" if request.xhr? %>
+                         "$('.organization-#{@organization.id}-roles').show();
+                         $('#organization-#{@organization.id}-form').empty();
+                         $('#organization-#{@organization.id}-visibility-form').empty();
+                         return false;" if request.xhr? %>
   </p>
 <% end %>

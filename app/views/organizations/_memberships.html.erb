@@ -17,7 +17,7 @@
         <%= content_tag(:em, "(#{l(:project_status_archived)})", :class=>"info", :style=>"display:inline") unless project.active? %>
       </td>
       <td class="roles">
-        <span id="member-<%= project.id %>-roles"><%=h @organization.roles_by_project(project).sort.collect(&:to_s).join(', ') %></span>
+        <span class="member-<%= project.id %>-roles"><%=h @organization.roles_by_project(project).sort.collect(&:to_s).join(', ') %></span>
       </td>
     </tr>
   <% end %>
