@@ -26,7 +26,7 @@
     </p>
   <% end %>
   <p style="width: <%= column_width %>%;float: left;">
-    <% @organization.users.each do |user| %>
+    <% @organization.users.active.each do |user| %>
       <label>
         <%= check_box_tag('membership[user_ids][]',
                           user.id, current_members.include?(user),
