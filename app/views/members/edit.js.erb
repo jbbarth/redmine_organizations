@@ -1,5 +1,5 @@
-$(".member-<%= @member.id %>-roles").hide();
-$("#member-<%= @member.id %>-form").html("<%= escape_javascript(render :partial => "edit") %>");
-<% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
-  $("#member-<%= @member.id %>-visibility-form").html("<%= escape_javascript(render :partial => "members/edit_visibility") %>");
-<% end %>
+$("#member-<%= @member.id %>-form").removeClass('hidden')
+$("tr#member-<%= @member.id %> td.roles").addClass('hidden')
+$("tr#member-<%= @member.id %> td.visibility_roles").addClass('hidden')
+$("tr#member-<%= @member.id %> td.users").addClass('hidden')
+$("#member-<%= @member.id %>-form").html("<%= escape_javascript(render :partial => "edit") %>")

@@ -28,7 +28,7 @@ Redmine::Plugin.register :redmine_organizations do
   description 'Adds "organization" structure to replace Redmine groups'
   url 'http://github.com/jbbarth/redmine_organizations'
   author_url 'mailto:jeanbaptiste.barth@gmail.com'
-  version '0.5'
+  version '3.4.4'
   requires_redmine :version_or_higher => '3.0.0'
   requires_redmine_plugin :redmine_base_rspec, :version_or_higher => '0.0.3' if Rails.env.test?
   requires_redmine_plugin :redmine_base_deface, :version_or_higher => '0.0.1'

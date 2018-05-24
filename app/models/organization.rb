@@ -63,6 +63,10 @@ class Organization < ActiveRecord::Base
     Member.joins(:user).where("users.organization_id = ? AND users.status = ?", self.id, User::STATUS_ACTIVE)
   end
 
+  def users_by_project(project)
+    users.joins(:members).where("users.status = ? AND members.project_id = ?", User::STATUS_ACTIVE, project.id)
+  end
+
   def projects
     Project.where("id IN (?)", self.memberships.pluck(:project_id).uniq)
   end

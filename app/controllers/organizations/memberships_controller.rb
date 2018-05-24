@@ -18,8 +18,15 @@ class Organizations::MembershipsController < ApplicationController
   def update
     if params[:membership]
       roles = Role.where(id: params[:membership][:role_ids].reject(&:empty?))
+      users = User.where(id: params[:membership][:user_ids].reject(&:empty?))
+      if Redmine::Plugin.installed?(:redmine_limited_visibility)
+        functions = params[:membership][:function_ids] ? Function.where(id: params[:membership][:function_ids].reject(&:empty?)) : []
+        previous_organization_functions = @organization.default_functions_by_project(@project)
+      end
     end
     previous_organization_roles = @organization.default_roles_by_project(@project)
+
+    update_members(@organization, users, @project, roles)
 
     ActiveRecord::Base.transaction do
       @organization.delete_all_organization_roles(@project)
@@ -32,6 +39,20 @@ class Organizations::MembershipsController < ApplicationController
                                                  organization: @organization,
                                                  organization_roles: organization_roles.map(&:role),
                                                  previous_organization_roles: previous_organization_roles)
+
+      if Redmine::Plugin.installed?(:redmine_limited_visibility)
+        @organization.delete_all_organization_functions(@project)
+        organization_functions = functions.map{ |function| OrganizationFunction.new(function_id: function.id, project_id: @project.id) }
+        organization_functions.each do |of|
+          @organization.organization_functions << of
+        end
+
+        give_new_organization_functions_to_all_members(project: @project,
+                                                       organization: @organization,
+                                                       organization_functions: organization_functions.map(&:function),
+                                                       previous_organization_functions: previous_organization_functions)
+      end
+
       saved = @organization.save
     end
 
@@ -45,6 +66,20 @@ class Organizations::MembershipsController < ApplicationController
           render_validation_errors(@member)
         end
       }
+    end
+  end
+
+  def update_members(organization, users, project, roles)
+    current_users = organization.users_by_project(project)
+    new_users = users - current_users
+    deleted_users = current_users - users
+    new_users.each do |user|
+      member = Member.where(user: user, project: project).first_or_initialize
+      member.roles = roles
+      member.save!
+    end
+    deleted_users.each do |user|
+      Member.where(:user => user, :project => project).first.try(:destroy)
     end
   end
 

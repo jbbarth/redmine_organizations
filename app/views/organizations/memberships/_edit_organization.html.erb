@@ -1,8 +1,11 @@
+<% current_members = @organization.users_by_project(@project) %>
+<% column_width = Redmine::Plugin.installed?(:redmine_limited_visibility) ? 33 : 50 %>
+
 <%= form_for(@organization, :url => organizations_membership_path(id: @organization.id, project_id: @project.id),
                       :as => :membership,
                       :remote => request.xhr?,
                       :method => :patch) do |f| %>
-  <p>
+  <p style="width: <%= column_width %>%;float: left;">
     <% @roles.each do |role| %>
     <label>
       <%= check_box_tag('membership[role_ids][]',
@@ -11,13 +14,36 @@
     </label><br />
     <% end %>
   </p>
+  <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
+    <p style="width: <%= column_width %>%;float: left;">
+      <% @functions.each do |function| %>
+        <label>
+          <%= check_box_tag('membership[function_ids][]',
+                            function.id, @organization_functions.include?(function),
+                            :id => nil) %> <%= function %>
+        </label><br />
+      <% end %>
+    </p>
+  <% end %>
+  <p style="width: <%= column_width %>%;float: left;">
+    <% @organization.users.each do |user| %>
+      <label>
+        <%= check_box_tag('membership[user_ids][]',
+                          user.id, current_members.include?(user),
+                          :id => nil) %> <%= user %>
+      </label><br />
+    <% end %>
+  </p>
   <%= hidden_field_tag 'membership[role_ids][]', '', :id => nil %>
+  <%= hidden_field_tag 'membership[function_ids][]', '', :id => nil %>
+  <%= hidden_field_tag 'membership[user_ids][]', '', :id => nil %>
   <p>
     <%= submit_tag l(:button_save), :class => "small" %>
     <%= link_to_function l(:button_cancel),
-                         "$('.organization-#{@organization.id}-roles').show();
-                         $('#organization-#{@organization.id}-form').empty();
-                         $('#organization-#{@organization.id}-visibility-form').empty();
-                         return false;" if request.xhr? %>
+                         "$('#organization-#{@organization.id}-form').addClass('hidden');
+                          $('tr#organization-#{@organization.id} td.roles').removeClass('hidden');
+                          $('tr#organization-#{@organization.id} td.visibility_roles').removeClass('hidden');
+                          $('tr#organization-#{@organization.id} td.users').removeClass('hidden');
+                          return false;" if request.xhr? %>
   </p>
 <% end %>

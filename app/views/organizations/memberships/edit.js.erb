@@ -1,5 +1,5 @@
-$(".organization-<%= @organization.id %>-roles").hide();
+$("#organization-<%= @organization.id %>-form").removeClass('hidden')
+$("tr#organization-<%= @organization.id %> td.roles").addClass('hidden')
+$("tr#organization-<%= @organization.id %> td.visibility_roles").addClass('hidden')
+$("tr#organization-<%= @organization.id %> td.users").addClass('hidden')
 $("#organization-<%= @organization.id %>-form").html("<%= escape_javascript(render :partial => "edit_organization") %>");
-<% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
-  $("#organization-<%= @organization.id %>-visibility-form").html("<%= escape_javascript(render :partial => "edit_organization_visibility") %>");
-<% end %>

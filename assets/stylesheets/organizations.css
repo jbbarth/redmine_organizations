@@ -23,9 +23,11 @@ table.memberships .buttons .icon-edit { display:none; }
 .organizations .organization { width:220px; }
 .organizations .role { min-width:180px; }
 .organizations .roles_checkboxes { width:190px; }
-table.list.organizations td {text-align:left;vertical-align: top;padding-left: 23px;}
+table.list.organizations td {text-align:left;vertical-align: top;padding-left: 23px;width: 25%;}
 table.list.organizations td.icon-group {background-position: 0% 5px;}
 table.list.organizations .undefined{color: #d3d3d3;font-style: italic;}
 .list.members .buttons { text-align:left; }
 table.members td.group { background-position: 0 4px; }
 
+
+table.list.organizations td.hidden {display: none;}

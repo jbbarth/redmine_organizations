@@ -1,29 +1,43 @@
-<% organization_roles = @member.principal.organization ? @member.principal.organization.default_roles_by_project(@project) : []  %>
+<% organization_roles = @member.principal.organization ? @member.principal.organization.default_roles_by_project(@project) : [] %>
+<% column_width = Redmine::Plugin.installed?(:redmine_limited_visibility) ? 33 : 50 %>
+<% if Redmine::Plugin.installed?(:redmine_limited_visibility)
+     organization_functions = @member.principal.organization ? @member.principal.organization.default_functions_by_project(@project) : []
+   end %>
 <%= form_for(@member, :url => membership_path(@member),
-                      :as => :membership,
-                      :remote => request.xhr?,
-                      :method => :put) do |f| %>
-  <p>
+             :as => :membership,
+             :remote => request.xhr?,
+             :method => :put) do |f| %>
+  <p style="width: <%= column_width %>%;float: left;">
     <% @roles.each do |role| %>
-    <label>
-
-      <% ### START PATCH ### %>
-      <%= check_box_tag('membership[role_ids][]',
-                        role.id, @member.roles.to_a.include?(role),
-                        :id => nil,
-                        :disabled => !@member.role_editable?(role) || organization_roles.detect {|r| r.id == role.id} ) %> <%= role %>
-      <% ### END PATCH ### %>
-
-    </label><br />
+      <label>
+        <%= check_box_tag('membership[role_ids][]',
+                          role.id, @member.roles.to_a.include?(role),
+                          :id => nil,
+                          :disabled => !@member.role_editable?(role) || organization_roles.detect {|r| r.id == role.id}) %> <%= role %>
+      </label><br/>
     <% end %>
   </p>
+  <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
+    <p style="width: <%= column_width %>%;float: left;">
+      <% @functions.each do |function| %>
+        <label>
+          <%= check_box_tag('membership[function_ids][]',
+                            function.id, @member.functions.to_a.include?(function),
+                            :id => nil,
+                            :disabled => organization_functions.detect {|f| f.id == function.id}) %> <%= function %>
+        </label><br/>
+      <% end %>
+    </p>
+  <% end %>
   <%= hidden_field_tag 'membership[role_ids][]', '', :id => nil %>
+  <%= hidden_field_tag 'membership[function_ids][]', '', :id => nil %>
   <p>
     <%= submit_tag l(:button_save), :class => "small" %>
     <%= link_to_function l(:button_cancel),
-                         "$('.member-#{@member.id}-roles').show();
-                         $('#member-#{@member.id}-form').empty();
-                         $('#member-#{@member.id}-visibility-form').empty();
-                         return false;" if request.xhr? %>
+                         "$('#member-#{@member.id}-form').addClass('hidden');
+                          $('tr#member-#{@member.id} td.roles').removeClass('hidden');
+                          $('tr#member-#{@member.id} td.visibility_roles').removeClass('hidden');
+                          $('tr#member-#{@member.id} td.users').removeClass('hidden');
+                          return false;" if request.xhr? %>
   </p>
 <% end %>

@@ -12,7 +12,8 @@
     <thead>
     <tr>
       <th><%= l(:label_organization) %> / <%= l(:label_user) %></th>
-      <th><%= l(:label_role_plural) %></th>
+      <th class="roles"><%= l(:label_role_plural) %></th>
+      <th></th>
       <th style="width:15%"></th>
     </tr>
     </thead>
@@ -21,16 +22,21 @@
         <% if organization.present? %>
           <tr id="organization-<%= organization.id %>" class="organization">
             <td class="name icon icon-group"><%= link_to_organization organization %></td>
+            <td id="organization-<%= organization.id %>-form"
+                colspan="<%= Redmine::Plugin.installed?(:redmine_limited_visibility) ? "3" : "2" %>"
+                class="hidden form">
+            </td>
             <td class="roles">
-              <span class="organization-<%= organization.id %>-roles">
               <% organization_roles = organization.default_roles_by_project(@project) %>
-                <% if organization_roles.any? %>
-                  <%= organization_roles.collect(&:to_s).join(', ') %>
-                <% else %>
-                  <span class="undefined"><%= l('undefined') %></span>
-                <% end %>
-              </span>
+              <% if organization_roles.any? %>
+                <%= organization_roles.collect(&:to_s).join(', ') %>
+              <% else %>
+                <span class="undefined"><%= l('undefined') %></span>
+              <% end %>
               <div id="organization-<%= organization.id %>-form"></div>
+            </td>
+            <td class="users">
+              <div id="organization-<%= organization.id %>-users-form"></div>
             </td>
             <td class="buttons">
               <%= link_to l(:button_edit),
@@ -44,10 +50,14 @@
           <% next if member.new_record? %>
           <tr id="member-<%= member.id %>" class="member">
             <td class="name icon icon-<%= member.principal.class.name.downcase %>"><%= link_to_user member.principal %></td>
-            <td class="roles">
-              <span class="member-<%= member.id %>-roles"><%= member.roles.collect(&:to_s).join(', ') %></span>
-              <div id="member-<%= member.id %>-form"></div>
+            <td id="member-<%= member.id %>-form"
+                colspan="<%= Redmine::Plugin.installed?(:redmine_limited_visibility) ? "3" : "2" %>"
+                class="hidden form">
             </td>
+            <td class="roles">
+              <%= member.roles.collect(&:to_s).join(', ') %>
+            </td>
+            <td class="users"></td>
             <td class="buttons">
               <%= link_to l(:button_edit),
                           edit_membership_path(member),
@@ -71,7 +81,7 @@
   <table class="list non-members organizations">
     <thead>
       <tr>
-        <th class="organization"><%= l(:label_organization) %></th>
+        <th class="organization"><%= l(:label_group_plural) %></th>
         <th class="role"><%= l(:label_role_plural) %></th>
         <th class="buttons"></th>
     </tr>
