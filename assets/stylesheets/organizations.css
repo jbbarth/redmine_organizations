@@ -31,3 +31,6 @@ table.members td.group { background-position: 0 4px; }
 
 
 table.list.organizations td.hidden {display: none;}
+
+#users_for_new_member {min-height: 20px;}
+#users_for_new_member.ajax-loading {background:url(../images/loading.gif) no-repeat center top;}

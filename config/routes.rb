@@ -7,10 +7,11 @@ RedmineApp::Application.routes.draw do
     end
     collection do
       get :autocomplete_user_from_id
+      get :autocomplete_users
     end
   end
   namespace :organizations do
-    resources :memberships, only: [:edit, :update] do
+    resources :memberships, only: [:new, :edit, :update] do
       collection do
         post :create_non_members_roles
         put :update_group_non_member_roles

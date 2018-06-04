@@ -5,7 +5,10 @@
     members_per_organization[member.principal.organization] << member }
     members_per_organization = members_per_organization.sort_by{|k,v|k.try(:fullname).to_s} %>
 
-<p><%= link_to l(:label_member_new), new_project_membership_path(@project), :remote => true, :class => "icon icon-add" %></p>
+<p>
+  <%= link_to l(:label_member_new), new_project_membership_path(@project), :remote => true, :class => "icon icon-add" %>
+  <%= link_to l(:label_new_members_through_organization), new_organizations_membership_path(project_id: @project.id), :remote => true, :class => "icon icon-group", style: "margin-left:10px;background-position: top left;" %>
+</p>
 
 <% if members.any? %>
   <table class="list members organizations">

@@ -2,8 +2,9 @@ class OrganizationsController < ApplicationController
   unloadable
 
   before_filter :require_admin, :only => [:new, :edit, :create, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id ]
-  before_filter :require_login, :only => [:index, :show]
-  
+  before_filter :require_login, :only => [:index, :show, :autocomplete_users]
+  before_filter :find_project_by_project_id, :only => [:autocomplete_users]
+
   layout 'admin'
   
   def index
@@ -114,6 +115,12 @@ class OrganizationsController < ApplicationController
   
   def autocomplete_user_from_id
     @user = User.active.find_by_id(params[:q])
+    render :layout => false
+  end
+
+  def autocomplete_users
+    @organizations = Organization.where(id: params[:organization_ids])
+    @users = @organizations.map{|o| o.users.active}.flatten.compact.uniq.sort_by(&:name)
     render :layout => false
   end
 

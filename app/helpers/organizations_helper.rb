@@ -33,4 +33,43 @@ module OrganizationsHelper
     html = link_to_project(project)
     html << " (#{roles.sort.map(&:to_s).join(', ')})" if roles.any?
   end
+
+  def render_organizations_for_new_members
+    organizations = Organization.order('lft')
+    content_tag('div',
+                    content_tag('div', organizations_check_box_tags('membership[organization_ids][]', organizations), :id => 'organizations'),
+                    :class => 'objects-selection',
+                    :style => 'max-height: 200px;height:auto;'
+    )
+  end
+
+  def organizations_check_box_tags(name, organizations)
+    s = ''
+    organizations.each do |organization|
+      s << "<label data-filter-value='#{organization.fullname}'>#{ check_box_tag name, organization.id, false, :id => nil } #{h organization}</label>\n"
+    end
+    s.html_safe
+  end
+
+  def render_users_for_new_members(project, users)
+    disabled_users = project ? project.principals : []
+    content_tag('div',
+                    content_tag('div', users_check_box_tags('membership[user_ids][]', users, disabled_users), :id => 'principals'),
+                    :class => 'objects-selection',
+                    :style => 'max-height: 200px;height:auto;'
+    )
+  end
+
+  def users_check_box_tags(name, principals, disabled_principals)
+    s = ''
+    principals.each do |principal|
+      if disabled_principals.include?(principal)
+        s << "<label style='color:lightgray;'>#{ check_box_tag '#', '#', true, :id => nil, disabled: true } #{h principal}</label>\n"
+      else
+        s << "<label>#{ check_box_tag name, principal.id, false, :id => nil } #{h principal}</label>\n"
+      end
+
+    end
+    s.html_safe
+  end
 end
