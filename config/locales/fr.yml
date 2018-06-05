@@ -22,3 +22,4 @@ fr:
   label_new_members_through_organization: "Ajout de membres par organisation"
   label_organization_search: "Rechercher une organisation"
   label_users_selection: "Sélectionner des utilisateurs"
+  selected_organizations: "Organisations sélectionnées"

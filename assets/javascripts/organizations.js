@@ -65,23 +65,36 @@ $(function () {
     })
 
     $("body").on("change", "#organizations_for_new_member input[name='membership[organization_ids][]']", function () {
-
         let organization_ids = $("input[name='membership[organization_ids][]']:checked").map(
-            function () {return this.value;}).get()
-
+            function () {
+                return this.value;
+            }).get()
         let project_id = $("input#membership_project_id").val()
-
-        // $('#users_for_new_member').html(organization_ids.join(","))
-
         $.ajax({
             url: '/organizations/autocomplete_users',
             type: 'get',
             data: {organization_ids: organization_ids, project_id: project_id},
             // success: function(data){ if(targetId) $('#'+targetId).html(data); },
-            beforeSend: function(){ $("#users_for_new_member").addClass('ajax-loading'); },
-            complete: function(){ $("#users_for_new_member").removeClass('ajax-loading'); }
+            beforeSend: function () {
+                $("#users_for_new_member").addClass('ajax-loading')
+            },
+            complete: function () {
+                $("#users_for_new_member").removeClass('ajax-loading')
+            }
         });
+        $('#organization_selection_counter').html(organization_ids.length)
+    })
 
-
+    $("body").on("click", "form#new_membership #link_select_all", function (event) {
+        event.preventDefault();
+        $("#users_for_new_member input:checkbox[name='membership[user_ids][]']").each(function () {
+            $(this).prop("checked", "checked");
+        });
+    })
+    $("body").on("click", "form#new_membership #link_select_none", function (event) {
+        event.preventDefault();
+        $("#users_for_new_member input:checkbox[name='membership[user_ids][]']").each(function () {
+            $(this).prop("checked", false);
+        });
     })
 })

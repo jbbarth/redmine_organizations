@@ -1,13 +1,17 @@
 <fieldset class="box">
   <legend><%= label_tag("organization_search", l(:label_organization_search)) %></legend>
-  <p><%= text_field_tag('filter-by-name', nil, {id: "filter-by-org-name", class: 'filter'}) %></p>
+  <p>
+    <%= text_field_tag('filter-by-name', nil, {id: "filter-by-org-name", class: 'filter', placeholder: 'Filtrer par nom'}) %>
+    <%= l("selected_organizations") %>:
+    <span id="organization_selection_counter">0</span>
+  </p>
   <div id="organizations_for_new_member">
     <%= render_organizations_for_new_members %>
   </div>
 </fieldset>
 
 <fieldset class="box">
-  <legend><%= label_tag("users_selection", l(:label_users_selection)) %></legend>
+  <legend><%= label_tag("users_selection", l(:label_users_selection)) %> - <%= link_to l("select_all"), '#', id: "link_select_all" %> / <%= link_to l("select_none"), '#', id: "link_select_none" %></legend>
   <div id="users_for_new_member">
   </div>
 </fieldset>

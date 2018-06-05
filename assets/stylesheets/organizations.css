@@ -34,3 +34,9 @@ table.list.organizations td.hidden {display: none;}
 
 #users_for_new_member {min-height: 20px;}
 #users_for_new_member.ajax-loading {background:url(../images/loading.gif) no-repeat center top;}
+
+.objects-selection>div#organizations {
+    column-width: 300px;
+    -webkit-column-width: 300px;
+    -moz-column-width: 300px;
+}
