@@ -87,4 +87,12 @@ $(function () {
             $(this).prop("checked", false);
         });
     })
+
+    $("body").on("click", "#users_for_new_member input:checkbox[name='membership[user_ids][]']", function (event) {
+        if ($("#users_for_new_member input:checkbox[name='membership[user_ids][]']:checked").length > 0) {
+            $('input#member-add-submit').prop('disabled', false)
+        } else {
+            $('input#member-add-submit').prop('disabled', true)
+        }
+    })
 })

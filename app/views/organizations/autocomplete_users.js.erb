@@ -3,17 +3,11 @@ var selected_boxes = $("#users_for_new_member input:checkbox[name='membership[us
         return this.value;
     }).get()
 
-console.log("selected_boxes: ");
-console.log(selected_boxes);
-
 $('#users_for_new_member').html('<%= escape_javascript(render_users_for_new_members(@project, @users)) %>');
 
 // Reselect checked boxes
 $("#users_for_new_member input:checkbox[name='membership[user_ids][]']").each(
     function (index, element) {
-        console.log("element: " + element)
-        console.log("value: " + element.value)
-        console.log("this: " + $(this))
         if (selected_boxes.indexOf(element.value) >= 0) {
             $(this).prop("checked", "checked");
         }
