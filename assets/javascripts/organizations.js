@@ -19,7 +19,7 @@ function initOrgasSelect2() {
     var $select = $(".orga-select2")
     if ($select.select2) {
         $select.select2({
-            containerCss: {minWidth: '300px'},
+            containerCss: {width: '100%', minWidth: '300px'},
             formatNoMatches: function (term) {
                 return $('#label-no-data').html()
             }
@@ -53,22 +53,13 @@ $(function () {
                 $elem.hide()
             }
         })
-        // New member popup
-        $("#organizations_for_new_member").find("label").each(function () {
-            var name = $(this).data('filterValue').toLowerCase()
-            if (name.indexOf(needle) >= 0) {
-                $(this).show()
-            } else {
-                $(this).hide()
-            }
-        })
     })
 
-    $("body").on("change", "#organizations_for_new_member input[name='membership[organization_ids][]']", function () {
-        let organization_ids = $("input[name='membership[organization_ids][]']:checked").map(
-            function () {
-                return this.value;
-            }).get()
+    $("body").on("change", "#organizations_ids", function () {
+        let organization_ids = $("#organizations_ids").select2('data').map(
+            function (element) {
+                return element.id;
+            })
         let project_id = $("input#membership_project_id").val()
         $.ajax({
             url: '/organizations/autocomplete_users',
@@ -82,7 +73,6 @@ $(function () {
                 $("#users_for_new_member").removeClass('ajax-loading')
             }
         });
-        $('#organization_selection_counter').html(organization_ids.length)
     })
 
     $("body").on("click", "form#new_membership #link_select_all", function (event) {

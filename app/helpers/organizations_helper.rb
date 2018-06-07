@@ -34,23 +34,6 @@ module OrganizationsHelper
     html << " (#{roles.sort.map(&:to_s).join(', ')})" if roles.any?
   end
 
-  def render_organizations_for_new_members
-    organizations = Organization.order('lft')
-    content_tag('div',
-                    content_tag('div', organizations_check_box_tags('membership[organization_ids][]', organizations), :id => 'organizations'),
-                    :class => 'objects-selection',
-                    :style => 'max-height: 200px;height:auto;'
-    )
-  end
-
-  def organizations_check_box_tags(name, organizations)
-    s = ''
-    organizations.each do |organization|
-      s << "<label data-filter-value='#{organization.fullname}'>#{ check_box_tag name, organization.id, false, :id => nil } #{h organization}</label>\n"
-    end
-    s.html_safe
-  end
-
   def render_users_for_new_members(project, users)
     disabled_users = project ? project.principals : []
     content_tag('div',
