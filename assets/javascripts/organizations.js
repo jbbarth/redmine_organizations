@@ -88,11 +88,20 @@ $(function () {
         });
     })
 
-    $("body").on("click", "#users_for_new_member input:checkbox[name='membership[user_ids][]']", function (event) {
-        if ($("#users_for_new_member input:checkbox[name='membership[user_ids][]']:checked").length > 0) {
-            $('input#member-add-submit').prop('disabled', false)
-        } else {
-            $('input#member-add-submit').prop('disabled', true)
-        }
+    $("body").on("click", "#users_for_new_member input:checkbox, .roles-selection input:checkbox", function (event) {
+        toggle_submit_button()
     })
 })
+
+function toggle_submit_button(){
+    let state = any_user_selected() && any_role_selected()
+    $('input#member-add-submit').prop('disabled', !state)
+}
+
+function any_user_selected(){
+    return $("#users_for_new_member input:checkbox[name='membership[user_ids][]']:checked").length > 0
+}
+
+function any_role_selected(){
+    return $(".roles-selection input:checkbox[name='membership[role_ids][]']:checked").length > 0
+}
