@@ -36,6 +36,34 @@
 </div>
 
 <div class="splitcontentright">
+
+  <% if Redmine::Plugin.installed?(:redmine_ldap_minequip)
+    mails_from_ldap = MailsFromLdap.new(@organization.fullname).list_of_mails
+    users = User.active.joins(:email_addresses).where('address IN (?)', mails_from_ldap) - @organization.users
+  %>
+
+    <% if users.any? %>
+      <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
+        <fieldset>
+          <legend><%= l(:label_user_new) %></legend>
+
+          <p><%= text_field_tag 'user_search', nil %></p>
+          <%= javascript_tag "observeSearchfield('user_search', 'users', '#{escape_javascript autocomplete_for_user_organization_path(:id => @organization)}')" %>
+
+          <div id="users">
+            <%= principals_check_box_tags 'user_ids[]', users %>
+          </div>
+
+          <p><%= submit_tag l(:button_add) %></p>
+        </fieldset>
+      <% end %>
+    <% end %>
+
+  <% end %>
+
+
+
+
   <% users = User.active.limit(100).to_a - @organization.users %>
   <% if users.any? %>
     <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
