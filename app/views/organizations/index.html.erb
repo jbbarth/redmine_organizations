@@ -3,6 +3,10 @@
   <%= link_to l(:label_organization_new), {:controller=>'organizations',:action=>'new'},
       :class => 'icon icon-add' %>
   <% end %>
+  <% if false # if User.current.has_permission?(:manager_my_organization) %>
+    <%= link_to l(:label_organization_edit), {:controller => 'organizations', :action => 'edit', :id => User.current.organization_id},
+              :class => 'icon icon-edit' %>
+  <% end %>
 </div>
 
 <h2><%=l(:label_organization_plural)%></h2>
@@ -17,6 +21,7 @@
             <input type=text name=filter-by-name id=filter-by-org-name class=filter>
           </th>
           <th><%= l(:field_description)%></th>
+          <th><%= l(:field_managers)%></th>
           <th> </th>
         </tr>
       </thead>
@@ -27,6 +32,7 @@
             <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
           </td>
           <td class="description"><%=h organization.description %></td>
+          <td class="managers"><%=h organization.managers.map(&:to_s).join(', ') %></td>
           <td class="buttons">
           <% if User.current.admin? %>
             <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},

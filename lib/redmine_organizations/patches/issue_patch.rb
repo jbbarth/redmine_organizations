@@ -45,15 +45,16 @@ end
 
 module IssuePatchWithOrganizations
   def organization_emails
-    return [] unless project.notify_organizations
     organization_ids = project.users.active.pluck(:organization_id)
     # here we use #where instead of #find because #find will throw an
     # exception if one of the organizations doesn't exist, and I'm not
     # sure that we manage organizations' deletion correctly enough to
     # be sure it won't ever break
-    Organization.where(id: organization_ids, notified: true)
-        .pluck(:mail)
-        .select(&:present?)
+    Organization.joins(:organization_notifications)
+                .where('organization_notifications.project_id = ?', project.id)
+                .where(id: organization_ids)
+                .pluck(:mail)
+                .select(&:present?)
   end
 end
 Issue.prepend IssuePatchWithOrganizations

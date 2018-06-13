@@ -16,6 +16,19 @@ module PluginOrganizations
       end
     end
 
+    def find_organization_by_id
+      @organization = Organization.find(params[:id])
+    end
+
+    def require_admin_or_manager
+      return unless require_login
+      if @organization.managers.exclude?(User.current) && User.current.is_not_admin?
+        render_403
+        return false
+      end
+      true
+    end
+
   end
 end
 

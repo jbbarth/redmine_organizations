@@ -6,8 +6,8 @@ class Project < ActiveRecord::Base
   unloadable
 
   has_many :organization_roles
-
-  safe_attributes "notify_organizations"
+  has_many :organization_notifications
+  has_many :notified_organizations, through: :organization_notifications, :source => :organization
 
   def organizations
     Organization.joins(:users => :members).where("project_id = ? AND users.status = ?", self.id, User::STATUS_ACTIVE).uniq

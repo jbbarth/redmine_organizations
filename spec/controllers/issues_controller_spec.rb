@@ -28,7 +28,7 @@ describe IssuesController, :type => :controller do
            :queries,
            :repositories,
            :changesets,
-           :organizations, :organization_roles
+           :organizations, :organization_roles, :organization_notifications
 
   render_views
 
@@ -56,12 +56,10 @@ describe IssuesController, :type => :controller do
     ActionMailer::Base.deliveries.clear
 
     user = User.find(2)
-    project = Project.find(1)
     orga = Organization.find(2)
 
     user.update_attribute('organization_id', orga.id)
     project.update_attribute('notify_organizations', true)
-
     expect(orga.mail).to_not be_nil
 
     expect {

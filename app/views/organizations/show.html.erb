@@ -1,10 +1,12 @@
 <div class="contextual">
-  <% if User.current.admin? %>
-  <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => @organization},
-      :class => 'icon icon-edit' %>
-  <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => @organization},
-      :class => 'icon icon-del', :data => { :confirm => l(:text_are_you_sure) }, :method => :delete %>
-  <% end %>
+  <%= link_to(l(:button_update),
+              {:controller => 'organizations', :action => 'edit', :id => @organization},
+              :class => 'icon icon-edit') if User.current.admin? || User.current.manage_his_organization? %>
+  <%= link_to(l(:button_delete),
+              {:controller => 'organizations', :action => 'destroy', :id => @organization},
+              :class => 'icon icon-del',
+              :data => { :confirm => l(:text_are_you_sure) },
+              :method => :delete) if User.current.admin? %>
 </div>
 
 <h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=link_to_organization @organization%></h2>
@@ -54,14 +56,14 @@
   <li class=selected-organization>
     <%= link_to_organization @organization, :link_ancestors => false %>
     <%= "(#{@users.count}) :" if @users.any? %>
-    <%= @users.map{|u| link_to_user(u)}.join(", ").html_safe %>
+    <%= @users.map{|u| link_to_user(u).html_safe }.join(", ").html_safe %>
   </li>
 <% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
   <% users = @subusers[suborganization] %>
   <li>
     <%= link_to_organization suborganization, :link_ancestors => false %>
     <%= "(#{users.count}) :" if users.any? %>
-    <%= users.map{|u| link_to_user(u)}.join(", ").html_safe %>
+    <%= users.map{|u| link_to_user(u) }.join(", ").html_safe %>
   </li>
 <% end %>
 </ul>

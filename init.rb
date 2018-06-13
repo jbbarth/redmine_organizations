@@ -37,6 +37,10 @@ Redmine::Plugin.register :redmine_organizations do
   settings :default => {
     'hide_groups_admin_menu' => "0",
   }, :partial => 'settings/organizations_settings'
+
+  project_module :organizations do
+    permission :manage_my_organization, { :organizations => [:edit, :update] }, :require => :loggedin
+  end
 end
 
 Redmine::MenuManager.map :admin_menu do |menu|

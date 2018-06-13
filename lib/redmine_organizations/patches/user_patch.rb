@@ -20,6 +20,14 @@ class User < Principal
       Member.where(attributes).first.try(:destroy)
     end
   end
+
+  def manage_his_organization?
+    organization.managers.include?(self)
+  end
+
+  def is_not_admin?
+    !admin?
+  end
 end
 
 # with organization exceptions TODO Test it

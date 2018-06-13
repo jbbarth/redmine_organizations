@@ -11,6 +11,8 @@ RedmineApp::Application.routes.draw do
     end
   end
   namespace :organizations do
+    resources :managers, only: [:update]
+    resources :notifications, only: [:update]
     resources :memberships, only: [:new, :edit, :update] do
       collection do
         post :create_non_members_roles

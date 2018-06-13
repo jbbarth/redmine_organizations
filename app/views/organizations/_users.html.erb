@@ -1,42 +1,57 @@
 <div class="splitcontentleft">
-<% if @organization.users.any? %>
-	<table class="list users">
-		<thead><tr>
-		  <th><%= l(:label_user) %></th>
-		  <th style="width:15%"></th>
-		</tr></thead>
-		<tbody>
-		<% @organization.users.sort.each do |user| %>
-			<tr id="user-<%= user.id %>" class="<%= cycle 'odd', 'even' %>">
-				<td class="user"><%= link_to_user user %></td>
-			  <td class="buttons">
-			    <%= link_to l(:button_delete), remove_user_organization_path(:id => @organization, :user_id => user), :method => :post, :remote => true, :class => 'icon icon-del' %>
-			  </td>
-			</tr>
-		<% end %>
-		</tbody>
-	</table>
-<% else %>
-	<p class="nodata"><%= l(:label_no_data) %></p>
-<% end %>
+  <% if @organization.users.any? %>
+    <%= form_for :managers, url: organizations_manager_path(@organization), :method => :patch do |f| %>
+      <table class="list users">
+        <thead>
+        <tr>
+          <th class="managers hidden"></th>
+          <th><%= l(:label_user) %></th>
+          <th style="width:15%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @organization.users.sort.each do |user| %>
+          <tr id="user-<%= user.id %>" class="<%= cycle 'odd', 'even' %>">
+            <td class="managers hidden">
+              <%= check_box_tag 'manager_ids[]', user.id.to_s, @organization.managers.include?(user), :id => nil %>
+            </td>
+            <td class="user">
+              <%= link_to_user user %>
+              <%= content_tag(:span, "Gestionnaire", :class => "badge manager-badge") if @organization.managers.include?(user) %>
+            </td>
+            <td class="buttons">
+              <%= link_to l(:button_delete), remove_user_organization_path(:id => @organization, :user_id => user), :method => :post, :remote => true, :class => 'icon icon-del' %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= f.submit "Modifier", class: "managers hidden" %>
+    <% end %>
+    <%= link_to_function "Modifier les gestionnaires", "toggle_organization_managers_form(true)", class: "managers_show" if User.current.admin? %>
+    <%= link_to_function "Annuler", "toggle_organization_managers_form(false)", class: "managers_hide", style: "display:none;" if User.current.admin? %>
+  <% else %>
+    <p class="nodata"><%= l(:label_no_data) %></p>
+  <% end %>
 </div>
 
 <div class="splitcontentright">
-<% users = User.active.limit(100).to_a - @organization.users %>
-<% if users.any? %>
-  <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
-    <fieldset><legend><%=l(:label_user_new)%></legend>
-    
-    <p><%= text_field_tag 'user_search', nil %></p>
-    <%= javascript_tag "observeSearchfield('user_search', 'users', '#{escape_javascript autocomplete_for_user_organization_path(:id => @organization)}')" %>
+  <% users = User.active.limit(100).to_a - @organization.users %>
+  <% if users.any? %>
+    <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
+      <fieldset>
+        <legend><%= l(:label_user_new) %></legend>
 
-		<div id="users">
-      <%= principals_check_box_tags 'user_ids[]', users %>
-		</div>
-   	
-    <p><%= submit_tag l(:button_add) %></p>
-		</fieldset>
+        <p><%= text_field_tag 'user_search', nil %></p>
+        <%= javascript_tag "observeSearchfield('user_search', 'users', '#{escape_javascript autocomplete_for_user_organization_path(:id => @organization)}')" %>
+
+        <div id="users">
+          <%= principals_check_box_tags 'user_ids[]', users %>
+        </div>
+
+        <p><%= submit_tag l(:button_add) %></p>
+      </fieldset>
+    <% end %>
   <% end %>
-<% end %>
 
 </div>

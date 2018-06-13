@@ -34,6 +34,9 @@ $(function () {
     initOrgasSelect2()
     //focus on search field on load
     $("#filter-by-org-name").focus()
+
+    toggle_organization_managers_form(false)
+
     //filter projects depending on input value
     $("body").on("keyup", "#filter-by-org-name", function () {
         var needle = $.trim($(this).val().toLowerCase())
@@ -91,6 +94,16 @@ $(function () {
     $("body").on("click", "#principals_for_new_member input:checkbox, .roles-selection input:checkbox", function (event) {
         toggle_submit_button()
     })
+
+    $("body").on("click", "#tab-content-memberships button#submit_notifications", function (event) {
+        event.preventDefault()
+        // $(".memberships form").submit();
+        $.ajax({
+            method: 'PATCH',
+            url: $(".list.memberships form").attr('action'),
+            data: $(".list.memberships input.notifications_projects").serialize()
+        })
+    })
 })
 
 function toggle_submit_button(){
@@ -105,3 +118,17 @@ function any_user_selected(){
 function any_role_selected(){
     return $(".roles-selection input:checkbox[name='membership[role_ids][]']:checked").length > 0
 }
+
+function toggle_organization_managers_form(state){
+    if(state){
+        $("form .managers").show()
+        $("a.managers_hide").show()
+        $("a.managers_show").hide()
+    }else{
+        $("form .managers").hide()
+        $("a.managers_hide").hide()
+        $("a.managers_show").show()
+    }
+}
+
+

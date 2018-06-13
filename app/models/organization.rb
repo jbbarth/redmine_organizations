@@ -10,6 +10,10 @@ class Organization < ActiveRecord::Base
 
   has_many :users
   has_many :organization_roles
+  has_many :organization_managers
+  has_many :managers, through: :organization_managers, :source => :user
+  has_many :organization_notifications
+  has_many :notified_projects, through: :organization_notifications, :source => :project
 
   safe_attributes :name, :parent_id, :description, :mail, :direction, :name_with_parents, :notified
 

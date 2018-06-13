@@ -1,9 +1,11 @@
 class OrganizationsController < ApplicationController
   unloadable
 
-  before_action :require_admin, :only => [:new, :edit, :create, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id ]
-  before_action :require_login, :only => [:index, :show, :autocomplete_users]
-  before_action :find_project_by_project_id, :only => [:autocomplete_users]
+  before_filter :require_admin, :only => [:new, :create, :destroy, :autocomplete_for_user, :autocomplete_user_from_id ]
+  before_filter :find_organization_by_id, only: [:show, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user]
+  before_filter :require_admin_or_manager, :only => [:edit, :update, :add_users, :remove_user ]
+  before_filter :require_login, :only => [:index, :show, :autocomplete_users]
+  before_filter :find_project_by_project_id, :only => [:autocomplete_users]
 
   layout 'admin'
   
@@ -13,8 +15,6 @@ class OrganizationsController < ApplicationController
   end
   
   def show
-    @organization = Organization.find(params[:id])
-
     @projects = @organization.projects.active
 
     @projects_not_active = @organization.projects.where(:status => [Project::STATUS_CLOSED, Project::STATUS_ARCHIVED])
@@ -56,9 +56,10 @@ class OrganizationsController < ApplicationController
   end
   
   def edit
-    @organization = Organization.find(params[:id])
     @roles = Role.find_all_givable
     @projects = Project.active.order('lft')
+
+    render :layout => (User.current.admin? ? 'admin' : 'base')
   end
   
   def create
@@ -73,9 +74,7 @@ class OrganizationsController < ApplicationController
   end
   
   def update
-    @organization = Organization.find(params[:id])
-    @organization.safe_attributes = params[:organization]
-    if @organization.save
+    if @organization.update_attributes(params[:organization])
       flash[:notice] = l(:notice_successful_update)
       redirect_to(@organization)
     else
@@ -84,14 +83,12 @@ class OrganizationsController < ApplicationController
   end
   
   def destroy
-    @organization = Organization.find(params[:id])
     @organization.destroy
     flash[:notice] = l(:notice_successful_delete)
     redirect_to(organizations_url)
   end
   
   def add_users
-    @organization = Organization.find(params[:id])
     @users = User.active.where(id: params[:user_ids])
     @organization.users << @users if request.post?
     respond_to do |format|
@@ -101,7 +98,6 @@ class OrganizationsController < ApplicationController
   end
   
   def remove_user
-    @organization = Organization.find(params[:id])
     @organization.users.delete(User.find(params[:user_id])) if request.post?
     respond_to do |format|
       format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'users' }
@@ -110,7 +106,6 @@ class OrganizationsController < ApplicationController
   end
   
   def autocomplete_for_user
-    @organization = Organization.find(params[:id])
     @users = User.active.like(params[:q]).limit(100).to_a - @organization.users
     render :layout => false
   end

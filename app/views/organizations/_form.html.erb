@@ -7,10 +7,6 @@
     <p>
       <%= f.text_field :mail, :size => 80 %>
     </p>
-    <p>
-      <%= f.check_box :notified %>
-      <em class="info"><%= l(:text_organization_mail_notice) %></em>
-    </p>
     <p><%= f.select "parent_id", nested_set_options(Organization, @organization) { |i| i.fullname },
                     { :include_blank => true, :label => :field_parent_organization },
                     { :class => "orga-select2" } %></p>
