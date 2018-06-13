@@ -37,7 +37,7 @@
 
 <div class="splitcontentright">
 
-  <% if Redmine::Plugin.installed?(:redmine_ldap_minequip)
+  <% if Redmine::Plugin.installed?(:redmine_ldap_minequip) && Rails.env.production?
     mails_from_ldap = MailsFromLdap.new(@organization.fullname).list_of_mails
     users = User.active.joins(:email_addresses).where('LOWER(address) IN (?)', mails_from_ldap) - @organization.users
   %>
@@ -48,7 +48,13 @@
           <legend><%= l(:label_user_new) %> (liste filtrée via le LDAP)</legend>
 
           <div id="users">
-            <%= principals_check_box_tags 'user_ids[]', users %>
+           <% users.each do |principal| %>
+            <label>
+              <%= check_box_tag 'user_ids[]', principal.id, false, :id => nil %>
+              <%= principal %>
+              <%= principal.organization ? "(#{principal.organization})" : "Sans organisation" %>
+            </label>
+           <% end %>
           </div>
 
           <p><%= submit_tag l(:button_add) %></p>
