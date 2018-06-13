@@ -50,7 +50,10 @@
           <div id="users_from_ldap">
             <% users.each do |principal| %>
               <% unless principal.organization %>
-                <%= principals_check_box_tags 'user_ids[]', users %>
+                <label>
+                  <%= check_box_tag 'user_ids[]', principal.id, false, :id => nil %>
+                  <%= principal %>
+                </label>
               <% end %>
             <% end %>
           </div>
