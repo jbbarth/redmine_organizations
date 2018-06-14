@@ -46,7 +46,7 @@
 </div>
 
 <div class="splitcontentright">
-  <% if all_projects.any? %>
+  <% if all_projects.any? && User.current.admin? %>
     <fieldset>
       <legend><%= l(:label_project_new) %></legend>
       <%= form_for(:membership, :remote => true) do %>
