@@ -67,28 +67,28 @@ $(function () {
             data: {organization_ids: organization_ids, project_id: project_id},
             // success: function(data){ if(targetId) $('#'+targetId).html(data); },
             beforeSend: function () {
-                $("#users_for_new_member").addClass('ajax-loading')
+                $("#principals_for_new_member").addClass('ajax-loading')
             },
             complete: function () {
-                $("#users_for_new_member").removeClass('ajax-loading')
+                $("#principals_for_new_member").removeClass('ajax-loading')
             }
         });
     })
 
     $("body").on("click", "form#new_membership #link_select_all", function (event) {
         event.preventDefault();
-        $("#users_for_new_member input:checkbox[name='membership[user_ids][]']").each(function () {
+        $("#principals_for_new_member input:checkbox[name='membership[user_ids][]']").each(function () {
             $(this).prop("checked", "checked");
         });
     })
     $("body").on("click", "form#new_membership #link_select_none", function (event) {
         event.preventDefault();
-        $("#users_for_new_member input:checkbox[name='membership[user_ids][]']").each(function () {
+        $("#principals_for_new_member input:checkbox[name='membership[user_ids][]']").each(function () {
             $(this).prop("checked", false);
         });
     })
 
-    $("body").on("click", "#users_for_new_member input:checkbox, .roles-selection input:checkbox", function (event) {
+    $("body").on("click", "#principals_for_new_member input:checkbox, .roles-selection input:checkbox", function (event) {
         toggle_submit_button()
     })
 })
@@ -99,7 +99,7 @@ function toggle_submit_button(){
 }
 
 function any_user_selected(){
-    return $("#users_for_new_member input:checkbox[name='membership[user_ids][]']:checked").length > 0
+    return $("#principals_for_new_member input:checkbox[name='membership[user_ids][]']:checked").length > 0
 }
 
 function any_role_selected(){

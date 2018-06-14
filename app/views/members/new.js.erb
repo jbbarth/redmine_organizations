@@ -1,0 +1,5 @@
+$('#ajax-modal').html('<%= escape_javascript(render :partial => 'members/new_modal') %>');
+showModal('ajax-modal', '90%');
+$(function () {
+    $('input#member-add-submit').prop('disabled', true)
+});

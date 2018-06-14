@@ -1,12 +1,12 @@
-var selected_boxes = $("#users_for_new_member input:checkbox[name='membership[user_ids][]']:checked").map(
+var selected_boxes = $("#principals_for_new_member input:checkbox[name='membership[user_ids][]']:checked").map(
     function () {
         return this.value;
     }).get()
 
-$('#users_for_new_member').html('<%= escape_javascript(render_users_for_new_members(@project, @users)) %>');
+$('#principals_for_new_member').html('<%= escape_javascript(render_users_for_new_members(@project, @users)) %>');
 
 // Reselect checked boxes
-$("#users_for_new_member input:checkbox[name='membership[user_ids][]']").each(
+$("#principals_for_new_member input:checkbox[name='membership[user_ids][]']").each(
     function (index, element) {
         if (selected_boxes.indexOf(element.value) >= 0) {
             $(this).prop("checked", "checked");
