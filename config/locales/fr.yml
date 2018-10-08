@@ -23,3 +23,4 @@ fr:
   label_organization_search: "Rechercher une organisation"
   label_users_selection: "Sélectionner des utilisateurs"
   selected_organizations: "Organisations sélectionnées"
+  field_author_organization: "Organisation de l'auteur"

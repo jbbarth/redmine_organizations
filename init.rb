@@ -6,6 +6,8 @@ ActionDispatch::Callbacks.to_prepare do
   require_dependency 'redmine_organizations/patches/user_patch'
   require_dependency 'redmine_organizations/patches/group_patch'
   require_dependency 'redmine_organizations/patches/issue_patch'
+  require_dependency 'redmine_organizations/patches/issue_query_patch'
+  require_dependency 'redmine_organizations/patches/queries_helper_patch'
   require_dependency 'redmine_organizations/patches/mailer_patch'
   require_dependency 'redmine_organizations/patches/project_patch'
   require_dependency 'redmine_organizations/patches/users_helper_patch'
