@@ -13,7 +13,12 @@ module PluginOrganizations
 
     def column_content(column, issue)
       if column.name == :author_organization
-        link_to_organization issue.author.organization
+        organization = issue.author.organization
+        if organization
+          link_to_organization organization
+        else
+          ""
+        end
       else
         super
       end
