@@ -2,7 +2,7 @@ require_dependency 'queries_helper'
 
 module PluginOrganizations
   module QueriesHelperPatch
-    
+
   end
 end
 

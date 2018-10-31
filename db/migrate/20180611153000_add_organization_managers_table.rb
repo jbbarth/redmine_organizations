@@ -3,7 +3,7 @@ class AddOrganizationManagersTable < ActiveRecord::Migration
     create_table :organization_managers do |t|
       t.column :organization_id, :integer, :null => false
       t.column :user_id, :integer, :null => false
-    end
+    end unless ActiveRecord::Base.connection.table_exists? 'organization_managers'
     add_index :organization_managers, [:organization_id]
     add_index :organization_managers, [:user_id]
   end
