@@ -11,7 +11,8 @@
     <% @roles.each do |role| %>
       <label>
         <%= check_box_tag('membership[role_ids][]',
-                          role.id, @member.roles.to_a.include?(role),
+                          role.id,
+                          @member.roles.to_a.include?(role),
                           :id => nil,
                           :disabled => !@member.role_editable?(role) || organization_roles.detect {|r| r.id == role.id}) %> <%= role %>
       </label><br/>
@@ -24,7 +25,7 @@
           <%= check_box_tag('membership[function_ids][]',
                             function.id, @member.functions.to_a.include?(function),
                             :id => nil,
-                            :disabled => organization_functions.detect {|f| f.id == function.id}) %> <%= function %>
+                            :disabled => !@member.function_editable?(function) || organization_functions.detect {|f| f.id == function.id}) %> <%= function %>
         </label><br/>
       <% end %>
     </p>

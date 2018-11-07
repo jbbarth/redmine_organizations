@@ -10,7 +10,8 @@
     <label>
       <%= check_box_tag('membership[role_ids][]',
                         role.id, @organization_roles.include?(role),
-                        :id => nil) %> <%= role %>
+                        :id => nil,
+                        :disabled => !User.current.managed_roles(@project).include?(role)) %> <%= role %>
     </label><br />
     <% end %>
   </p>
@@ -20,7 +21,8 @@
         <label>
           <%= check_box_tag('membership[function_ids][]',
                             function.id, @organization_functions.include?(function),
-                            :id => nil) %> <%= function %>
+                            :id => nil,
+                            :disabled => !User.current.managed_functions(@project).include?(function)) %> <%= function %>
         </label><br />
       <% end %>
     </p>
