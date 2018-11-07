@@ -32,10 +32,11 @@ class Organizations::MembershipsController < ApplicationController
     end
     previous_organization_roles = @organization.default_roles_by_project(@project)
 
-    update_members(@organization, users, @project, roles)
+    update_members(@organization, users, @project, roles, User.current)
 
     ActiveRecord::Base.transaction do
-      @organization.delete_all_organization_roles(@project)
+      not_manageable_roles = Role.givable.to_a - User.current.managed_roles(@project)
+      @organization.delete_all_organization_roles(@project, not_manageable_roles)
       organization_roles = roles.map{ |role| OrganizationRole.new(role_id: role.id, project_id: @project.id) }
       organization_roles.each do |r|
         @organization.organization_roles << r
@@ -43,11 +44,12 @@ class Organizations::MembershipsController < ApplicationController
 
       give_new_organization_roles_to_all_members(project: @project,
                                                  organization: @organization,
-                                                 organization_roles: organization_roles.map(&:role),
+                                                 organization_roles: @organization.organization_roles.map(&:role).reject(&:blank?),
                                                  previous_organization_roles: previous_organization_roles)
 
       if Redmine::Plugin.installed?(:redmine_limited_visibility)
-        @organization.delete_all_organization_functions(@project)
+        not_manageable_functions = Function.all.to_a - User.current.managed_functions(@project)
+        @organization.delete_all_organization_functions(@project, not_manageable_functions)
         organization_functions = functions.map{ |function| OrganizationFunction.new(function_id: function.id, project_id: @project.id) }
         organization_functions.each do |of|
           @organization.organization_functions << of
@@ -55,7 +57,7 @@ class Organizations::MembershipsController < ApplicationController
 
         give_new_organization_functions_to_all_members(project: @project,
                                                        organization: @organization,
-                                                       organization_functions: organization_functions.map(&:function),
+                                                       organization_functions: @organization.organization_functions.map(&:function).reject(&:blank?),
                                                        previous_organization_functions: previous_organization_functions)
       end
 
@@ -75,17 +77,20 @@ class Organizations::MembershipsController < ApplicationController
     end
   end
 
-  def update_members(organization, users, project, roles)
+  def update_members(organization, users, project, roles, current_user)
     current_users = organization.users_by_project(project)
     new_users = users - current_users
-    deleted_users = current_users - users
     new_users.each do |user|
       member = Member.where(user: user, project: project).first_or_initialize
       member.roles = roles
       member.save!
     end
-    deleted_users.each do |user|
-      Member.where(:user => user, :project => project).first.try(:destroy)
+    # Remove unchecked users (only if deletable)
+    to_be_deleted_users = current_users - users
+    to_be_deleted_members = Member.where(user: to_be_deleted_users, project: project)
+    deletable_members = to_be_deleted_members.select{|m| (m.roles & current_user.managed_roles(project)) == m.roles}
+    deletable_members.each do |member|
+      member.try(:destroy)
     end
   end
 

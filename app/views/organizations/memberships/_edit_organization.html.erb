@@ -29,10 +29,13 @@
   <% end %>
   <p style="width: <%= column_width %>%;float: left;">
     <% @organization.users.active.each do |user| %>
+      <% member = @project.members.where(principal: user).first %>
       <label>
         <%= check_box_tag('membership[user_ids][]',
-                          user.id, current_members.include?(user),
-                          :id => nil) %> <%= user %>
+                          user.id,
+                          current_members.include?(user),
+                          :id => nil,
+                          :disabled => (member && !member.deletable?)) %> <%= user %>
       </label><br />
     <% end %>
   </p>

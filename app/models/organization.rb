@@ -99,10 +99,9 @@ class Organization < ActiveRecord::Base
     end
   end
 
-  def delete_all_organization_roles(project_id, excluded = [])
-    organization_roles.where(project_id: project_id).each do |r|
-      next if excluded.include?(r)
-      r.try(:destroy) if r.id
+  def delete_all_organization_roles(project_id, excluded_roles = [])
+    organization_roles.where(project_id: project_id).where.not(role_id: excluded_roles.map(&:id)).each do |organization_role|
+      organization_role.try(:destroy) if organization_role.id
     end
   end
 
