@@ -1,6 +1,6 @@
 class Organizations::ManagersController < ApplicationController
 
-  before_filter :require_admin
+  before_action :require_admin
 
   def update
     @organization = Organization.find(params[:id])

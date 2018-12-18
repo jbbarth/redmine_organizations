@@ -1,4 +1,4 @@
-class RemoveNotifiedFields < ActiveRecord::Migration
+class RemoveNotifiedFields < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :organizations, :notified
     remove_column :projects, :notify_organizations

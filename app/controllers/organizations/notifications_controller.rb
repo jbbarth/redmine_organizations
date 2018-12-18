@@ -1,7 +1,7 @@
 class Organizations::NotificationsController < ApplicationController
 
-  before_filter :find_organization_by_id
-  before_filter :require_admin_or_manager
+  before_action :find_organization_by_id
+  before_action :require_admin_or_manager
 
   def update
     @projects = Project.active.where(id: params[:projects])
