@@ -4,8 +4,8 @@ class AddOrganizationManagersTable < ActiveRecord::Migration[4.2]
       t.column :organization_id, :integer, :null => false
       t.column :user_id, :integer, :null => false
     end unless ActiveRecord::Base.connection.table_exists? 'organization_managers'
-    add_index :organization_managers, [:organization_id]
-    add_index :organization_managers, [:user_id]
+    add_index :organization_managers, [:organization_id] unless ActiveRecord::Base.connection.index_exists?(:organization_managers, [:organization_id])
+    add_index :organization_managers, [:user_id] unless ActiveRecord::Base.connection.index_exists?(:organization_managers, [:user_id])
   end
 
   def self.down
