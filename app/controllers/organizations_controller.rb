@@ -62,7 +62,8 @@ class OrganizationsController < ApplicationController
   end
   
   def create
-    @organization = Organization.new(params[:organization])
+    @organization = Organization.new
+    @organization.safe_attributes = params[:organization]
     if @organization.save
       flash[:notice] = l(:notice_successful_create)
       redirect_to(@organization)
@@ -73,7 +74,8 @@ class OrganizationsController < ApplicationController
   
   def update
     @organization = Organization.find(params[:id])
-    if @organization.update_attributes(params[:organization])
+    @organization.safe_attributes = params[:organization]
+    if @organization.save
       flash[:notice] = l(:notice_successful_update)
       redirect_to(@organization)
     else

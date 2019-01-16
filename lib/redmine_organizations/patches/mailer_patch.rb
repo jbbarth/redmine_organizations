@@ -5,7 +5,8 @@ module MailerPatchWithOrganizations
   # Monkey-patch recipients to add organization's addresses
   def mail(headers={}, &block)
     if @issue
-      headers = add_organizations_mails(headers, @issue)
+      # TODO Modify this function to send a DIFFERENT mail to the organization (since Redmine 4: only one recipient per mail sent)
+      # headers = add_organizations_mails(headers, @issue)
     end
     super if defined?(super)
   end
