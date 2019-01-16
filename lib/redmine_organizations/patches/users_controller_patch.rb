@@ -2,7 +2,7 @@ require_dependency 'users_controller'
 
 class UsersController < ApplicationController
 
-  after_filter :update_memberships_according_to_new_orga, only: [:update]
+  after_action :update_memberships_according_to_new_orga, only: [:update]
 
   private
 
@@ -15,10 +15,10 @@ class UsersController < ApplicationController
 
         case params[:user][:orga_update_method]
           when "remove" # Remove all memberships for this user
-            Member.destroy_all(user_id: @user.id)
+            Member.where(user_id: @user.id).destroy_all
           when "replace"
             other_memberships = User.find(params[:copy_user]).memberships
-            Member.destroy_all(user_id: @user.id)
+            Member.where(user_id: @user.id).destroy_all
             other_memberships.each do |membership|
               new_membership = Member.new(project_id: membership.project_id)
               membership.roles.each do |role|

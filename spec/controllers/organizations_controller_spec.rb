@@ -15,74 +15,74 @@ describe OrganizationsController, :type => :controller do
 
   it "should get index" do
     get :index
-    expect(response).to be_success
+    expect(response).to be_successful
     refute_nil assigns(:organizations)
   end
 
   it "should get new" do
     get :new
-    expect(response).to be_success
+    expect(response).to be_successful
   end
 
   it "should create organization" do
     assert_difference('Organization.count') do
-      post :create, organization: { name: "orga-A" }
+      post :create, params: {organization: {name: "orga-A"}}
     end
 
     expect(response).to redirect_to(organization_path(assigns(:organization)))
   end
 
   it "should show organization" do
-    get :show, :id => Organization.find(1).to_param
-    expect(response).to be_success
+    get :show, params: {:id => Organization.find(1).to_param}
+    expect(response).to be_successful
   end
 
   it "should get edit" do
-    get :edit, :id => Organization.find(1).to_param
-    expect(response).to be_success
+    get :edit, params: {:id => Organization.find(1).to_param}
+    expect(response).to be_successful
   end
 
   it "should update organization" do
-    put :update, :id => Organization.find(1).to_param, :organization => { }
+    put :update, params: {:id => Organization.find(1).to_param, :organization => {}}
     expect(response).to redirect_to(organization_path(assigns(:organization)))
   end
 
   it "should destroy organization" do
     assert_difference('Organization.count', -1) do
-      delete :destroy, :id => Organization.find(3).to_param
+      delete :destroy, params: {:id => Organization.find(3).to_param}
     end
 
     expect(response).to redirect_to(organizations_path)
   end
 
   it "should autocomplete for users" do
-    get :autocomplete_for_user, :id => 1, :q => "adm"
-    expect(response).to be_success
+    get :autocomplete_for_user, params: {:id => 1, :q => "adm"}
+    expect(response).to be_successful
     assert response.body.include?("Admin")
     assert !response.body.include?("John")
   end
 
   it "should NOT create organizations with same names and parents" do
     assert_no_difference('Organization.count') do
-      post :create, organization: {name: "Team A", parent_id: 1}
+      post :create, params: {organization: {name: "Team A", parent_id: 1}}
     end
   end
 
   it "should create organizations with same names but different parents" do
     assert_difference('Organization.count') do
-      post :create, organization: {name: "Team A", parent_id: 3}
+      post :create, params: {organization: {name: "Team A", parent_id: 3}}
     end
   end
 
   describe "add_users method" do
     it "should add a user to the organization" do
       assert_difference 'Organization.find(1).users.count', 1 do
-        post :add_users, id: 1, user_ids: ["8"]
+        post :add_users, params: {id: 1, user_ids: ["8"]}
       end
     end
     it "should add several users at a time to the organization" do
       assert_difference 'Organization.find(1).users.count', 2 do
-        post :add_users, id: 1, user_ids: ["7","8"]
+        post :add_users, params: {id: 1, user_ids: ["7", "8"]}
       end
     end
   end

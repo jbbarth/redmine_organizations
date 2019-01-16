@@ -1,4 +1,4 @@
-class CreateNewOrganizationRoles < ActiveRecord::Migration
+class CreateNewOrganizationRoles < ActiveRecord::Migration[4.2]
   def self.up
     create_table :organization_roles do |t|
       t.column :organization_id, :integer, :null => false

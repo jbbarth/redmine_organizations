@@ -22,7 +22,7 @@
       </thead>
       <tbody>
       <% @organizations.each do |organization| %>
-        <tr class="organization <%= cycle("odd", "even") %> <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
+        <tr class="organization <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
           <td class="name" data-filter-value="<%= organization.fullname %>">
             <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
           </td>

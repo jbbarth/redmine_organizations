@@ -4,8 +4,8 @@ class Organizations::MembershipsController < ApplicationController
 
   DEFAULT_ROLE_ID = 4 # role_id = 4 => project_member in our case #TODO Make it customizable in settings
 
-  before_filter :find_project_by_project_id, :is_allowed_to_manage_members?
-  before_filter :find_organization, except: [:new, :create_non_members_roles, :update_group_non_member_roles]
+  before_action :find_project_by_project_id, :is_allowed_to_manage_members?
+  before_action :find_organization, except: [:new, :create_non_members_roles, :update_group_non_member_roles]
 
   def new
     @member = Member.new

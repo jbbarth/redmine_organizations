@@ -1,4 +1,4 @@
-class AddDirectionToOrganization < ActiveRecord::Migration
+class AddDirectionToOrganization < ActiveRecord::Migration[4.2]
   def self.up
     add_column :organizations, :direction, :boolean
   end

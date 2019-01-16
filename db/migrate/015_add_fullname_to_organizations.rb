@@ -1,4 +1,4 @@
-class AddFullnameToOrganizations < ActiveRecord::Migration
+class AddFullnameToOrganizations < ActiveRecord::Migration[4.2]
   def self.up
     add_column :organizations, :fullname, :string
   end

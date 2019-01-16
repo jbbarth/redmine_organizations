@@ -14,8 +14,8 @@ describe UsersController, type: :controller do
       user = User.find(2)
       previous_memberships = user.memberships
       previous_organization = user.organization
-      put :update, :id => 2,
-          :user => {:organization_id => '2', :orga_update_method => 'keep'}
+      put :update, params: {:id => 2,
+                            :user => {:organization_id => '2', :orga_update_method => 'keep'}}
       user = user.reload
       assert_equal 2, user.organization_id
       assert_equal previous_memberships, user.memberships
@@ -29,8 +29,8 @@ describe UsersController, type: :controller do
       user.memberships << membership
       previous_memberships = user.memberships
       previous_organization = user.organization
-      put :update, :id => 2,
-          :user => {:organization_id => '2', :orga_update_method => 'remove'}
+      put :update, params: {:id => 2,
+                            :user => {:organization_id => '2', :orga_update_method => 'remove'}}
       user = user.reload
       expect(user.memberships).to_not eq previous_memberships
       expect(user.organization).to_not eq previous_organization
@@ -45,9 +45,9 @@ describe UsersController, type: :controller do
       user.memberships << membership
       previous_memberships = user.memberships
       previous_organization = user.organization
-      put :update, :id => 2,
-          :user => {:organization_id => '2', :orga_update_method => 'replace'},
-          :copy_user => '3'
+      put :update, params: {:id => 2,
+                            :user => {:organization_id => '2', :orga_update_method => 'replace'},
+                            :copy_user => '3'}
       user = user.reload
       expect(user.memberships).to_not eq previous_memberships
       expect(user.organization).to_not eq previous_organization

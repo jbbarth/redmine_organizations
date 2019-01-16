@@ -1,9 +1,9 @@
 class OrganizationsController < ApplicationController
   unloadable
 
-  before_filter :require_admin, :only => [:new, :edit, :create, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id ]
-  before_filter :require_login, :only => [:index, :show, :autocomplete_users]
-  before_filter :find_project_by_project_id, :only => [:autocomplete_users]
+  before_action :require_admin, :only => [:new, :edit, :create, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id ]
+  before_action :require_login, :only => [:index, :show, :autocomplete_users]
+  before_action :find_project_by_project_id, :only => [:autocomplete_users]
 
   layout 'admin'
   

@@ -1,4 +1,4 @@
-class RemoveOrganizationRoles < ActiveRecord::Migration
+class RemoveOrganizationRoles < ActiveRecord::Migration[4.2]
   def self.up
     drop_table :organization_roles
   end

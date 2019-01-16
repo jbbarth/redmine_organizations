@@ -4,8 +4,8 @@ describe "AdminMenuPatch", :type => :controller do
   render_views
   before do
     @controller = AdminController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
+    @request    = ActionDispatch::TestRequest.create
+    @response   = ActionDispatch::TestResponse.new
     User.current = nil
     @request.session[:user_id] = 1 # admin
   end

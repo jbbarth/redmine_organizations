@@ -1,4 +1,4 @@
-class RemoveOrganizationInvolvements < ActiveRecord::Migration
+class RemoveOrganizationInvolvements < ActiveRecord::Migration[4.2]
   def self.up
     # Migrating members and member's roles to standard tables, we don't want to lost members
     ActiveRecord::Base.connection.execute("select user_id, project_id, role_id FROM organization_involvements INNER JOIN organization_memberships ON organization_memberships.id = organization_involvements.organization_membership_id INNER JOIN organization_roles ON organization_memberships.id = organization_roles.organization_membership_id").each do |result|

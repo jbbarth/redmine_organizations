@@ -1,4 +1,3 @@
-require_dependency 'project' #see: http://www.redmine.org/issues/11035
 require_dependency 'principal'
 
 # This ugly patch is only useful in db:migrate/redmine:plugin:migrate
@@ -12,7 +11,7 @@ require_dependency 'principal'
 # don't need "order" in migrations...).
 #
 # This is *not* fun. Will try to propose a patch..
-if File.basename($0) == "rake" && ARGV.first.match(/^db:|^redmine:/)
+if File.basename($0) == "rake" && ARGV.any? && ARGV.first.match(/^db:|^redmine:/)
   class Group < Principal
     def self.order(*args)
       if table_exists?

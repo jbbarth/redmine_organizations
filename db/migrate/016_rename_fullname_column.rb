@@ -1,4 +1,4 @@
-class RenameFullnameColumn < ActiveRecord::Migration
+class RenameFullnameColumn < ActiveRecord::Migration[4.2]
   def self.up
     rename_column :organizations, :fullname, :name_with_parents
   end

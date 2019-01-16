@@ -1,7 +1,7 @@
 require 'redmine'
 
 # Patches to existing classes/modules
-ActionDispatch::Callbacks.to_prepare do
+ActiveSupport::Reloader.to_prepare do
   #patches
   require_dependency 'redmine_organizations/patches/user_patch'
   require_dependency 'redmine_organizations/patches/group_patch'

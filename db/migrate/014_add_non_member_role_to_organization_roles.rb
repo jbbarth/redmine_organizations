@@ -1,4 +1,4 @@
-class AddNonMemberRoleToOrganizationRoles < ActiveRecord::Migration
+class AddNonMemberRoleToOrganizationRoles < ActiveRecord::Migration[4.2]
   def self.up
     add_column :organization_roles, :non_member_role, :boolean, :default => false
   end

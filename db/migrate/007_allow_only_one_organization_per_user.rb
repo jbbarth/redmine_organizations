@@ -1,4 +1,4 @@
-class AllowOnlyOneOrganizationPerUser < ActiveRecord::Migration
+class AllowOnlyOneOrganizationPerUser < ActiveRecord::Migration[4.2]
   def self.up
     add_column :users, :organization_id, :integer
     User.connection.execute("SELECT * FROM organization_users").each do |result|

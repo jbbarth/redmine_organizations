@@ -37,9 +37,9 @@ describe IssuesController, :type => :controller do
     expect User.find(2).member_of?(Project.find(4))
 
     expect {
-      post :create, :project_id => 1, :copy_from => 1,
-           :issue => {:project_id => '4', :tracker_id => '3', :status_id => '1', :subject => 'Copy'}
-    }.to change {Issue.count}
+      post :create, params: {:project_id => 1, :copy_from => 1,
+                             :issue => {:project_id => '4', :tracker_id => '3', :status_id => '1', :subject => 'Copy'}
+      }}.to change {Issue.count}
 
     issue = Issue.order('id DESC').first
     expect(issue.project_id).to eq(1)
@@ -61,13 +61,13 @@ describe IssuesController, :type => :controller do
 
     user.update_attribute('organization_id', orga.id)
     project.update_attribute('notify_organizations', true)
-    
+
     expect(orga.mail).to_not be_nil
 
     expect {
-      post :create, :project_id => 1,
-           :issue => {:tracker_id => '3', :status_id => '1', :subject => 'Subject for test'}
-    }.to change {Issue.count}
+      post :create, params: {:project_id => 1,
+                             :issue => {:tracker_id => '3', :status_id => '1', :subject => 'Subject for test'}
+      }}.to change {Issue.count}
     issue = Issue.last
     expect(issue.organization_emails).to_not be_empty
     expect(ActionMailer::Base.deliveries.size).to eq 1
