@@ -49,7 +49,7 @@ module PluginOrganizations
         return true if admin?
 
         # authorize if user has at least one role that has this permission
-        roles = memberships.collect {|m| m.roles}.flatten.uniq
+        roles = memberships.includes(:roles).collect {|m| m.roles}.flatten.uniq
         roles << (self.logged? ? Role.non_member : Role.anonymous)
 
         user_organization = User.current.try(:organization)
