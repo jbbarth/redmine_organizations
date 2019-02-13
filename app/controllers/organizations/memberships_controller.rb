@@ -25,12 +25,7 @@ class Organizations::MembershipsController < ApplicationController
     if params[:membership]
       roles = Role.where(id: params[:membership][:role_ids].reject(&:empty?))
       users = User.where(id: params[:membership][:user_ids].reject(&:empty?))
-      if Redmine::Plugin.installed?(:redmine_limited_visibility)
-        functions = params[:membership][:function_ids] ? Function.where(id: params[:membership][:function_ids].reject(&:empty?)) : []
-        previous_organization_functions = @organization.default_functions_by_project(@project)
-      end
     end
-    previous_organization_roles = @organization.default_roles_by_project(@project)
 
     update_members(@organization, users, @project, roles, User.current)
 
@@ -41,24 +36,17 @@ class Organizations::MembershipsController < ApplicationController
       organization_roles.each do |r|
         @organization.organization_roles << r
       end
-
-      give_new_organization_roles_to_all_members(project: @project,
-                                                 organization: @organization,
-                                                 organization_roles: @organization.organization_roles.map(&:role).reject(&:blank?),
-                                                 previous_organization_roles: previous_organization_roles)
+      give_new_organization_roles_to_all_members(project: @project, organization: @organization)
 
       if Redmine::Plugin.installed?(:redmine_limited_visibility)
+        functions = params[:membership][:function_ids] ? Function.where(id: params[:membership][:function_ids].reject(&:empty?)) : []
         not_manageable_functions = Function.all.to_a - User.current.managed_functions(@project)
         @organization.delete_all_organization_functions(@project, not_manageable_functions)
         organization_functions = functions.map{ |function| OrganizationFunction.new(function_id: function.id, project_id: @project.id) }
         organization_functions.each do |of|
           @organization.organization_functions << of
         end
-
-        give_new_organization_functions_to_all_members(project: @project,
-                                                       organization: @organization,
-                                                       organization_functions: @organization.organization_functions.map(&:function).reject(&:blank?),
-                                                       previous_organization_functions: previous_organization_functions)
+        give_new_organization_functions_to_all_members(project: @project, organization: @organization)
       end
 
       saved = @organization.save
@@ -176,7 +164,9 @@ class Organizations::MembershipsController < ApplicationController
     @organization = Organization.find(params[:id])
   end
 
-  def give_new_organization_roles_to_all_members(project:, organization:, organization_roles:, previous_organization_roles:)
+  def give_new_organization_roles_to_all_members(project:, organization:)
+    organization_roles = @organization.organization_roles.where(project_id: @project.id).map(&:role).reject(&:blank?)
+    previous_organization_roles = @organization.default_roles_by_project(@project)
     members = Member.joins(:user).where("project_id = ? AND users.organization_id = ?", project.id, organization.id)
     members.each do |member|
       personal_roles = member.roles - previous_organization_roles
