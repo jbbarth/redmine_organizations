@@ -17,6 +17,8 @@ class Organization < ActiveRecord::Base
 
   SEPARATOR = '/'
 
+  scope :sorted, -> {order('lft')}
+
   # Reorder tree after save on the fly
   # Less beautiful than Redmine method to keep tree sorted,
   # But also far less complicated
