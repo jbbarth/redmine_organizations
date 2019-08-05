@@ -25,6 +25,10 @@ class User < Principal
     organization.managers.include?(self)
   end
 
+  def is_a_manager?(organization)
+    OrganizationManager.where(organization: organization.self_and_ancestors).pluck(:user_id).include?(self.id)
+  end
+
   def is_not_admin?
     !admin?
   end

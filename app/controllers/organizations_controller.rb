@@ -1,9 +1,9 @@
 class OrganizationsController < ApplicationController
   unloadable
 
-  before_action :require_admin, :only => [:new, :create, :destroy, :autocomplete_for_user, :autocomplete_user_from_id]
+  before_action :require_admin, :only => [:new, :create, :destroy]
   before_action :find_organization_by_id, only: [:show, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user]
-  before_action :require_admin_or_manager, :only => [:edit, :update, :add_users, :remove_user]
+  before_action :require_admin_or_manager, :only => [:edit, :update, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id]
   before_action :require_login, :only => [:index, :show, :autocomplete_users]
   before_action :find_project_by_project_id, :only => [:autocomplete_users]
 
@@ -11,6 +11,8 @@ class OrganizationsController < ApplicationController
 
   def index
     @organizations = Organization.order('lft')
+    @managed_organizations = Organization.joins(:organization_managers).where("organization_managers.user_id = ?", User.current.id).order('lft')
+    @managed_organizations = @managed_organizations.map(&:self_and_descendants).flatten.uniq
     render :layout => (User.current.admin? ? 'admin' : 'base')
   end
 
@@ -107,12 +109,12 @@ class OrganizationsController < ApplicationController
   end
 
   def autocomplete_for_user
-    @users = User.active.like(params[:q]).limit(100).to_a - @organization.users
+    @users = User.active.sorted.like(params[:q]).limit(100).to_a - @organization.users
     render :layout => false
   end
 
   def autocomplete_user_from_id
-    @user = User.active.find_by_id(params[:q])
+    @user = User.active.sorted.find_by_id(params[:q])
     render :layout => false
   end
 

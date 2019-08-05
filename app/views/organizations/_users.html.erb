@@ -37,54 +37,21 @@
 
 <div class="splitcontentright">
 
-  <% if Redmine::Plugin.installed?(:redmine_ldap_minequip) && Rails.env.production?
-       mails_from_ldap = MailsFromLdap.new(@organization.fullname).list_of_mails
-       users = User.active.joins(:email_addresses).where('LOWER(address) IN (?)', mails_from_ldap) - @organization.users
-  %>
-    <% if users.any? %>
-      <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
-        <fieldset>
-          <legend><%= l(:label_user_new) %> (liste filtrée via le LDAP)</legend>
-
-          <div id="users_from_ldap">
-            <% users.each do |principal| %>
-              <% unless principal.organization %>
-                <label>
-                  <%= check_box_tag 'user_ids[]', principal.id, false, :id => nil %>
-                  <%= principal %>
-                </label>
-              <% end %>
-            <% end %>
-          </div>
-
-          <p><%= submit_tag l(:button_add) %></p>
-        </fieldset>
-      <% end %>
-    <% else %>
+  <% users = User.active.where("organization_id IS NULL").sorted.limit(100).to_a %>
+  <% if users.any? %>
+    <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
       <fieldset>
-        <legend><%= l(:label_user_new) %> (liste filtrée via le LDAP)</legend>
-        <p><%= "Aucun utilisateur non-membre retrouvé via le LDAP pour l'organisation #{@organization.fullname}" %></p>
+        <legend><%= l(:label_user_new) %> parmi tous les inscrits sur le Portail</legend>
+
+        <p><%= text_field_tag 'user_search', nil %></p>
+        <%= javascript_tag "observeSearchfield('user_search', 'users', '#{escape_javascript autocomplete_for_user_organization_path(:id => @organization)}')" %>
+
+        <div id="users">
+          <%= principals_check_box_tags 'user_ids[]', users %>
+        </div>
+
+        <p><%= submit_tag l(:button_add) %></p>
       </fieldset>
-    <% end %>
-  <% end %>
-
-  <% if User.current.admin? %>
-    <% users = User.active.limit(100).to_a - @organization.users %>
-    <% if users.any? %>
-      <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
-        <fieldset>
-          <legend><%= l(:label_user_new) %> parmi tous les inscrits sur le Portail</legend>
-
-          <p><%= text_field_tag 'user_search', nil %></p>
-          <%= javascript_tag "observeSearchfield('user_search', 'users', '#{escape_javascript autocomplete_for_user_organization_path(:id => @organization)}')" %>
-
-          <div id="users">
-            <%= principals_check_box_tags 'user_ids[]', users %>
-          </div>
-
-          <p><%= submit_tag l(:button_add) %></p>
-        </fieldset>
-      <% end %>
     <% end %>
   <% end %>
 

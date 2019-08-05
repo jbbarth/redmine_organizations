@@ -1,29 +1,63 @@
 <div class="contextual">
   <% if User.current.admin? %>
-  <%= link_to l(:label_organization_new), {:controller=>'organizations',:action=>'new'},
-      :class => 'icon icon-add' %>
+    <%= link_to l(:label_organization_new), {:controller => 'organizations', :action => 'new'},
+                :class => 'icon icon-add' %>
   <% end %>
   <% if false # if User.current.has_permission?(:manager_my_organization) %>
     <%= link_to l(:label_organization_edit), {:controller => 'organizations', :action => 'edit', :id => User.current.organization_id},
-              :class => 'icon icon-edit' %>
+                :class => 'icon icon-edit' %>
   <% end %>
 </div>
 
-<h2><%=l(:label_organization_plural)%></h2>
+<% if @managed_organizations.any? %>
+  <h2><%= l(:label_managed_organizations) %></h2>
+  <table class="list attributes">
+    <thead>
+    <tr>
+      <th class=left style="width:270px"><%= l(:field_name) %></th>
+      <th><%= l(:field_description) %></th>
+      <th><%= l(:field_managers) %></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @managed_organizations.each do |organization| %>
+      <tr class="organization <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
+        <td class="name" data-filter-value="<%= organization.fullname %>">
+          <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
+        </td>
+        <td class="description"><%= h organization.description %></td>
+        <td class="managers"><%= h organization.managers.map(&:to_s).join(', ') %></td>
+        <td class="buttons">
+          <% if User.current.admin? %>
+            <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
+                        :class => 'icon icon-edit' %>
+            <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
+                        :class => 'icon icon-del', :data => {:confirm => l(:text_are_you_sure)}, :method => :delete %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <br>
+<% end %>
+
+<h2><%= l(:label_all_organizations) %></h2>
 
 <% if last_org = Organization.order("updated_at desc").first %>
   <% cache ["organizations-index-v1", last_org.updated_at.to_i, "admin-#{User.current.admin? ? 1 : 0}"] do %>
     <table class="list attributes">
       <thead>
-        <tr>
-          <th class=left style="width:270px">
-            <%= l(:field_name)%><br>
-            <input type=text name=filter-by-name id=filter-by-org-name class=filter>
-          </th>
-          <th><%= l(:field_description)%></th>
-          <th><%= l(:field_managers)%></th>
-          <th> </th>
-        </tr>
+      <tr>
+        <th class=left style="width:270px">
+          <%= l(:field_name) %><br>
+          <input type=text name=filter-by-name id=filter-by-org-name class=filter>
+        </th>
+        <th><%= l(:field_description) %></th>
+        <th><%= l(:field_managers) %></th>
+        <th></th>
+      </tr>
       </thead>
       <tbody>
       <% @organizations.each do |organization| %>
@@ -31,15 +65,15 @@
           <td class="name" data-filter-value="<%= organization.fullname %>">
             <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
           </td>
-          <td class="description"><%=h organization.description %></td>
-          <td class="managers"><%=h organization.managers.map(&:to_s).join(', ') %></td>
+          <td class="description"><%= h organization.description %></td>
+          <td class="managers"><%= h organization.managers.map(&:to_s).join(', ') %></td>
           <td class="buttons">
-          <% if User.current.admin? %>
-            <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
-                :class => 'icon icon-edit' %>
-            <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
-                :class => 'icon icon-del', :data => { :confirm => l(:text_are_you_sure) }, :method => :delete %>
-          <% end %>
+            <% if User.current.admin? %>
+              <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
+                          :class => 'icon icon-edit' %>
+              <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
+                          :class => 'icon icon-del', :data => {:confirm => l(:text_are_you_sure)}, :method => :delete %>
+            <% end %>
           </td>
         </tr>
       <% end %>

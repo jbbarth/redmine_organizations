@@ -2,6 +2,8 @@ require_dependency 'users_controller'
 
 class UsersController < ApplicationController
 
+  skip_before_action :require_admin
+  before_action :require_admin, :except => [:show, :index, :new, :create]
   after_action :update_memberships_according_to_new_orga, only: [:update]
 
   private

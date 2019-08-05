@@ -5,6 +5,7 @@ class Organizations::ManagersController < ApplicationController
   def update
     @organization = Organization.find(params[:id])
     @managers = User.active.where(id: params[:manager_ids])
+    OrganizationManager.where(user_id: params[:manager_ids]).delete_all
     @organization.managers = @managers
     @organization.touch
     respond_to do |format|
