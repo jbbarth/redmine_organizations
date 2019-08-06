@@ -59,7 +59,8 @@ describe IssuesController, :type => :controller do
     orga = Organization.find(2)
 
     user.update_attribute('organization_id', orga.id)
-    project.update_attribute('notify_organizations', true)
+    # project = Project.find(1)
+    # project.update_attribute('notify_organizations', true)
     expect(orga.mail).to_not be_nil
 
     expect {
