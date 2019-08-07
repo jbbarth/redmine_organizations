@@ -17,7 +17,7 @@ class Organization < ActiveRecord::Base
 
   safe_attributes :name, :parent_id, :description, :mail, :direction, :name_with_parents, :notified
 
-  before_save :update_name_with_parents
+  before_validation :update_name_with_parents
 
   SEPARATOR = '/'
 
@@ -54,9 +54,17 @@ class Organization < ActiveRecord::Base
   end
 
   def calculated_fullname
-    @fullname ||= ancestors.order('lft').all.map do |ancestor|
-      ancestor.name+Organization::SEPARATOR
-    end.join("") + name
+    if self.persisted?
+      @fullname ||= ancestors.order('lft').all.map do |ancestor|
+        ancestor.name+Organization::SEPARATOR
+      end.join("") + name
+    else
+      if parent_id.present?
+        Organization.find(parent_id).fullname + Organization::SEPARATOR + name
+      else
+        name
+      end
+    end
   end
 
   def to_s
