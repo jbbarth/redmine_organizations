@@ -54,16 +54,10 @@ class Organization < ActiveRecord::Base
   end
 
   def calculated_fullname
-    if self.persisted?
-      @fullname ||= ancestors.order('lft').all.map do |ancestor|
-        ancestor.name+Organization::SEPARATOR
-      end.join("") + name
+    if parent_id.present?
+      Organization.find(parent_id).fullname + Organization::SEPARATOR + name
     else
-      if parent_id.present?
-        Organization.find(parent_id).fullname + Organization::SEPARATOR + name
-      else
-        name
-      end
+      name
     end
   end
 
