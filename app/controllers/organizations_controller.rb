@@ -1,9 +1,8 @@
 class OrganizationsController < ApplicationController
   unloadable
 
-  before_action :require_admin, :only => [:new, :create, :destroy]
   before_action :find_organization_by_id, only: [:show, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user]
-  before_action :require_admin_or_manager, :only => [:edit, :update, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id]
+  before_action :require_admin_or_manager, :only => [:new, :create, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id]
   before_action :require_login, :only => [:index, :show, :autocomplete_users]
   before_action :find_project_by_project_id, :only => [:autocomplete_users]
 
@@ -67,6 +66,9 @@ class OrganizationsController < ApplicationController
   def create
     @organization = Organization.new
     @organization.safe_attributes = params[:organization]
+    if !User.current.admin? && User.current.organization.self_and_descendants.exclude?(@organization.parent)
+      raise Forbidden
+    end
     if @organization.save
       flash[:notice] = l(:notice_successful_create)
       redirect_to(@organization)
@@ -86,6 +88,9 @@ class OrganizationsController < ApplicationController
   end
 
   def destroy
+    if !User.current.admin? && User.current.organization.descendants.exclude?(@organization)
+      raise Forbidden
+    end
     @organization.destroy
     flash[:notice] = l(:notice_successful_delete)
     redirect_to(organizations_url)

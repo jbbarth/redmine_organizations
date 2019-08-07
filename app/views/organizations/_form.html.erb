@@ -2,14 +2,14 @@
 
 <!--[form:organization]-->
 <div class="box tabular">
-    <p><%= f.text_field :name %></p>
-    <p><%= f.text_area :description, :size => "40x3" %></p>
-    <p>
-      <%= f.text_field :mail, :size => 80 %>
-    </p>
-    <p><%= f.select "parent_id", nested_set_options(Organization, @organization) { |i| i.fullname },
-                    { :include_blank => true, :label => :field_parent_organization },
-                    { :class => "orga-select2" } %></p>
-    <p><%= f.check_box :direction %></p>
-  </div>
+  <p><%= f.text_field :name %></p>
+  <p><%= f.text_area :description, :size => "40x3" %></p>
+  <p>
+    <%= f.text_field :mail, :size => 80 %>
+  </p>
+  <p><%= f.select "parent_id", nested_set_options(User.current.admin? ? Organization : User.current.organization, @organization) {|i| i.fullname},
+                  {:include_blank => true, :label => :field_parent_organization},
+                  {:class => "orga-select2"} %></p>
+  <p><%= f.check_box :direction %></p>
+</div>
 <!--[eoform:organization]-->
