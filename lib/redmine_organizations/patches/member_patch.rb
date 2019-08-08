@@ -20,4 +20,44 @@ class Member
 
   end
 
+  # Returns the organizations that the member is allowed to manage
+  # in the project the member belongs to
+  def managed_organizations
+    if principal.try(:admin?)
+      Organization.all
+    else
+      members_management_roles = roles.select do |role|
+        role.has_permission?(:manage_members)
+      end
+      if members_management_roles.empty?
+        []
+      elsif members_management_roles.any?(&:all_organizations_managed?)
+        Organization.all
+      else
+        if principal.try(:organization)
+          principal.organization.self_and_descendants
+        else
+          []
+        end
+      end
+    end
+  end
+
+  def managed_only_his_organization?
+    if principal.try(:admin?)
+      false
+    else
+      members_management_roles = roles.select do |role|
+        role.has_permission?(:manage_members)
+      end
+      if members_management_roles.empty?
+        false
+      elsif members_management_roles.any?(&:all_organizations_managed?)
+        false
+      else
+        true
+      end
+    end
+  end
+
 end

@@ -25,6 +25,7 @@ ActiveSupport::Reloader.to_prepare do
   require_dependency 'redmine_organizations/patches/member_role_patch'
 
   require_dependency 'redmine_organizations/patches/member_patch'
+  require_dependency 'redmine_organizations/patches/members_helper_patch'
   require_dependency 'redmine_organizations/patches/users_controller_patch'
   require_dependency 'redmine_organizations/patches/application_controller_patch'
 

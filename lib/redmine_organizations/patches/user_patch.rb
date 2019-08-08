@@ -32,6 +32,16 @@ class User < Principal
   def is_not_admin?
     !admin?
   end
+
+  # Returns the roles that the user is allowed to manage for the given project
+  def managed_organizations(project)
+    if admin?
+      Organization.all
+    else
+      membership(project).try(:managed_organizations) || []
+    end
+  end
+
 end
 
 # with organization exceptions TODO Test it

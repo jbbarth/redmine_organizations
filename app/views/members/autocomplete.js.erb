@@ -1,0 +1,8 @@
+<%
+  if User.current.membership(@project).managed_only_his_organization?
+    organization = User.current.organization
+  else
+    organization = nil
+  end
+%>
+$('#principals_for_new_member').html('<%= escape_javascript(render_principals_for_new_members(@project, 100, organization)) %>');

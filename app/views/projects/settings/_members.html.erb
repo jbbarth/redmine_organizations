@@ -5,6 +5,14 @@
     members_per_organization[member.principal.organization] << member }
     members_per_organization = members_per_organization.sort_by{|k,v|k.try(:fullname).to_s} %>
 
+<%
+  if User.current.membership(@project).managed_only_his_organization?
+    managed_organization = User.current.organization
+  else
+    managed_organization = nil
+  end
+%>
+
 <p>
   <%= link_to l(:label_member_new), new_project_membership_path(@project), :remote => true, :class => "icon icon-add" %>
   <%= link_to l(:label_new_members_through_organization), new_organizations_membership_path(project_id: @project.id), :remote => true, :class => "icon icon-group", style: "margin-left:10px;background-position: top left;" %>
@@ -45,7 +53,7 @@
               <%= link_to l(:button_edit),
                           edit_organizations_membership_path(id: organization.id, project_id: @project.id),
                           :remote => true,
-                          :class => 'icon icon-edit' %>
+                          :class => 'icon icon-edit' if managed_organization.nil? || managed_organization == organization %>
             </td>
           </tr>
         <% end %>
@@ -62,13 +70,15 @@
             </td>
             <td class="users"></td>
             <td class="buttons">
-              <%= link_to l(:button_edit),
-                          edit_membership_path(member),
-                          :remote => true,
-                          :class => 'icon icon-edit' %>
-              <%= delete_link membership_path(member),
-                              :remote => true,
-                              :data => (!User.current.admin? && member.include?(User.current) ? {:confirm => l(:text_own_membership_delete_confirmation)} : {}) if member.deletable? %>
+              <% if managed_organization.nil? || managed_organization == organization %>
+                <%= link_to l(:button_edit),
+                            edit_membership_path(member),
+                            :remote => true,
+                            :class => 'icon icon-edit' %>
+                <%= delete_link membership_path(member),
+                                :remote => true,
+                                :data => (!User.current.admin? && member.include?(User.current) ? {:confirm => l(:text_own_membership_delete_confirmation)} : {}) if member.deletable? %>
+              <% end %>
             </td>
           </tr>
         <% end %>
@@ -78,6 +88,8 @@
 <% else %>
   <p class="nodata"><%= l(:label_no_data) %></p>
 <% end %>
+
+<% if managed_organization.nil? %>
 
 <div style="margin-top: 10px;border: 1px lightgrey solid;padding: 10px;">
   <h3><%= l(:label_group_non_member) %></h3>
@@ -94,3 +106,5 @@
     </tbody>
   </table>
 </div>
+
+<% end %>
