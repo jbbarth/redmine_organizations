@@ -1,3 +1,10 @@
+<div class="contextual">
+  <% if User.current.admin? || User.current.is_a_manager?(@organization) %>
+    <%= link_to l(:label_organization_new), {:controller => 'organizations', :action => 'new'},
+                :class => 'icon icon-add' %>
+  <% end %>
+</div>
+
 <h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%=h @organization.name %></h2>
 
 <%= render_tabs organization_settings_tabs %>
