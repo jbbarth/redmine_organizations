@@ -3,14 +3,10 @@
   members.each { |member|
     members_per_organization[member.principal.organization] ||= []
     members_per_organization[member.principal.organization] << member }
-    members_per_organization = members_per_organization.sort_by{|k,v|k.try(:fullname).to_s} %>
+    members_per_organization = members_per_organization.sort_by{|k,v|k.try(:fullname).to_s}
 
-<%
-  if User.current.membership(@project).managed_only_his_organization?
-    managed_organization = User.current.organization
-  else
-    managed_organization = nil
-  end
+  current_member = User.current.membership(@project)
+  managed_organizations = current_member.managed_organizations
 %>
 
 <p>
@@ -53,7 +49,7 @@
               <%= link_to l(:button_edit),
                           edit_organizations_membership_path(id: organization.id, project_id: @project.id),
                           :remote => true,
-                          :class => 'icon icon-edit' if managed_organization.nil? || managed_organization == organization %>
+                          :class => 'icon icon-edit' if managed_organizations.include? organization %>
             </td>
           </tr>
         <% end %>
@@ -70,7 +66,7 @@
             </td>
             <td class="users"></td>
             <td class="buttons">
-              <% if managed_organization.nil? || managed_organization == organization %>
+              <% if managed_organizations.include? organization %>
                 <%= link_to l(:button_edit),
                             edit_membership_path(member),
                             :remote => true,
@@ -89,7 +85,7 @@
   <p class="nodata"><%= l(:label_no_data) %></p>
 <% end %>
 
-<% if managed_organization.nil? %>
+<% unless current_member.managed_only_his_organization? %>
 
 <div style="margin-top: 10px;border: 1px lightgrey solid;padding: 10px;">
   <h3><%= l(:label_group_non_member) %></h3>

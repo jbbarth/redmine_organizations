@@ -14,6 +14,24 @@
 <p><em><%=textilizable @organization.description %></em></p>
 
 <div class="splitcontentleft organization">
+
+<h3><%= "#{ l(:label_user_plural)} (#{@subusers_count})" %></h3>
+<ul class=root>
+  <li class=selected-organization>
+    <%= link_to_organization @organization, :link_ancestors => false %>
+    <%= "(#{@users.count}) :" if @users.any? %>
+    <%= @users.map{|u| link_to_user(u).html_safe }.join(", ").html_safe %>
+  </li>
+  <% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
+    <% users = @subusers[suborganization] %>
+    <li>
+      <%= link_to_organization suborganization, :link_ancestors => false %>
+      <%= "(#{users.count}) :" if users.any? %>
+      <%= users.map{|u| link_to_user(u) }.join(", ").html_safe %>
+    </li>
+  <% end %>
+</ul>
+
 <h3><%=l(:label_project_plural)%></h3>
 <ul class=root>
   <li class=selected-organization>
@@ -49,23 +67,6 @@
       </ul>
     </li>
   <% end %>
-</ul>
-
-<h3><%= "#{ l(:label_user_plural)} (#{@subusers_count})" %></h3>
-<ul class=root>
-  <li class=selected-organization>
-    <%= link_to_organization @organization, :link_ancestors => false %>
-    <%= "(#{@users.count}) :" if @users.any? %>
-    <%= @users.map{|u| link_to_user(u).html_safe }.join(", ").html_safe %>
-  </li>
-<% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
-  <% users = @subusers[suborganization] %>
-  <li>
-    <%= link_to_organization suborganization, :link_ancestors => false %>
-    <%= "(#{users.count}) :" if users.any? %>
-    <%= users.map{|u| link_to_user(u) }.join(", ").html_safe %>
-  </li>
-<% end %>
 </ul>
 
 <%= call_hook :view_organization_left_bottom, :organization => @organization %>
