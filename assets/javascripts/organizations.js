@@ -19,7 +19,8 @@ function initOrgasSelect2() {
     var $select = $(".orga-select2");
     if ($select.select2) {
         $select.select2({
-            containerCss: {width: '100%', minWidth: '300px'},
+            containerCss: {width: '100%', minWidth: '350px'},
+            dropdownAutoWidth : true,
             formatNoMatches: function (term) {
                 return $('#label-no-data').html()
             }
