@@ -47,3 +47,9 @@ table.list.organizations td.hidden {display: none;}
 .manager-red-badge { color:#fff; background:#c22; text-shadow:1px 1px 2px #711; }
 .manager-green-badge { color:#fff; background:#2a6; text-shadow:1px 1px 2px #171; }
 .manager-badge { color:#fff; background:#74a; text-shadow:1px 1px 2px #117; }
+
+textarea#organization_description{
+    font-size: 12px;
+    font-family: "Lucida Grande", verdana, arial, helvetica, sans-serif;
+    padding: 4px;
+}

@@ -28,3 +28,6 @@ fr:
   field_author_organization: "Organisation de l'auteur"
   label_managed_organizations: "Les organisations que je gère"
   label_all_organizations: "Toutes les organisations"
+  functional_mail: "Boite mail fonctionnelle"
+  fullname: "Nom complet"
+  shortname: "Nom court"

@@ -3,78 +3,104 @@ require "active_support/testing/assertions"
 
 describe OrganizationsController, :type => :controller do
 
-  fixtures :organizations
+  fixtures :organizations, :organization_managers, :users
 
   render_views
 
   include ActiveSupport::Testing::Assertions
 
-  before do
-    @request.session[:user_id] = 1
-  end
-
-  it "should get index" do
-    get :index
-    expect(response).to be_successful
-    refute_nil assigns(:organizations)
-  end
-
-  it "should get new" do
-    get :new
-    expect(response).to be_successful
-  end
-
-  it "should create organization" do
-    assert_difference('Organization.count') do
-      post :create, params: {organization: {name: "orga-A"}}
+  describe 'Admin actions' do
+    before do
+      @request.session[:user_id] = 1
     end
 
-    expect(response).to redirect_to(organization_path(assigns(:organization)))
-  end
-
-  it "should show organization" do
-    get :show, params: {:id => Organization.find(1).to_param}
-    expect(response).to be_successful
-  end
-
-  it "should get edit" do
-    get :edit, params: {:id => Organization.find(1).to_param}
-    expect(response).to be_successful
-  end
-
-  it "should update organization" do
-    put :update, params: {:id => Organization.find(1).to_param, :organization => {}}
-    expect(response).to redirect_to(organization_path(assigns(:organization)))
-  end
-
-  it "should destroy organization" do
-    assert_difference('Organization.count', -1) do
-      delete :destroy, params: {:id => Organization.find(3).to_param}
+    it "should get index" do
+      get :index
+      expect(response).to be_successful
+      refute_nil assigns(:organizations)
     end
 
-    expect(response).to redirect_to(organizations_path)
-  end
+    it "should get new" do
+      get :new
+      expect(response).to be_successful
+    end
 
-  it "should autocomplete for users" do
-    get :autocomplete_for_user, params: {:id => 1, :q => "adm"}
-    expect(response).to be_successful
-    assert response.body.include?("Admin")
-    assert !response.body.include?("John")
-  end
+    it "should create organization" do
+      assert_difference('Organization.count') do
+        post :create, params: {organization: {name: "orga-A"}}
+      end
 
-  it "should NOT create organizations with same names and parents" do
-    assert_no_difference('Organization.count') do
-      post :create, params: {organization: {name: "Team A", parent_id: 1}}
+      expect(response).to redirect_to(organization_path(assigns(:organization)))
+    end
+
+    it "should show organization" do
+      get :show, params: {:id => Organization.find(1).to_param}
+      expect(response).to be_successful
+    end
+
+    it "should get edit" do
+      get :edit, params: {:id => Organization.find(1).to_param}
+      expect(response).to be_successful
+    end
+
+    it "should update organization" do
+      put :update, params: {:id => Organization.find(1).to_param, :organization => {}}
+      expect(response).to redirect_to(organization_path(assigns(:organization)))
+    end
+
+    it "should destroy organization" do
+      assert_difference('Organization.count', -1) do
+        delete :destroy, params: {:id => Organization.find(3).to_param}
+      end
+
+      expect(response).to redirect_to(organizations_path)
+    end
+
+    it "should autocomplete for users" do
+      get :autocomplete_for_user, params: {:id => 1, :q => "adm"}
+      expect(response).to be_successful
+      assert response.body.include?("Admin")
+      assert !response.body.include?("John")
+    end
+
+    it "should NOT create organizations with same names and parents" do
+      assert_no_difference('Organization.count') do
+        post :create, params: {organization: {name: "Team A", parent_id: 1}}
+      end
+    end
+
+    it "should create organizations with same names but different parents" do
+      assert_difference('Organization.count') do
+        post :create, params: {organization: {name: "Team A", parent_id: 3}}
+      end
     end
   end
 
-  it "should create organizations with same names but different parents" do
-    assert_difference('Organization.count') do
-      post :create, params: {organization: {name: "Team A", parent_id: 3}}
+  describe "Manager actions" do
+
+    before do
+      @request.session[:user_id] = 2
     end
+
+    it "should get new" do
+      get :new
+      expect(response).to be_successful
+    end
+
+    it "should forbid access to new method if non manager" do
+      @request.session[:user_id] = 3
+      get :new
+      expect(response.status).to eq 403 # Forbidden
+    end
+
   end
 
   describe "add_users method" do
+
+    before do
+      @request.session[:user_id] = 1
+    end
+
     it "should add a user to the organization" do
       assert_difference 'Organization.find(1).users.count', 1 do
         post :add_users, params: {id: 1, user_ids: ["8"]}

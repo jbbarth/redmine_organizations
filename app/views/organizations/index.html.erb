@@ -7,7 +7,7 @@
 
 <% if @managed_organizations.any? %>
   <h2><%= l(:label_managed_organizations) %></h2>
-  <table class="list attributes">
+  <table class="list attributes managed-organizations">
     <thead>
     <tr>
       <th class=left style="width:270px"><%= l(:field_name) %></th>
@@ -18,9 +18,9 @@
     </thead>
     <tbody>
     <% @managed_organizations.each do |organization| %>
-      <tr class="organization <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
+      <tr class="organization <%= organization.direction? ? "direction" : "" %>">
         <td class="name" data-filter-value="<%= organization.fullname %>">
-          <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
+          <%= link_to h(organization.fullname), {:controller => 'organizations', :action => 'show', :id => organization} %>
         </td>
         <td class="description"><%= h organization.description %></td>
         <td class="managers"><%= h organization.managers.map(&:to_s).join(', ') %></td>
@@ -43,7 +43,7 @@
 
 <% if last_org = Organization.order("updated_at desc").first %>
   <% cache ["organizations-index-v1", last_org.updated_at.to_i, "admin-#{User.current.admin? ? 1 : 0}"] do %>
-    <table class="list attributes">
+    <table class="list attributes all-organizations">
       <thead>
       <tr>
         <th class=left style="width:270px">

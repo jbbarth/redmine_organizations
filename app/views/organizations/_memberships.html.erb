@@ -9,7 +9,7 @@
       <tr>
         <th><%= l(:label_project) %></th>
         <th><%= l(:label_role_plural) %></th>
-        <th><%= l(:label_notifications) %></th>
+        <!-- <th><%= l(:label_notifications) %></th> -->
       </tr>
       </thead>
       <tbody>
@@ -25,18 +25,22 @@
             <td class="roles">
               <span class="member-<%= project.id %>-roles"><%= h @organization.roles_by_project(project).sort.collect(&:to_s).join(', ') %></span>
             </td>
+            <!--
             <td class="notifications">
               <%= check_box_tag 'projects[]', project.id, current_notified_projects.include?(project),
                                 :id => "notifications_project_#{project.id}", class: "notifications_projects" %>
             </td>
+            -->
           </tr>
         <% end %>
       <% end %>
+      <!--
       <tr>
         <td></td>
         <td></td>
         <td><%= button_tag "Enregistrer", id: "submit_notifications" %></td>
       </tr>
+      -->
       </tbody>
       <% reset_cycle %>
     </table>
