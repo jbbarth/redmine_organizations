@@ -4,6 +4,7 @@
   <li>
     <%= link_to_organization @user.organization %>
     <%= "(#{@user.organization.description})" if @user.organization.description.present? %>
+    <%= content_tag(:span, "Gestionnaire", :class => "badge manager-badge") if @user.organization.managers.include?(@user) %>
   </li>
 </ul>
 <% end %>
