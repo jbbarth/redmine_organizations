@@ -5,8 +5,7 @@
     members_per_organization[member.principal.organization] << member }
     members_per_organization = members_per_organization.sort_by{|k,v|k.try(:fullname).to_s}
 
-  current_member = User.current.membership(@project)
-  managed_organizations = current_member.managed_organizations
+  managed_organizations = User.current.managed_organizations(@project)
 %>
 
 <p>
@@ -85,7 +84,7 @@
   <p class="nodata"><%= l(:label_no_data) %></p>
 <% end %>
 
-<% unless current_member.managed_only_his_organization? %>
+<% unless User.current.managed_only_his_organization?(@project) %>
 
 <div style="margin-top: 10px;border: 1px lightgrey solid;padding: 10px;">
   <h3><%= l(:label_group_non_member) %></h3>

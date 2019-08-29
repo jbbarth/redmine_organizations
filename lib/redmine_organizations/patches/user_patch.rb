@@ -42,12 +42,20 @@ class User < Principal
     end
   end
 
+  def managed_only_his_organization?(project)
+    if admin?
+      false
+    else
+      membership(project).try(:managed_only_his_organization?) || true
+    end
+  end
+
 end
 
 # with organization exceptions TODO Test it
 module PluginOrganizations
   module UserModel
-    def allowed_to?(action, context, options={}, &block)
+    def allowed_to?(action, context, options = {}, &block)
       if context && context.is_a?(Project)
         return false unless context.allows_to?(action)
         # Admin users are authorized for anything else
@@ -66,7 +74,7 @@ module PluginOrganizations
               role.allowed_to?(action) &&
               (block_given? ? yield(role, self) : true)
         }
-      elsif context==nil && options[:global]
+      elsif context == nil && options[:global]
         # Admin users are always authorized
         return true if admin?
 
