@@ -1,7 +1,7 @@
 <fieldset class="box">
   <legend><%= label_tag("organization_search", l(:label_organization_search)) %></legend>
   <p>
-    <%= select_tag "organizations_ids", options_for_select(nested_set_options(User.current.membership(@project).managed_only_his_organization? ? User.current.organization : Organization) {|i| i.fullname} ) ,
+    <%= select_tag "organizations_ids", options_for_select(nested_set_options(User.current.managed_only_his_organization?(@project) ? User.current.organization : Organization) {|i| i.fullname} ) ,
                  {:include_blank => true,
                   :label => :field_parent_organization,
                   :class => "orga-select2",

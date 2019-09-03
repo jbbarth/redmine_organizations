@@ -1,5 +1,5 @@
 <%
-  if User.current.membership(@project).managed_only_his_organization?
+  if User.current.managed_only_his_organization?(@project)
     organization = User.current.organization
   else
     organization = nil
