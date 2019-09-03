@@ -11,7 +11,9 @@ class Organization < ActiveRecord::Base
   has_many :users
   has_many :organization_roles
   has_many :organization_managers
+  has_many :organization_team_leaders
   has_many :managers, through: :organization_managers, :source => :user
+  has_many :team_leaders, through: :organization_team_leaders, :source => :user
   has_many :organization_notifications
   has_many :notified_projects, through: :organization_notifications, :source => :project
 

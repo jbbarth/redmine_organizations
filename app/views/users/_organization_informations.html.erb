@@ -1,10 +1,16 @@
 <% unless @user.organization.blank? %>
-<h3><%=l(:label_organization)%></h3>
-<ul>
-  <li>
-    <%= link_to_organization @user.organization %>
-    <%= "(#{@user.organization.description})" if @user.organization.description.present? %>
-    <%= content_tag(:span, "Gestionnaire", :class => "badge manager-badge") if @user.organization.managers.include?(@user) %>
-  </li>
-</ul>
+  <h3><%= l(:label_organization) %></h3>
+  <ul>
+    <li>
+      <%= link_to_organization @user.organization %>
+      <%= "(#{@user.organization.description})" if @user.organization.description.present? %>
+      <%= content_tag(:span, "Gestionnaire", :class => "badge manager-badge") if @user.organization.managers.include?(@user) %>
+      <% if @user.organization.team_leaders.include?(@user) %>
+        <div style="margin-top: 10px;">
+          <%= content_tag(:span, "Chef d'équipe", :class => "badge team-leader-badge") %>
+          <%= link_to "Affecter à tous les projets de l'équipe", assign_to_team_projects_organizations_team_leaders_path(user_id: @user.id), method: :put, remote: true if User.current.admin? %>
+        </div>
+      <% end %>
+    </li>
+  </ul>
 <% end %>

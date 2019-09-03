@@ -4,7 +4,8 @@
       <table class="list users">
         <thead>
         <tr>
-          <th class="managers hidden"></th>
+          <th class="managers hidden"><%= t 'field_managers' %></th>
+          <th class="team_leaders hidden"><%= t 'field_team_leaders' %></th>
           <th><%= l(:label_user) %></th>
           <th style="width:15%"></th>
         </tr>
@@ -15,9 +16,13 @@
             <td class="managers hidden">
               <%= check_box_tag 'manager_ids[]', user.id.to_s, @organization.managers.include?(user), :id => nil %>
             </td>
+            <td class="team_leaders hidden">
+              <%= check_box_tag 'team_leader_ids[]', user.id.to_s, @organization.team_leaders.include?(user), :id => nil %>
+            </td>
             <td class="user">
               <%= link_to_user user %>
               <%= content_tag(:span, "Gestionnaire", :class => "badge manager-badge") if @organization.managers.include?(user) %>
+              <%= content_tag(:span, "Chef d'équipe", :class => "badge team-leader-badge") if @organization.team_leaders.include?(user) %>
             </td>
             <td class="buttons">
               <%= link_to l(:button_delete), remove_user_organization_path(:id => @organization, :user_id => user), :method => :post, :remote => true, :class => 'icon icon-del' %>

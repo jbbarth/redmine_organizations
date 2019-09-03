@@ -12,6 +12,11 @@ RedmineApp::Application.routes.draw do
   end
   namespace :organizations do
     resources :managers, only: [:update]
+    resources :team_leaders, only: [] do
+      collection do
+        put :assign_to_team_projects
+      end
+    end
     resources :notifications, only: [:update]
     resources :memberships, only: [:new, :edit, :update] do
       collection do
