@@ -12,6 +12,7 @@
     <tr>
       <th class=left style="width:270px"><%= l(:field_name) %></th>
       <th><%= l(:field_description) %></th>
+      <th><%= l(:field_team_leaders) %></th>
       <th><%= l(:field_managers) %></th>
       <th></th>
     </tr>
@@ -23,6 +24,7 @@
           <%= link_to h(organization.fullname), {:controller => 'organizations', :action => 'show', :id => organization} %>
         </td>
         <td class="description"><%= h organization.description %></td>
+        <td class="team_leaders"><%= h organization.team_leaders.map(&:to_s).join(', ') %></td>
         <td class="managers"><%= h organization.managers.map(&:to_s).join(', ') %></td>
         <td class="buttons">
           <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
@@ -51,6 +53,7 @@
           <input type=text name=filter-by-name id=filter-by-org-name class=filter>
         </th>
         <th><%= l(:field_description) %></th>
+        <th><%= l(:field_team_leaders) %></th>
         <th><%= l(:field_managers) %></th>
         <th></th>
       </tr>
@@ -62,6 +65,7 @@
             <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
           </td>
           <td class="description"><%= h organization.description %></td>
+          <td class="team_leaders"><%= h organization.team_leaders.map(&:to_s).join(', ') %></td>
           <td class="managers"><%= h organization.managers.map(&:to_s).join(', ') %></td>
           <td class="buttons">
             <% if User.current.admin? %>

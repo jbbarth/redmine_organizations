@@ -33,9 +33,11 @@
       </table>
       <%= f.submit "Modifier", class: "managers hidden" %>
     <% end %>
-    <%= link_to_function "Modifier les gestionnaires", "toggle_organization_managers_form(true)", class: "managers_show" if User.current.admin? %>
+    <%= link_to_function "Modifier les gestionnaires et les chefs d'équipe", "toggle_organization_managers_form(true)", class: "managers_show" if User.current.admin? %>
     <%= link_to_function "Annuler", "toggle_organization_managers_form(false)", class: "managers_hide", style: "display:none;" if User.current.admin? %>
-  <% else %>
+    <hr>
+    <%= link_to "[Script] Affecter les chefs d'équipe à tous les projets de leurs équipes", assign_to_team_projects_organizations_team_leaders_path(organization_id: @organization.id), method: :put, remote: true if User.current.admin? %>
+<% else %>
     <p class="nodata"><%= l(:label_no_data) %></p>
   <% end %>
 </div>
