@@ -6,9 +6,20 @@
       <%= "(#{@user.organization.description})" if @user.organization.description.present? %>
       <%= content_tag(:span, "Gestionnaire", :class => "badge manager-badge") if @user.organization.managers.include?(@user) %>
       <% if @user.organization.team_leaders.include?(@user) %>
+        <%= content_tag(:span, "Chef d'équipe", :class => "badge team-leader-badge") %>
         <div style="margin-top: 10px;">
-          <%= content_tag(:span, "Chef d'équipe", :class => "badge team-leader-badge") %>
-          <%= link_to "Affecter à tous les projets de l'équipe", assign_to_team_projects_organizations_team_leaders_path(user_id: @user.id), method: :put, remote: true if User.current.admin? %>
+          <%= form_tag(assign_to_team_projects_organizations_team_leaders_path(user_id: @user.id), :method => :put, :remote => true) do %>
+            <fieldset id="role_propagation_for_team_leaders">
+              <legend><%= l(:role_propagation_for_team_leaders) %></legend>
+
+              <p>
+                Donne des droits de "gestionnaire local" à ce chef d'équipe, sur tous les projets dans lesquels au moins
+                un agent de l'entité a déjà des droits.
+              </p>
+
+              <p><%= submit_tag l(:button_apply) %></p>
+            </fieldset>
+          <% end if User.current.is_admin_or_manage?(@user.organization) || User.current == @user %>
         </div>
       <% end %>
     </li>

@@ -1,6 +1,6 @@
 class Organizations::TeamLeadersController < ApplicationController
 
-  before_action :require_admin
+  before_action :require_admin_or_manager
 
   def assign_to_team_projects
 
@@ -8,31 +8,31 @@ class Organizations::TeamLeadersController < ApplicationController
       user = User.find(params[:user_id])
       users = [user]
       orga = user.organization
+      @message = "Modification des rôles de l'utilisateur #{user}. Il dispose désormais du rôle lui permettant de gérer les membres de son équipe sur tous les projets concernés."
     else
       if params[:organization_id].present?
         orga = Organization.find(params[:organization_id])
         users = orga.team_leaders
+        @message = "Modification des rôles des utilisateurs : #{users.join(', ')}. Ils disposent désormais du rôle leur permettant de gérer les membres de leur équipe sur tous les projets concernés."
       else
         users = []
       end
     end
 
-    puts "** Mise à jour pour l'organisation #{orga} **"
+    # puts "** Mise à jour pour l'organisation #{orga} **"
 
     projects = orga.self_and_descendants.map {|org| org.projects}.flatten.uniq.compact.select(&:active?) if orga.present?
-    puts "Nombre de projets concernés : #{projects.size}"
+    # puts "Nombre de projets concernés : #{projects.size}"
 
-    project_member = Role.find(4)
+    # project_member = Role.find(4)
     gestionnaire = Role.find(23)
-
-    @message = "Modification des rôles des utilisateurs : #{users.join(', ')}. Ils disposent désormais des rôles leur permettant de gérer leur équipe sur tous les projets concernés."
 
     users.each do |user|
       projects.each do |p|
         member = user.membership(p)
         if member.blank?
           member = Member.new(user: user, project: p)
-          member.roles << project_member
+          member.roles << gestionnaire
           if member.save
             @message << "\\n#{user} ajouté au projet : #{p}"
           else

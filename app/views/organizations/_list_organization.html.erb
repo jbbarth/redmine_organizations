@@ -1,6 +1,6 @@
 <%= link_to_organization organization, :link_ancestors => false %>
 <%= "(#{users.count}) :" if users.any? %>
-<ul>
+<ul class="sublist">
   <%= users.map {|u|
     "<li>" +
         link_to_user(u) +

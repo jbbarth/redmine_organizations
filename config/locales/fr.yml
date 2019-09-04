@@ -31,3 +31,5 @@ fr:
   functional_mail: "Boite mail fonctionnelle"
   fullname: "Nom complet"
   shortname: "Nom court"
+  role_propagation_for_team_leaders: "Propagation des droits de gestionnaire local"
+

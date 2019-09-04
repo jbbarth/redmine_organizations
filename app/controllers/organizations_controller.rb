@@ -25,11 +25,11 @@ class OrganizationsController < ApplicationController
     @subprojects_by_organization = {}
     @subusers = {}
 
-    @users = @organization.users.active
+    @users = @organization.users.active.sorted
 
     @organization.descendants.order("lft").each do |organization|
       @subprojects_by_organization[organization] = organization.projects
-      @subusers[organization] = organization.users.active
+      @subusers[organization] = organization.users.active.sorted
     end
 
     @subusers_count = (@organization.users | @subusers.values.flatten.uniq).count
