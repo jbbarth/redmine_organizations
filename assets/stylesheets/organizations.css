@@ -17,7 +17,9 @@ table.memberships .buttons .icon-edit { display:none; }
 .organization.splitcontentleft { width:34%; }
 .organization.splitcontentright { width:64%; }
 .organization ul { padding-left:25px; }
+.organization ul.sublist { margin-bottom: 0.4em }
 .organization li { padding:2px 5px; }
+.organization li .manager, .organization li .team-leader {margin: 0 2px -2px 3px;}
 .selected-organization { background-color:#f3f6fe; padding:4px 7px !important; border-radius:4px; list-style-type: none;}
 .organizations .buttons { width:160px !important; }
 .organizations .organization { width:220px; }
