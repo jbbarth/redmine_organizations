@@ -8,7 +8,7 @@ class Organizations::TeamLeadersController < ApplicationController
       user = User.find(params[:user_id])
       users = [user]
       orga = user.organization
-      @message = "Modification des rôles de l'utilisateur #{user}. Il dispose désormais du rôle lui permettant de gérer les membres de son équipe sur tous les projets concernés."
+      @message = "Modification des rôles de l'utilisateur #{user}.<br>Il dispose désormais du rôle lui permettant de gérer les membres de son équipe sur tous les projets concernés."
     else
       if params[:organization_id].present?
         orga = Organization.find(params[:organization_id])
@@ -16,7 +16,7 @@ class Organizations::TeamLeadersController < ApplicationController
         if users.empty?
           @message = "Aucun chef d'équipe à affecter"
         else
-          @message = "Modification des rôles des utilisateurs : #{users.join(', ')}. Ils disposent désormais du rôle leur permettant de gérer les membres de leur équipe sur tous les projets concernés."
+          @message = "Modification des rôles des utilisateurs : #{users.join(', ')}.<br>Ils disposent désormais du rôle leur permettant de gérer les membres de leur équipe sur tous les projets concernés."
         end
       else
         users = []
