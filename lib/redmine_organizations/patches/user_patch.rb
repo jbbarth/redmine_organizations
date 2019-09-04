@@ -21,6 +21,10 @@ class User < Principal
     end
   end
 
+  def is_admin_or_manage?(organization)
+    admin? || is_a_manager?(organization)
+  end
+
   def manage_his_organization?
     organization.managers.include?(self)
   end
