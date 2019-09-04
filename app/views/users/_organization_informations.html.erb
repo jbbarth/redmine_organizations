@@ -18,6 +18,7 @@
               </p>
 
               <p><%= submit_tag l(:button_apply) %></p>
+              <p class="response"></p>
             </fieldset>
           <% end if User.current.is_admin_or_manage?(@user.organization) || User.current == @user %>
         </div>

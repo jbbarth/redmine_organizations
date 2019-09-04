@@ -13,7 +13,11 @@ class Organizations::TeamLeadersController < ApplicationController
       if params[:organization_id].present?
         orga = Organization.find(params[:organization_id])
         users = orga.team_leaders
-        @message = "Modification des rôles des utilisateurs : #{users.join(', ')}. Ils disposent désormais du rôle leur permettant de gérer les membres de leur équipe sur tous les projets concernés."
+        if users.empty?
+          @message = "Aucun chef d'équipe à affecter"
+        else
+          @message = "Modification des rôles des utilisateurs : #{users.join(', ')}. Ils disposent désormais du rôle leur permettant de gérer les membres de leur équipe sur tous les projets concernés."
+        end
       else
         users = []
       end
@@ -34,9 +38,9 @@ class Organizations::TeamLeadersController < ApplicationController
           member = Member.new(user: user, project: p)
           member.roles << gestionnaire
           if member.save
-            @message << "\\n#{user} ajouté au projet : #{p}"
+            @message << "<br>#{user} ajouté au projet : #{p}"
           else
-            @message << "\\n! #{member.errors.messages} | #{p.identifier}"
+            @message << "<br>! #{member.errors.messages} | #{p.identifier}"
           end
         end
         member.roles << gestionnaire
