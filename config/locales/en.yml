@@ -14,3 +14,5 @@ en:
   memberships_keep: "Keep all current roles and projects"
   memberships_remove: "Delete all roles in all projects"
   memberships_replace: "Duplicate roles and projects Lui donner les mêmes projets et les mêmes rôles que "
+  organization_manager: "Organization manager"
+  team_leader: "Team leader"

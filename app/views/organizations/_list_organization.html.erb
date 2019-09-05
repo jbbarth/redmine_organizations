@@ -4,8 +4,8 @@
   <%= users.map {|u|
     "<li>" +
         link_to_user(u) +
-        (organization.managers.include?(u) ? image_tag("star.png", :plugin => :redmine_organizations, :size => '16x16', class: "manager") : "") +
-        (organization.team_leaders.include?(u) ? image_tag("group.png", :size => '16x16', class: "team-leader") : "") +
+        (organization.managers.include?(u) ? image_tag("star.png", :plugin => :redmine_organizations, :size => '16x16', class: "manager", alt: l("organization_manager"), title: l("organization_manager")) : "") +
+        (organization.team_leaders.include?(u) ? image_tag("group.png", :size => '16x16', class: "team-leader", alt: l("team_leader"), title: l("team_leader")) : "") +
         "</li>"
   }.join.html_safe %>
 </ul>

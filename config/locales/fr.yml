@@ -23,6 +23,8 @@ fr:
   label_users_selection: "Sélectionner des utilisateurs"
   selected_organizations: "Organisations sélectionnées"
   field_author_organization: "Organisation de l'auteur"
+  organization_manager: "Gestionnaire de l'organisation"
+  team_leader: "Chef d'équipe"
   field_managers: "Gestionnaires"
   field_team_leaders: "Chefs d'équipe"
   label_notifications: "Notifications par mail"
