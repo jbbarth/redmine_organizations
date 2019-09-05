@@ -1,18 +1,18 @@
 module OrganizationsHelper
   def organization_settings_tabs
     tabs = [{:name => 'general', :partial => 'organizations/general', :label => :label_general},
-            {:name => 'users', :partial => 'organizations/users', :label => :label_user_plural},
-            {:name => 'memberships', :partial => 'organizations/memberships', :label => :label_project_plural}
-            ]
+            {:name => 'users', :partial => 'organizations/users', :label => :label_user_plural}]
+    tabs << {:name => 'memberships', :partial => 'organizations/memberships', :label => :label_project_plural} if User.current.admin?
+    tabs
   end
-  
+
   def link_to_organization(organization, options = {})
     options = {:link_ancestors => true,
                :fullname => true,
                :title => organization.fullname}.merge(options)
 
     url = organization_path(organization)
-    html = {:title => options[:title] }
+    html = {:title => options[:title]}
 
     if options[:fullname] && options[:link_ancestors]
       h = ""
@@ -28,8 +28,8 @@ module OrganizationsHelper
       link_to(organization.name, url, html)
     end
   end
-  
-  def link_to_organization_membership(project, roles=nil, options={})
+
+  def link_to_organization_membership(project, roles = nil, options = {})
     html = link_to_project(project)
     html << " (#{roles.sort.map(&:to_s).join(', ')})" if roles.any?
   end
@@ -37,9 +37,9 @@ module OrganizationsHelper
   def render_users_for_new_members(project, users)
     disabled_users = project ? project.principals : []
     content_tag('div',
-                    content_tag('div', users_check_box_tags('membership[user_ids][]', users, disabled_users), :id => 'principals'),
-                    :class => 'objects-selection',
-                    :style => 'max-height: 200px;height:auto;'
+                content_tag('div', users_check_box_tags('membership[user_ids][]', users, disabled_users), :id => 'principals'),
+                :class => 'objects-selection',
+                :style => 'max-height: 200px;height:auto;'
     )
   end
 
