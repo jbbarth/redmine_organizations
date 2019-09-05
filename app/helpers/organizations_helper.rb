@@ -34,6 +34,11 @@ module OrganizationsHelper
     html << " (#{roles.sort.map(&:to_s).join(', ')})" if roles.any?
   end
 
+  def link_to_organization_project(project, users = nil, options = {})
+    html = link_to_project(project, options)
+    html << " (#{users.size})" if users.any?
+  end
+
   def render_users_for_new_members(project, users)
     disabled_users = project ? project.principals : []
     content_tag('div',

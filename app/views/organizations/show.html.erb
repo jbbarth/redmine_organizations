@@ -34,7 +34,7 @@
       <% if @projects.any? %>
         <ul>
           <% for project in @projects %>
-            <li><%= link_to_organization_membership(project, @organization.roles_by_project(project)) %></li>
+            <li><%= link_to_organization_project(project, @organization.users_by_project(project)) %></li>
           <% end %>
         </ul>
       <% end %>
@@ -46,7 +46,7 @@
         <% if subprojects.any? %>
           <ul>
             <% for project in subprojects %>
-              <li><%= link_to_organization_membership(project, suborganization.roles_by_project(project)) %></li>
+              <li><%= link_to_organization_project(project, suborganization.users_by_project(project)) %></li>
             <% end %>
           </ul>
         <% end %>
@@ -57,7 +57,7 @@
         <%= l(:project_status_archived).capitalize %>:
         <ul>
           <% for project in @projects_not_active %>
-            <li><%= link_to_organization_membership(project, @organization.roles_by_project(project)) %></li>
+            <li><%= link_to_organization_project(project, @organization.users_by_project(project)) %></li>
           <% end %>
         </ul>
       </li>
