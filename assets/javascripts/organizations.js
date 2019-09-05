@@ -7,8 +7,7 @@ function toggleOrgaForms(id, type) {
         var $forms = $(orga_id + "-roles-form," + orga_id + "-members-form");
         if ($texts.is(":visible")) {
             $forms.hide()
-        }
-        else {
+        } else {
             $forms.show()
         }
     })
@@ -19,8 +18,6 @@ function initOrgasSelect2() {
     var $select = $(".orga-select2");
     if ($select.select2) {
         $select.select2({
-            containerCss: {width: '100%', minWidth: '350px'},
-            dropdownAutoWidth : true,
             formatNoMatches: function (term) {
                 return $('#label-no-data').html()
             }
@@ -107,25 +104,25 @@ $(function () {
     })
 });
 
-function toggle_submit_button(){
+function toggle_submit_button() {
     let state = any_user_selected() && any_role_selected();
     $('input#member-add-submit').prop('disabled', !state)
 }
 
-function any_user_selected(){
+function any_user_selected() {
     return $("#principals_for_new_member input:checkbox[name='membership[user_ids][]']:checked").length > 0
 }
 
-function any_role_selected(){
+function any_role_selected() {
     return $(".roles-selection input:checkbox[name='membership[role_ids][]']:checked").length > 0
 }
 
-function toggle_organization_managers_form(state){
-    if(state){
+function toggle_organization_managers_form(state) {
+    if (state) {
         $("form .managers, form .team_leaders").show();
         $("a.managers_hide").show();
         $("a.managers_show").hide()
-    }else{
+    } else {
         $("form .managers, form .team_leaders").hide();
         $("a.managers_hide").hide();
         $("a.managers_show").show()
