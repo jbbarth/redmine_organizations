@@ -12,16 +12,20 @@ class Organizations::ManagersController < ApplicationController
     end
 
     # Team leaders
-    team_leaders_ids = params[:team_leader_ids].map(&:to_i)
-    team_leaders = User.active.where(id: team_leaders_ids)
+    if params[:team_leader_ids].present?
+      team_leaders_ids = params[:team_leader_ids]
+      team_leaders = User.active.where(id: team_leaders_ids)
+    else
+      team_leaders_ids = []
+      team_leaders = []
+    end
     previous_team_leaders_ids = @organization.team_leaders.map(&:id)
-    projects = team_leaders.map(&:projects).flatten.uniq
 
     @organization.team_leaders = team_leaders
     OrganizationTeamLeader.where(user_id: params[:team_leader_ids]).where.not(organization: @organization).delete_all
     @organization.touch
 
-    assign_roles_to_team_leaders(team_leaders_ids, previous_team_leaders_ids, projects)
+    assign_roles_to_team_leaders(team_leaders_ids, previous_team_leaders_ids)
 
     respond_to do |format|
       format.html {redirect_to edit_organization_path(@organization, :tab => 'users')}
@@ -32,7 +36,10 @@ class Organizations::ManagersController < ApplicationController
 
   private
 
-  def assign_roles_to_team_leaders(current_team_leaders_ids, previous_team_leaders_ids, projects)
+  def assign_roles_to_team_leaders(current_team_leaders_ids, previous_team_leaders_ids)
+
+    projects = @organization.self_and_descendants.map {|org| org.projects}.flatten.uniq.compact.select(&:active?)
+
     added_team_leaders_ids = current_team_leaders_ids - previous_team_leaders_ids
     removed_team_leaders_ids = previous_team_leaders_ids - current_team_leaders_ids
 
