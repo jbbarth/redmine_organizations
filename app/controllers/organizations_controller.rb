@@ -9,7 +9,7 @@ class OrganizationsController < ApplicationController
   layout 'admin'
 
   def index
-    @organizations = Organization.order('lft')
+    @organizations = Organization.order('lft').includes(:managers, :team_leaders)
     @managed_organizations = Organization.joins(:organization_managers).where("organization_managers.user_id = ?", User.current.id).order('lft')
     @managed_organizations = @managed_organizations.map(&:self_and_descendants).flatten.uniq
     render :layout => (User.current.admin? ? 'admin' : 'base')
