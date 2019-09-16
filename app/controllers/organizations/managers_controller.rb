@@ -6,23 +6,33 @@ class Organizations::ManagersController < ApplicationController
   def update
     # Managers
     if User.current.admin? # Managers are not allowed to modify managers
-      managers = User.active.where(id: params[:manager_ids])
-      OrganizationManager.where(user_id: params[:manager_ids]).delete_all
+      previous_managers_ids = @organization.managers.map(&:id)
+      managers = User.where(id: params[:manager_ids])
+      managers_ids = managers.map(&:id)
+      add_managers_ids = managers_ids - previous_managers_ids
+      removed_managers_ids = previous_managers_ids - managers_ids
+
+      OrganizationManager.where(user_id: removed_managers_ids).delete_all
       @organization.managers = managers
+
+      OrganizationManager.send_notification_to_added_managers(User.current, add_managers_ids, @organization) if add_managers_ids.any?
+      OrganizationManager.send_notification_to_removed_managers(User.current, removed_managers_ids, @organization) if removed_managers_ids.any?
     end
 
     # Team leaders
-    if params[:team_leader_ids].present?
-      team_leaders_ids = params[:team_leader_ids]
-      team_leaders = User.active.where(id: team_leaders_ids)
-    else
-      team_leaders_ids = []
-      team_leaders = []
-    end
+    team_leaders = User.where(id: params[:team_leader_ids])
+    team_leaders_ids = team_leaders.map(&:id)
     previous_team_leaders_ids = @organization.team_leaders.map(&:id)
+    added_team_leaders_ids = team_leaders_ids - previous_team_leaders_ids
+    removed_team_leaders_ids = previous_team_leaders_ids - team_leaders_ids
 
-    @organization.team_leaders = team_leaders
     OrganizationTeamLeader.where(user_id: params[:team_leader_ids]).where.not(organization: @organization).delete_all
+    OrganizationTeamLeader.where(user_id: removed_team_leaders_ids).delete_all
+    @organization.team_leaders = team_leaders
+
+    OrganizationTeamLeader.send_notification_to_added_team_leaders(User.current, added_team_leaders_ids, @organization) if added_team_leaders_ids.any?
+    OrganizationTeamLeader.send_notification_to_removed_team_leaders(User.current, removed_team_leaders_ids, @organization) if removed_team_leaders_ids.any?
+
     @organization.touch
 
     assign_roles_to_team_leaders(team_leaders_ids, previous_team_leaders_ids)

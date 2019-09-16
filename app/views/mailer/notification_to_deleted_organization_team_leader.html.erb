@@ -1,0 +1,11 @@
+<p><%= l('hello', user: @user.firstname) %></p>
+
+<p>
+  <%= l('mail_notification_removed_team_leader_role', author: @author, organization: @organization.fullname) %>
+</p>
+
+<p>
+  <%= Setting.app_title %><br/>
+  <%= l(:field_user) %>: <strong><%= @author.login %></strong><br/>
+  <%= l(:label_date) %>: <strong><%= format_time Time.now, true %></strong>
+</p>
