@@ -15,7 +15,40 @@ describe Organizations::ManagersController, :type => :controller do
     Setting.default_language = 'fr'
     User.find(1).update_attribute('organization_id', 1)
     User.find(4).update_attribute('organization_id', 1)
+    User.find(2).update_attribute('organization_id', 2)
+    User.find(7).update_attribute('organization_id', 2)
     Setting["plugin_redmine_organizations"]["default_team_leader_role"] = 1
+  end
+
+  it "should allow managers to set other managers in their organization and sub-organization" do
+    @request.session[:user_id] = 2 # Member of organization #2
+
+    OrganizationManager.create(user_id: 2, organization_id: 1)
+    organization = Organization.find(2)
+    expect(organization.managers).to include(User.find(2))
+    expect(organization.managers).to_not include(User.find(7))
+
+    assert_difference 'OrganizationManager.count', 1 do
+      patch :update, params: {id: 2,
+                              manager_ids: [2, 7],
+                              team_leader_ids: [2]}
+    end
+
+    expect(response).to redirect_to(edit_organization_path(2, tab: 'users'))
+    organization.reload
+    expect(organization.managers).to include(User.find(2))
+    expect(organization.managers).to include(User.find(7))
+  end
+
+  it "should forbid users from sub-organization to modify managers in parents of their organization" do
+    @request.session[:user_id] = 2 # Not Admin, member of organization #2
+    assert_no_difference 'OrganizationManager.count' do
+      expect {patch :update, params: {id: 1,
+                                      manager_ids: [1, 2],
+                                      team_leader_ids: [1]}
+      }.to raise_error(ActionView::Template::Error)
+    end
+    # expect(response).to have_http_status(:forbidden) # 403
   end
 
   it "should send a notification to new managers" do
@@ -31,7 +64,6 @@ describe Organizations::ManagersController, :type => :controller do
                                 team_leader_ids: [1]}
       end
     end
-
 
     expect(response).to redirect_to(edit_organization_path(1, tab: 'users'))
 

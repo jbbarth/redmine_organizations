@@ -4,7 +4,7 @@
       <table class="list users">
         <thead>
         <tr>
-          <% if User.current.admin? %>
+          <% if User.current.is_admin_or_manage?(@organization) %>
             <th class="managers hidden"><%= t 'field_managers' %></th>
           <% end %>
           <th class="team_leaders hidden"><%= t 'field_team_leaders' %></th>
@@ -15,7 +15,7 @@
         <tbody>
         <% @organization.users.sort.each do |user| %>
           <tr id="user-<%= user.id %>" class="<%= cycle 'odd', 'even' %>">
-            <% if User.current.admin? %>
+            <% if User.current.is_admin_or_manage?(@organization) %>
               <td class="managers hidden">
                 <%= check_box_tag 'manager_ids[]', user.id.to_s, @organization.managers.include?(user), :id => nil %>
               </td>
@@ -38,7 +38,7 @@
       <%= f.submit "Modifier", class: "managers hidden" %>
     <% end %>
     <% if User.current.is_admin_or_manage?(@organization) %>
-      <%= link_to_function "Modifier #{"les gestionnaires et " if User.current.admin? }les chefs d'équipe", "toggle_organization_managers_form(true)", class: "managers_show" %>
+      <%= link_to_function "Modifier #{"les gestionnaires et " if User.current.is_admin_or_manage?(@organization) }les chefs d'équipe", "toggle_organization_managers_form(true)", class: "managers_show" %>
       <%= link_to_function "Annuler", "toggle_organization_managers_form(false)", class: "managers_hide", style: "display:none;" %>
 
       <!--

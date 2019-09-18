@@ -5,7 +5,7 @@ class Organizations::ManagersController < ApplicationController
 
   def update
     # Managers
-    if User.current.admin? # Managers are not allowed to modify managers
+    if User.current.is_admin_or_manage?(@organization) # Managers ARE allowed to modify managers
       previous_managers_ids = @organization.managers.map(&:id)
       managers = User.where(id: params[:manager_ids])
       managers_ids = managers.map(&:id)
