@@ -93,6 +93,15 @@ describe OrganizationsController, :type => :controller do
       expect(response.status).to eq 403 # Forbidden
     end
 
+    it "should get edit if user is a manager of the organization" do
+      get :edit, params: {:id => Organization.find(2).to_param}
+      expect(response).to be_successful
+    end
+
+    it "should not get edit if not a manager of the organization" do
+      get :edit, params: {:id => Organization.find(1).to_param}
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
   describe "add_users method" do
