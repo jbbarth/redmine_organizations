@@ -27,12 +27,15 @@ class OrganizationTeamLeader < ActiveRecord::Base
     end
     if Setting["plugin_redmine_organizations"]["default_team_leader_role"].present?
       member.roles |= Array.wrap(Role.find(Setting["plugin_redmine_organizations"]["default_team_leader_role"]))
+    else
+      puts "! Settings missing !"
     end
 
     member.functions |= self.organization.self_and_descendants.map {|org| org.functions_by_project(project)}.flatten.uniq.compact
     if member.save
       response
     else
+      puts "** #{"! #{member.errors.messages} | #{project.identifier}"} **"
       "! #{member.errors.messages} | #{project.identifier}"
     end
   end

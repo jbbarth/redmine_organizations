@@ -6,7 +6,7 @@ describe Organizations::ManagersController, :type => :controller do
   include Rails::Dom::Testing::Assertions
   include ActiveSupport::Testing::Assertions
 
-  fixtures :organizations, :organization_managers, :users, :organization_team_leaders, :members, :member_roles
+  fixtures :organizations, :organization_managers, :users, :organization_team_leaders, :members, :member_roles, :roles
 
   render_views
 
@@ -17,7 +17,6 @@ describe Organizations::ManagersController, :type => :controller do
     User.find(4).update_attribute('organization_id', 1)
     User.find(2).update_attribute('organization_id', 2)
     User.find(7).update_attribute('organization_id', 2)
-    Setting["plugin_redmine_organizations"]["default_team_leader_role"] = 1
   end
 
   it "should allow managers to set other managers in their organization and sub-organization" do
@@ -158,23 +157,25 @@ describe Organizations::ManagersController, :type => :controller do
 
   it "should add a specific role to new team leaders" do
     @request.session[:user_id] = 1 # Admin
+    with_settings :plugin_redmine_organizations => {'default_team_leader_role' => '1'} do # Default team leader role
 
-    organization = Organization.find(1)
+      organization = Organization.find(1)
 
-    expect(organization.users).to include(User.find(4))
-    expect(organization.team_leaders).to include(User.find(1))
-    expect(organization.team_leaders).to_not include(User.find(4))
+      expect(organization.users).to include(User.find(4))
+      expect(organization.team_leaders).to include(User.find(1))
+      expect(organization.team_leaders).to_not include(User.find(4))
 
-    assert_difference 'OrganizationTeamLeader.count', 1 do
-      patch :update, params: {id: 1,
-                              manager_ids: [1],
-                              team_leader_ids: [1, 4]}
+      assert_difference 'OrganizationTeamLeader.count', 1 do
+        patch :update, params: {id: 1,
+                                manager_ids: [1],
+                                team_leader_ids: [1, 4]}
+      end
+
+      organization.reload
+      expect(organization.team_leaders).to include(User.find(4))
+      expect(Project.find(5).users).to include User.find(4)
+      expect(response).to redirect_to(edit_organization_path(1, tab: 'users'))
     end
-
-    organization.reload
-    expect(organization.team_leaders).to include(User.find(4))
-    expect(Project.find(5).users).to include User.find(4)
-    expect(response).to redirect_to(edit_organization_path(1, tab: 'users'))
   end
 
   it "should remove a specific role from deleted team leaders" do
