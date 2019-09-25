@@ -38,24 +38,8 @@
       <%= f.submit "Modifier", class: "managers hidden" %>
     <% end %>
     <% if User.current.is_admin_or_manage?(@organization) %>
-      <%= link_to_function "Modifier #{"les gestionnaires et " if User.current.is_admin_or_manage?(@organization) }les chefs d'équipe", "toggle_organization_managers_form(true)", class: "managers_show" %>
+      <%= link_to_function "Modifier les gestionnaires et les chefs d'équipe", "toggle_organization_managers_form(true)", class: "managers_show" %>
       <%= link_to_function "Annuler", "toggle_organization_managers_form(false)", class: "managers_hide", style: "display:none;" %>
-
-      <!--
-      <br><br>
-      <%= form_for :team_leader_assignment, url: assign_to_team_projects_organizations_team_leaders_path(organization_id: @organization.id), :method => :put, :remote => true do %>
-        <fieldset id="role_propagation_for_team_leaders">
-          <legend><%= l(:role_propagation_for_team_leaders) %></legend>
-
-          Donne des droits de "gestionnaire local" aux chefs d'équipe, sur tous les projets dans lesquels au moins un
-          agent de l'entité a déjà des droits.
-
-          <p><%= submit_tag l(:button_apply) %></p>
-          <p class="response"></p>
-        </fieldset>
-      <% end %>
-      -->
-
     <% end %>
   <% else %>
     <p class="nodata"><%= l(:label_no_data) %></p>
