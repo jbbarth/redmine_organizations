@@ -17,7 +17,8 @@ module PluginOrganizations
     end
 
     def find_organization_by_id
-      @organization = Organization.find(params[:id])
+      @organization = Organization.where("identifier = lower(?) OR id = ?", params[:id], params[:id].to_i).first
+      render_404 if @organization.blank?
     end
 
     def require_admin_or_manager

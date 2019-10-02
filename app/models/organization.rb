@@ -37,6 +37,7 @@ class Organization < ActiveRecord::Base
 
   def update_name_with_parents
     self.name_with_parents = calculated_fullname
+    self.identifier = calculated_identifier
   end
   
   def <=>(other)
@@ -65,6 +66,10 @@ class Organization < ActiveRecord::Base
 
   def to_s
     fullname
+  end
+
+  def calculated_identifier
+    name_with_parents.parameterize
   end
 
   def direction_organization
@@ -115,6 +120,22 @@ class Organization < ActiveRecord::Base
     organization_roles.where(project_id: project_id).where.not(role_id: excluded_roles.map(&:id)).each do |organization_role|
       organization_role.try(:destroy) if organization_role.id
     end
+  end
+
+  def all_managers
+    managers + inherited_managers
+  end
+
+  def inherited_managers
+    self.ancestors.map(&:managers).flatten.uniq
+  end
+
+  def all_team_leaders
+    team_leaders + inherited_team_leaders
+  end
+
+  def inherited_team_leaders
+    self.ancestors.map(&:team_leaders).flatten.uniq
   end
 
 end

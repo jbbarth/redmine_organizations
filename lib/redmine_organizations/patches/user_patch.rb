@@ -10,6 +10,8 @@ require_dependency 'user'
 class User < Principal
   unloadable
   belongs_to :organization
+  has_many :organization_managers
+  has_many :organization_team_leaders
 
   safe_attributes 'organization_id'
   attr_accessor :orga_update_method
@@ -35,6 +37,14 @@ class User < Principal
 
   def is_not_admin?
     !admin?
+  end
+
+  def managers
+    if self.organization.present?
+      organization.all_managers
+    else
+      []
+    end
   end
 
   # Returns the roles that the user is allowed to manage for the given project

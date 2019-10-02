@@ -50,7 +50,7 @@
 
   <% users = User.active.where("organization_id IS NULL").sorted.limit(100).to_a %>
   <% if users.any? %>
-    <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization}, :method => :post) do |f| %>
+    <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization.identifier}, :method => :post) do |f| %>
       <fieldset>
         <legend><%= l(:label_user_new) %> parmi tous les inscrits sur le Portail</legend>
 

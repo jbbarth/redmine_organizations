@@ -119,12 +119,12 @@ function any_role_selected() {
 
 function toggle_organization_managers_form(state) {
     if (state) {
-        $("form .managers, form .team_leaders").show();
-        $("a.managers_hide").show();
+        $("form .managers, form .team_leaders").show()
+        $("a.managers_hide").show()
         $("a.managers_show").hide()
     } else {
-        $("form .managers, form .team_leaders").hide();
-        $("a.managers_hide").hide();
+        $("form .managers, form .team_leaders").hide()
+        $("a.managers_hide").hide()
         $("a.managers_show").show()
     }
 }

@@ -100,7 +100,7 @@ class OrganizationsController < ApplicationController
     @users = User.active.where(id: params[:user_ids])
     @organization.users << @users if request.post?
     respond_to do |format|
-      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'users'}
+      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.identifier, :tab => 'users'}
       format.js
     end
   end
@@ -108,7 +108,7 @@ class OrganizationsController < ApplicationController
   def remove_user
     @organization.users.delete(User.find(params[:user_id])) if request.post?
     respond_to do |format|
-      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization, :tab => 'users'}
+      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.identifier, :tab => 'users'}
       format.js
     end
   end

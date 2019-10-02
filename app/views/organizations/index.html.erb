@@ -21,16 +21,16 @@
     <% @managed_organizations.each do |organization| %>
       <tr class="organization <%= organization.direction? ? "direction" : "" %>">
         <td class="name" data-filter-value="<%= organization.fullname %>">
-          <%= link_to h(organization.fullname), {:controller => 'organizations', :action => 'show', :id => organization} %>
+          <%= link_to h(organization.fullname), {:controller => 'organizations', :action => 'show', :id => organization.identifier} %>
         </td>
         <td class="description"><%= h organization.description %></td>
         <td class="team_leaders"><%= h organization.team_leaders.map(&:to_s).join(', ') %></td>
         <td class="managers"><%= h organization.managers.map(&:to_s).join(', ') %></td>
         <td class="buttons">
-          <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
+          <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization.identifier},
                       :class => 'icon icon-edit' %>
           <% if organization != User.current.organization %>
-            <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
+            <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization.identifier},
                         :class => 'icon icon-del', :data => {:confirm => l(:text_are_you_sure)}, :method => :delete %>
           <% end %>
         </td>
@@ -62,16 +62,16 @@
       <% @organizations.each do |organization| %>
         <tr class="organization <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
           <td class="name" data-filter-value="<%= organization.fullname %>">
-            <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization} %>
+            <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization.identifier} %>
           </td>
           <td class="description"><%= h organization.description %></td>
           <td class="team_leaders"><%= h organization.team_leaders.map(&:to_s).join(', ') %></td>
           <td class="managers"><%= h organization.managers.map(&:to_s).join(', ') %></td>
           <td class="buttons">
             <% if User.current.admin? %>
-              <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization},
+              <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization.identifier},
                           :class => 'icon icon-edit' %>
-              <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization},
+              <%= link_to l(:button_delete), {:controller => 'organizations', :action => 'destroy', :id => organization.identifier},
                           :class => 'icon icon-del', :data => {:confirm => l(:text_are_you_sure)}, :method => :delete %>
             <% end %>
           </td>
