@@ -4,7 +4,8 @@ require 'redmine_organizations/patches/users_controller_patch'
 describe UsersController, type: :controller do
 
   describe 'method_update_memberships_according_to_new_orga' do
-    fixtures :organizations, :users, :roles, :projects, :members, :member_roles
+    fixtures :organizations, :users, :roles, :projects, :members, :member_roles,
+             :organization_managers, :organization_team_leaders
 
     before do
       @request.session[:user_id] = 1

@@ -3,7 +3,8 @@ require "active_support/testing/assertions"
 
 describe OrganizationsController, :type => :controller do
 
-  fixtures :organizations, :organization_managers, :users
+  fixtures :organizations, :organization_managers, :users,
+           :organization_team_leaders, :members, :member_roles, :roles
 
   render_views
 

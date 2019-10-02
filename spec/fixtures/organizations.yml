@@ -1,6 +1,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 organization_001:
   id: 1
+  identifier: org-a
   name: Org A
   description: Description of organization A
   parent_id: 
@@ -10,6 +11,7 @@ organization_001:
   rgt: 6
 organization_002:
   id: 2
+  identifier: org-a-team-a
   name: Team A
   description: Team A in org A
   parent_id: 1
@@ -18,6 +20,7 @@ organization_002:
   rgt: 3
 organization_003:
   id: 3
+  identifier: org-a-team-b
   name: Team B
   description: Team B in org B
   parent_id: 1

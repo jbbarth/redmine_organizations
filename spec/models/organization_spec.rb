@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe "Organization" do
-  fixtures :organizations, :users, :roles, :projects, :members, :member_roles
+  fixtures :organizations, :users, :roles, :projects, :members, :member_roles, :organization_managers
 
   it "should test_organization_tree_sorting" do
     o = Organization.create(:name => "Team C", :parent_id => 1)
@@ -40,5 +40,19 @@ describe "Organization" do
     end
     assert_equal result, [{0=>"Org A"}, {1=>"Team A"}, {1=>"Team B"}]
   end
+
+  it "should test Organization#managers" do
+    expect(Organization.find(1).managers).to eq [User.find(1)]
+  end
+
+  it "should test Organization#inherited_managers" do
+    expect(Organization.find(2).managers).to eq [User.find(2)]
+    expect(Organization.find(2).inherited_managers).to eq [User.find(1)]
+  end
+
+  it "should test Organization#all_managers" do
+    expect(Organization.find(2).all_managers).to eq [User.find(2), User.find(1)]
+  end
+
 
 end
