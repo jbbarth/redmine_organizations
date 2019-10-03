@@ -60,7 +60,7 @@ class User < Principal
     if admin?
       false
     else
-      membership(project).try(:managed_only_his_organization?) || true
+      membership(project).try(:managed_only_his_organization?)
     end
   end
 
