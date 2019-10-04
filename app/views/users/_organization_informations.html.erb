@@ -23,6 +23,29 @@
           <% end if User.current.is_admin_or_manage?(@user.organization) || User.current == @user %>
         </div>
       <% end %>
+
+      <div style="margin-top: 5px;">Gestionnaires d'organisation :</div>
+      <ul>
+        <% if @user.organization.all_managers.each do |manager| %>
+          <li>
+            <%= link_to_user manager %> (<%= link_to_organization(manager.organization) %>)
+          </li>
+        <% end.empty? %>
+          Cet utilisateur n'a aucun gestionnaire d'organisation
+        <% end %>
+      </ul>
+
+      <div style="margin-top: 5px;">Chefs d'équipe :</div>
+      <ul>
+        <% if @user.organization.all_team_leaders.each do |team_leader| %>
+          <li>
+            <%= link_to_user team_leader %> (<%= link_to_organization(team_leader.organization) %>)
+          </li>
+        <% end.empty? %>
+          Cet utilisateur n'a aucun chef d'équipe
+        <% end %>
+      </ul>
+
     </li>
   </ul>
 <% end %>
