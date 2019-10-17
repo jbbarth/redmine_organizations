@@ -1,0 +1,4 @@
+$('#tab-content-managers').html('<%= escape_javascript(render :partial => 'organizations/managers') %>')
+<% @managers.each do |manager| %>
+  $('#manager-<%= manager.id %>').effect("highlight")
+<% end %>

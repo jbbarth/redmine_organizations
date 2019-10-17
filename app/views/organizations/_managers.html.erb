@@ -1,0 +1,51 @@
+<div class="splitcontentleft">
+  <% if @organization.all_managers.any? %>
+    <table class="list managers">
+      <thead>
+      <tr>
+        <th><%= l(:field_managers) %></th>
+        <th style="width:15%"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @organization.all_managers.sort.each do |manager| %>
+        <tr id="manager-<%= manager.id %>" class="<%= cycle 'odd', 'even' %>">
+          <td class="user">
+            <%= link_to_user manager %>
+            <%= "(#{manager.organization})" if manager.organization.present? && manager.organization != @organization %>
+            <%= "(aucune organisation)" if manager.organization.blank? %>
+            <%= content_tag(:span, "Chef d'équipe", :class => "badge team-leader-badge") if @organization.all_team_leaders.include?(manager) %>
+          </td>
+          <td class="buttons">
+            <%= link_to l(:button_delete), organizations_manager_path(:id => @organization, :manager_id => manager.id), :method => :delete, :remote => true, :class => 'icon icon-del' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="nodata"><%= l(:label_no_data) %></p>
+  <% end %>
+</div>
+
+<div class="splitcontentright">
+
+  <% managers = User.active.sorted.limit(50).to_a %>
+  <% if managers.any? %>
+    <%= form_for(@organization, :as => :organization, :remote => true, :url => organizations_managers_path(:id => @organization.identifier), :method => :post) do |f| %>
+      <fieldset>
+        <legend><%= l(:label_manager_new) %> parmi tous les inscrits sur le Portail</legend>
+
+        <p><%= text_field_tag 'manager_search', nil %></p>
+        <%= javascript_tag "observeSearchfield('manager_search', 'managers', '#{escape_javascript autocomplete_for_manager_organizations_managers_path(:id => @organization)}')" %>
+
+        <div id="managers">
+          <%= managers_check_box_tags 'manager_ids[]', managers %>
+        </div>
+
+        <p><%= submit_tag l(:button_add) %></p>
+      </fieldset>
+    <% end %>
+  <% end %>
+
+</div>

@@ -60,3 +60,10 @@ textarea#organization_description{
 .orga-select2{
     width: 350px;
 }
+
+#tab-content-managers .splitcontentleft {width: 64%;}
+#tab-content-managers .splitcontentright {width: 34%;}
+#tab-content-managers fieldset {padding:1em; margin-bottom: 1em;}
+#tab-content-managers fieldset label {display: block;}
+#tab-content-managers #principals {max-height: 400px; overflow: auto;}
+input#manager_search {width:90%}

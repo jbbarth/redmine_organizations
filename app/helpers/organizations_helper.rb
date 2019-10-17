@@ -2,11 +2,13 @@ module OrganizationsHelper
   def organization_settings_tabs
     tabs = [{:name => 'general', :partial => 'organizations/general', :label => :label_general},
             {:name => 'users', :partial => 'organizations/users', :label => :label_user_plural}]
+    tabs << {:name => 'managers', :partial => 'organizations/managers', :label => :field_managers} if User.current.is_admin_or_manage?(@organization)
     tabs << {:name => 'memberships', :partial => 'organizations/memberships', :label => :label_project_plural} if User.current.admin?
     tabs
   end
 
   def link_to_organization(organization, options = {})
+    return '' if organization.blank?
     options = {:link_ancestors => true,
                :fullname => true,
                :title => organization.fullname}.merge(options)
@@ -48,15 +50,23 @@ module OrganizationsHelper
     )
   end
 
-  def users_check_box_tags(name, principals, disabled_principals)
+  def users_check_box_tags(name, principals, disabled_principals = [])
     s = ''
     principals.each do |principal|
       if disabled_principals.include?(principal)
         s << "<label style='color:lightgray;'>#{ check_box_tag '#', '#', true, :id => nil, disabled: true } #{h principal}</label>\n"
       else
-        s << "<label>#{ check_box_tag name, principal.id, false, :id => nil } #{h principal}</label>\n"
+        s << "<label>#{ check_box_tag name, principal.id, false, :id => nil } #{h principal} <span style='color:darkgray;'>#{principal.organization.present? ? "(#{principal.organization})" : ''}</span> </label>\n"
       end
 
+    end
+    s.html_safe
+  end
+
+  def managers_check_box_tags(name, principals)
+    s = ''
+    principals.each do |principal|
+      s << "<label>#{ check_box_tag name, principal.id, false, :id => nil } #{h principal} <span style='color:darkgray;'>#{principal.organization.present? ? "(#{principal.organization})" : ''}</span> </label>\n"
     end
     s.html_safe
   end

@@ -11,8 +11,12 @@ RedmineApp::Application.routes.draw do
     end
   end
   namespace :organizations do
-    resources :managers, only: [:update]
-    resources :team_leaders, only: [] do
+    resources :managers, only: [:create, :destroy] do
+      collection do
+        get :autocomplete_for_manager
+      end
+    end
+    resources :team_leaders, only: [:update] do
       collection do
         put :assign_to_team_projects
       end

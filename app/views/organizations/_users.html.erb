@@ -1,12 +1,9 @@
 <div class="splitcontentleft">
   <% if @organization.users.any? %>
-    <%= form_for :managers, url: organizations_manager_path(@organization), :method => :patch do |f| %>
+    <%= form_for :team_leaders, url: organizations_team_leader_path(@organization), :method => :patch do |f| %>
       <table class="list users">
         <thead>
         <tr>
-          <% if User.current.is_admin_or_manage?(@organization) %>
-            <th class="managers hidden"><%= t 'field_managers' %></th>
-          <% end %>
           <th class="team_leaders hidden"><%= t 'field_team_leaders' %></th>
           <th><%= l(:label_user) %></th>
           <th style="width:15%"></th>
@@ -15,11 +12,6 @@
         <tbody>
         <% @organization.users.sort.each do |user| %>
           <tr id="user-<%= user.id %>" class="<%= cycle 'odd', 'even' %>">
-            <% if User.current.is_admin_or_manage?(@organization) %>
-              <td class="managers hidden">
-                <%= check_box_tag 'manager_ids[]', user.id.to_s, @organization.managers.include?(user), :id => nil %>
-              </td>
-            <% end %>
             <td class="team_leaders hidden">
               <%= check_box_tag 'team_leader_ids[]', user.id.to_s, @organization.team_leaders.include?(user), :id => nil %>
             </td>
@@ -35,11 +27,11 @@
         <% end %>
         </tbody>
       </table>
-      <%= f.submit "Modifier", class: "managers hidden" %>
+      <%= f.submit "Modifier", class: "team_leaders hidden" %>
     <% end %>
     <% if User.current.is_admin_or_manage?(@organization) %>
-      <%= link_to_function "Modifier les gestionnaires et les chefs d'équipe", "toggle_organization_managers_form(true)", class: "managers_show" %>
-      <%= link_to_function "Annuler", "toggle_organization_managers_form(false)", class: "managers_hide", style: "display:none;" %>
+      <%= link_to_function "Modifier les chefs d'équipe", "toggle_organization_team_leaders_form(true)", class: "team_leaders_show" %>
+      <%= link_to_function "Annuler", "toggle_organization_team_leaders_form(false)", class: "team_leaders_hide", style: "display:none;" %>
     <% end %>
   <% else %>
     <p class="nodata"><%= l(:label_no_data) %></p>
@@ -48,7 +40,7 @@
 
 <div class="splitcontentright">
 
-  <% users = User.active.where("organization_id IS NULL").sorted.limit(100).to_a %>
+  <% users = User.active.where("organization_id IS NULL").sorted.limit(50).to_a %>
   <% if users.any? %>
     <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization.identifier}, :method => :post) do |f| %>
       <fieldset>
@@ -58,7 +50,7 @@
         <%= javascript_tag "observeSearchfield('user_search', 'users', '#{escape_javascript autocomplete_for_user_organization_path(:id => @organization)}')" %>
 
         <div id="users">
-          <%= principals_check_box_tags 'user_ids[]', users %>
+          <%= users_check_box_tags 'user_ids[]', users %>
         </div>
 
         <p><%= submit_tag l(:button_add) %></p>
