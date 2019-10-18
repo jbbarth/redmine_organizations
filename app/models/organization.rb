@@ -138,4 +138,8 @@ class Organization < ActiveRecord::Base
     self.ancestors.map(&:team_leaders).flatten.uniq
   end
 
+  def self.managed_by(user:)
+    Organization.joins(:organization_managers).where("organization_managers.user_id = ?", user.id).order('lft').map(&:self_and_descendants).flatten.uniq
+  end
+
 end

@@ -58,7 +58,7 @@ describe OrganizationsController, :type => :controller do
     end
 
     it "should autocomplete for users" do
-      get :autocomplete_for_user, params: {:id => 1, :q => "adm"}
+      get :autocomplete_for_user, params: {:id => 2, :q => "adm"}
       expect(response).to be_successful
       assert response.body.include?("Admin")
       assert !response.body.include?("John")

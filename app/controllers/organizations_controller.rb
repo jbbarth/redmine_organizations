@@ -10,8 +10,7 @@ class OrganizationsController < ApplicationController
 
   def index
     @organizations = Organization.order('lft').includes(:managers, :team_leaders)
-    @managed_organizations = Organization.joins(:organization_managers).where("organization_managers.user_id = ?", User.current.id).order('lft')
-    @managed_organizations = @managed_organizations.map(&:self_and_descendants).flatten.uniq
+    @managed_organizations = Organization.managed_by(user: User.current)
     render :layout => (User.current.admin? ? 'admin' : 'base')
   end
 
@@ -54,11 +53,13 @@ class OrganizationsController < ApplicationController
 
   def new
     @organization = Organization.new
+    @managed_organizations = Organization.managed_by(user: User.current)
   end
 
   def edit
     @roles = Role.find_all_givable
     @projects = Project.active.order('lft')
+    @managed_organizations = Organization.managed_by(user: User.current)
 
     render :layout => (User.current.admin? ? 'admin' : 'base')
   end

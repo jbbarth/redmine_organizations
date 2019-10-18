@@ -1,7 +1,7 @@
 class Organizations::TeamLeadersController < ApplicationController
 
-  before_action :require_admin_or_manager
   before_action :find_organization_by_id, only: [:update]
+  before_action :require_admin_or_manager
 
   def assign_to_team_projects
 

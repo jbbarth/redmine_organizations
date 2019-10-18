@@ -7,7 +7,7 @@
   <p>
     <%= f.text_field :mail, :size => 80, label: t('functional_mail') %>
   </p>
-  <p><%= f.select "parent_id", nested_set_options(User.current.admin? ? Organization : User.current.organization, @organization) {|i| i.fullname},
+  <p><%= f.select "parent_id", User.current.admin? ? nested_set_options(Organization, @organization){|i| i.fullname} : options_from_collection_for_select(@managed_organizations-@organization.self_and_descendants, 'id', 'fullname', @organization.parent_id),
                   {:include_blank => (User.current.admin?), :label => :field_parent_organization},
                   {:class => "orga-select2"} %></p>
   <% if User.current.admin? %>

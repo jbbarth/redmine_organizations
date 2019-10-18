@@ -5,7 +5,7 @@ describe "UserPatch" do
 
   fixtures :organizations, :organization_managers, :users, :roles
 
-  before(:all) do
+  before(:each) do
     User.find(1).update_attributes(organization_id: 1)
     User.find(2).update_attributes(organization_id: 2)
   end
