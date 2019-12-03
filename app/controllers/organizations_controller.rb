@@ -67,9 +67,6 @@ class OrganizationsController < ApplicationController
   def create
     @organization = Organization.new
     @organization.safe_attributes = params[:organization]
-    if !User.current.admin? && User.current.organization.self_and_descendants.exclude?(@organization.parent)
-      raise Forbidden
-    end
     if @organization.save
       flash[:notice] = l(:notice_successful_create)
       redirect_to(@organization)
@@ -89,9 +86,6 @@ class OrganizationsController < ApplicationController
   end
 
   def destroy
-    if !User.current.admin? && User.current.organization.descendants.exclude?(@organization)
-      raise Forbidden
-    end
     @organization.destroy
     flash[:notice] = l(:notice_successful_delete)
     redirect_to(organizations_url)
