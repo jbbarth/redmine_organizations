@@ -46,3 +46,4 @@ fr:
   mail_notification_removed_team_leader_role: "%{author} vient de vous retirer les droits de 'Chef d'équipe' pour l'organisation '%{organization}'."
   mail_subject_updated_role: "Modification des paramètres de votre compte"
   hello: "Bonjour %{user}"
+  label_sign_up_new_user: "Inscrire un nouvel utilisateur sur le Portail"

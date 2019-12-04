@@ -1,5 +1,57 @@
 require_dependency 'users_controller'
 
+module PluginOrganizations
+  module UsersController
+
+
+    def create
+
+      if params[:back_url].present?
+
+        @back_url = params[:back_url]
+
+        # Copy/Paste From Redmine Core
+        @user = User.new(:language => Setting.default_language, :mail_notification => Setting.default_notification_option, :admin => false)
+        @user.safe_attributes = params[:user]
+        @user.password, @user.password_confirmation = params[:user][:password], params[:user][:password_confirmation] unless @user.auth_source_id
+        @user.pref.safe_attributes = params[:pref]
+
+        if @user.save
+          Mailer.deliver_account_information(@user, @user.password) if params[:send_information]
+
+          respond_to do |format|
+            format.html {
+              flash[:notice] = l(:notice_user_successful_create, :id => view_context.link_to(@user.login, user_path(@user)))
+              if params[:continue]
+                attrs = {:generate_password => @user.generate_password}
+                redirect_to new_user_path(:user => attrs, back_url: @back_url)
+              else
+                redirect_back_or_default(user_path(@user))
+              end
+            }
+            format.api {render :action => 'show', :status => :created, :location => user_url(@user)}
+          end
+        else
+          @auth_sources = AuthSource.all
+          # Clear password input
+          @user.password = @user.password_confirmation = nil
+
+          respond_to do |format|
+            format.html {render :action => 'new', back_url: @back_url}
+            format.api {render_validation_errors(@user)}
+          end
+        end
+
+      else
+        super
+      end
+
+    end
+
+  end
+end
+UsersController.prepend PluginOrganizations::UsersController
+
 class UsersController < ApplicationController
 
   skip_before_action :require_admin

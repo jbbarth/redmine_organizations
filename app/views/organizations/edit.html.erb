@@ -2,6 +2,7 @@
   <% if User.current.is_admin_or_manage?(@organization) %>
     <%= link_to l(:label_organization_new), {:controller => 'organizations', :action => 'new'},
                 :class => 'icon icon-add' %>
+    <%= link_to l(:label_sign_up_new_user), {:controller => 'users', :action => 'new', :back_url => edit_organization_path(@organization)}, :class => 'icon icon-user' %>
   <% end %>
 </div>
 
