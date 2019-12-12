@@ -2,8 +2,6 @@
 fr:
   label_organization: "Organisation"
   label_organization_plural: "Organisations"
-  project_module_organizations: "Organisations"
-  permission_manage_my_organization: "Gérer mon organisation"
   label_organization_new: "Nouvelle organisation"
   label_organization_children: "Sous-organisations"
   label_missing_target_user: "L'utilisateur cible ne peut pas être vide"
