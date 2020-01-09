@@ -65,7 +65,7 @@
             </td>
             <td class="users"></td>
             <td class="buttons">
-              <% if managed_organizations.include? organization %>
+              <% if organization.blank? || managed_organizations.include?(organization) %>
                 <%= link_to l(:button_edit),
                             edit_membership_path(member),
                             :remote => true,

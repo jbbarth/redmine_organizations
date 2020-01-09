@@ -29,7 +29,9 @@ class OrganizationTeamLeader < ActiveRecord::Base
       member.roles |= Array.wrap(Role.find(Setting["plugin_redmine_organizations"]["default_team_leader_role"]))
     end
 
-    member.functions |= self.organization.self_and_descendants.map {|org| org.functions_by_project(project)}.flatten.uniq.compact
+    if Redmine::Plugin.installed?(:redmine_limited_visibility)
+      member.functions |= self.organization.self_and_descendants.map {|org| org.functions_by_project(project)}.flatten.uniq.compact
+    end
     if member.save
       response
     else
