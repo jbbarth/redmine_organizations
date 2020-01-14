@@ -60,3 +60,8 @@ Redmine::MenuManager.map :admin_menu do |menu|
             :caption => :label_organization_plural,
             :html => {:class => 'icon'}
 end
+
+Redmine::MenuManager.map :top_menu do |menu|
+  menu.push :organizations, {:controller => 'organizations'}, :caption => :label_organization_plural,
+            :if => Proc.new {User.current.logged?}, :last => true
+end
