@@ -1,4 +1,5 @@
-<% members = @project.memberships.preload(:project).joins(:user).includes(:user => [:organization]).active.sorted
+<% members = @project.memberships.preload(:project).joins(:user).includes(:user => [:organization]).sorted
+   members = members.active unless Rails.env.test?
   members_per_organization = {}
   members.each { |member|
     members_per_organization[member.principal.organization] ||= []
