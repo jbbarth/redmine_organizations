@@ -35,7 +35,12 @@
       <% if @projects.any? %>
         <ul>
           <% for project in @projects %>
-            <li><%= link_to_organization_project(project, @organization.users_by_project(project)) %></li>
+            <li>
+              <%= link_to_organization_project(project, @organization.users_by_project(project)) %>
+              <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
+                <%= @organization.functions_by_project(project).map(&:name).join(', ') %>
+              <% end %>
+            </li>
           <% end %>
         </ul>
       <% end %>
