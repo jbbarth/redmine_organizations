@@ -16,6 +16,7 @@
 <div class="splitcontentleft organization">
 
   <h3><%= "#{ l(:label_user_plural)} (#{@subusers_count})" %></h3>
+
   <ul class=root>
     <li class=selected-organization>
       <%= render 'list_organization', organization: @organization, users: @users %>
@@ -27,7 +28,7 @@
     <% end %>
   </ul>
 
-  <h3><%= l(:label_project_plural) %></h3>
+  <h3><%= "#{l(:label_project_plural)} (#{@projects.size})" %></h3>
   <ul class=root>
     <li class=selected-organization>
       <%= link_to_organization @organization, :link_ancestors => false %>

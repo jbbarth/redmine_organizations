@@ -31,7 +31,7 @@ class OrganizationsController < ApplicationController
       @subusers[organization] = organization.users.active.sorted
     end
 
-    @subusers_count = (@organization.users | @subusers.values.flatten.uniq).count
+    @subusers_count = (@organization.users.active | @subusers.values.flatten.uniq).count
 
     events = []
     #@users.each do |user|
@@ -42,7 +42,7 @@ class OrganizationsController < ApplicationController
 
     #issues for projects of this organization + sub organizations
     organization_ids = @organization.self_and_descendants.map(&:id)
-    project_ids = Member.joins(:user).where('users.organization_id IN (?)', organization_ids).map(&:project_id).uniq
+    project_ids = Member.joins(:user).where('users.status = ? AND users.organization_id IN (?)', User::STATUS_ACTIVE, organization_ids).map(&:project_id).uniq
     @issues = Issue.open.visible.on_active_project.where(project_id: project_ids).joins(:priority).order("enumerations.position desc").limit(50)
 
     render :layout => 'base'
