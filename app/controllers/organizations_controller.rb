@@ -33,13 +33,6 @@ class OrganizationsController < ApplicationController
 
     @subusers_count = (@organization.users.active | @subusers.values.flatten.uniq).count
 
-    events = []
-    #@users.each do |user|
-    #  events << Redmine::Activity::Fetcher.new(User.current, :author => user).events(nil, nil, :limit => 10)
-    #end
-    #@events_by_day = events.group_by(&:event_date) <<undefined method 'event_date' for Array
-    @events_by_day = []
-
     #issues for projects of this organization + sub organizations
     organization_ids = @organization.self_and_descendants.map(&:id)
     project_ids = Member.joins(:user).where('users.status = ? AND users.organization_id IN (?)', User::STATUS_ACTIVE, organization_ids).map(&:project_id).uniq

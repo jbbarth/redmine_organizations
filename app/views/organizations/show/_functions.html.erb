@@ -1,0 +1,36 @@
+<table class="list functions">
+
+  <thead>
+  <tr>
+    <th>Rôles fonctionnels</th>
+    <th>Projets</th>
+    <th>Membres</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @organization.functions.each do |function| %>
+
+    <% projects = @organization.projects_by_function(function) %>
+    <% projects.each_with_index do |project, row_index| %>
+
+      <tr>
+        <% if row_index == 0 %>
+          <td rowspan="<%= projects.size %>"><%= function.name %></td>
+        <% end %>
+        <td><%= link_to_project(project) %></td>
+        <td>
+          <ul>
+            <% @organization.users_with(project: project, functions: [function]).each do |user| %>
+              <li><%= link_to_user user %></li>
+            <% end %>
+          </ul>
+        </td>
+      </tr>
+
+    <% end %>
+
+  <% end %>
+  </tbody>
+
+</table>

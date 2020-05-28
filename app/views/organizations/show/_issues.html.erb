@@ -1,0 +1,3 @@
+<% if @issues.any? %>
+  <%= render :partial => 'issues/list_simple', :locals => {:issues => @issues} %>
+<% end %>

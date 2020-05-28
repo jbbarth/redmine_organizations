@@ -1,0 +1,41 @@
+<h3><%= l(:label_project_plural) %></h3>
+<ul class=root>
+  <li class=selected-organization>
+    <%= link_to_organization @organization, :link_ancestors => false %>
+    <% if @projects.any? %>
+      <ul>
+        <% for project in @projects %>
+          <li>
+            <%= link_to_organization_project(project, @organization.users_by_project(project)) %>
+            <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
+              <%= @organization.functions_by_project(project).map(&:name).join(', ') %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </li>
+  <% @subprojects_by_organization.keys.sort_by(&:fullname).each do |suborganization| %>
+    <% subprojects = @subprojects_by_organization[suborganization] %>
+    <li>
+      <%= link_to_organization suborganization, :link_ancestors => false %>
+      <% if subprojects.any? %>
+        <ul>
+          <% for project in subprojects %>
+            <li><%= link_to_organization_project(project, suborganization.users_by_project(project)) %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </li>
+  <% end %>
+  <% if @projects_not_active.any? %>
+    <li class="selected-organization">
+      <%= l(:project_status_archived).capitalize %>:
+      <ul>
+        <% for project in @projects_not_active %>
+          <li><%= link_to_organization_project(project, @organization.users_by_project(project)) %></li>
+        <% end %>
+      </ul>
+    </li>
+  <% end %>
+</ul>

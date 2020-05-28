@@ -11,99 +11,13 @@
 
 <h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%= link_to_organization @organization %></h2>
 
-<p><em><%= textilizable @organization.description %></em></p>
+<div class="organization">
 
-<div class="splitcontentleft organization">
+  <p class="description">
+    <%= @organization.description %>
+  </p>
 
-  <h3><%= "#{ l(:label_user_plural)} (#{@subusers_count})" %></h3>
-
-  <ul class=root>
-    <li class=selected-organization>
-      <%= render 'list_organization', organization: @organization, users: @users %>
-    </li>
-    <% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
-      <li>
-        <%= render 'list_organization', organization: suborganization, users: @subusers[suborganization] %>
-      </li>
-    <% end %>
-  </ul>
-
-  <h3><%= "#{l(:label_project_plural)} (#{@projects.size})" %></h3>
-  <ul class=root>
-    <li class=selected-organization>
-      <%= link_to_organization @organization, :link_ancestors => false %>
-      <% if @projects.any? %>
-        <ul>
-          <% for project in @projects %>
-            <li>
-              <%= link_to_organization_project(project, @organization.users_by_project(project)) %>
-              <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
-                <%= @organization.functions_by_project(project).map(&:name).join(', ') %>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
-    </li>
-    <% @subprojects_by_organization.keys.sort_by(&:fullname).each do |suborganization| %>
-      <% subprojects = @subprojects_by_organization[suborganization] %>
-      <li>
-        <%= link_to_organization suborganization, :link_ancestors => false %>
-        <% if subprojects.any? %>
-          <ul>
-            <% for project in subprojects %>
-              <li><%= link_to_organization_project(project, suborganization.users_by_project(project)) %></li>
-            <% end %>
-          </ul>
-        <% end %>
-      </li>
-    <% end %>
-    <% if @projects_not_active.any? %>
-      <li class="selected-organization">
-        <%= l(:project_status_archived).capitalize %>:
-        <ul>
-          <% for project in @projects_not_active %>
-            <li><%= link_to_organization_project(project, @organization.users_by_project(project)) %></li>
-          <% end %>
-        </ul>
-      </li>
-    <% end %>
-  </ul>
-
-  <%= call_hook :view_organization_left_bottom, :organization => @organization %>
-</div>
-
-<div class="splitcontentright organization">
-
-  <% unless @events_by_day.empty? %>
-    <h3><%= link_to l(:label_activity), :controller => 'projects', :action => 'activity', :id => nil, :organization_id => @organization, :from => @events_by_day.keys.first %></h3>
-
-    <p>
-      <%= l(:label_reported_issues) %>: <%= Issue.where(:author_id => @organization.users.map(&:id)).count %>
-    </p>
-
-    <div id="activity">
-      <% @events_by_day.keys.sort.reverse.each do |day| %>
-        <h4><%= format_activity_day(day) %></h4>
-        <dl>
-          <% @events_by_day[day].sort {|x, y| y.event_datetime <=> x.event_datetime}.each do |e| -%>
-            <dt class="<%= e.event_type %>">
-              <span class="time"><%= format_time(e.event_datetime, false) %></span>
-              <%= content_tag('span', h(e.project), :class => 'project') %>
-              <%= link_to format_activity_title(e.event_title), e.event_url %></dt>
-            <dd><span class="description"><%= format_activity_description(e.event_description) %></span></dd>
-          <% end -%>
-        </dl>
-      <% end -%>
-    </div>
-
-  <% end %>
-  <%= call_hook :view_account_right_bottom, :organization => @organization %>
-
-  <% if @issues.any? %>
-    <h3><%= l(:label_issue_plural) %></h3>
-    <%= render :partial => 'issues/list_simple', :locals => {:issues => @issues} %>
-  <% end %>
+  <%= render_organization_tabs %>
 
 </div>
 

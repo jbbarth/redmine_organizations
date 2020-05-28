@@ -1,0 +1,12 @@
+<h3><%= "#{@subusers_count} #{ l(:label_user_plural).downcase }" %></h3>
+
+<ul class=root>
+  <li class=selected-organization>
+    <%= render 'list_organization', organization: @organization, users: @users %>
+  </li>
+  <% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
+    <li>
+      <%= render 'list_organization', organization: suborganization, users: @subusers[suborganization] %>
+    </li>
+  <% end %>
+</ul>

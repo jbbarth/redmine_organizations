@@ -7,6 +7,23 @@ module OrganizationsHelper
     tabs
   end
 
+  def render_organization_tabs
+    render_tabs [
+        {:name => 'show_users',
+         :partial => 'organizations/show/users',
+         :label => :label_user_plural},
+        {:name => 'show_projects',
+         :partial => 'organizations/show/projects',
+         :label => :label_project_plural},
+        {:name => 'show_functions',
+         :partial => 'organizations/show/functions',
+         :label => :label_functional_roles},
+        {:name => 'show_issues',
+         :partial => 'organizations/show/issues',
+         :label => :label_issue_plural}
+    ]
+  end
+
   def link_to_organization(organization, options = {})
     return '' if organization.blank?
     options = {:link_ancestors => true,
