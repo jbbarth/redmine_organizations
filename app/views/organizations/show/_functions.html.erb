@@ -4,7 +4,7 @@
   <tr>
     <th>Rôles fonctionnels</th>
     <th>Projets</th>
-    <th>Membres</th>
+    <th class="members">Membres</th>
   </tr>
   </thead>
 
@@ -19,7 +19,7 @@
           <td rowspan="<%= projects.size %>"><%= function.name %></td>
         <% end %>
         <td><%= link_to_project(project) %></td>
-        <td>
+        <td class="members">
           <ul>
             <% @organization.users_with(project: project, functions: [function]).each do |user| %>
               <li><%= link_to_user user %></li>
