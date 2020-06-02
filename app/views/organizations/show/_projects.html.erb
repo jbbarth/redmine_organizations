@@ -45,10 +45,12 @@
 
 </table>
 
-
-<h2>Sous-organisations</h2>
+<% if @subprojects_by_organization.any? %>
+  <h2>Sous-organisations</h2>
+<% end %>
 
 <ul class=root>
+
   <% @subprojects_by_organization.keys.sort_by(&:fullname).each do |suborganization| %>
     <% subprojects = @subprojects_by_organization[suborganization] %>
     <li>
@@ -67,6 +69,7 @@
       <% end %>
     </li>
   <% end %>
+
   <% if @projects_not_active.any? %>
     <li class="selected-organization">
       <%= l(:project_status_archived).capitalize %>:
