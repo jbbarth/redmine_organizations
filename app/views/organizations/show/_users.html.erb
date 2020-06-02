@@ -2,11 +2,11 @@
 
 <ul class=root>
   <li class=selected-organization>
-    <%= render 'list_organization', organization: @organization, users: @users %>
+    <%= render 'organizations/show/list_organization', organization: @organization, users: @users %>
   </li>
   <% @subusers.keys.sort_by(&:fullname).each do |suborganization| %>
     <li>
-      <%= render 'list_organization', organization: suborganization, users: @subusers[suborganization] %>
+      <%= render 'organizations/show/list_organization', organization: suborganization, users: @subusers[suborganization] %>
     </li>
   <% end %>
 </ul>

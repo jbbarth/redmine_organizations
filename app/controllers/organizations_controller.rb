@@ -27,7 +27,7 @@ class OrganizationsController < ApplicationController
     @users = @organization.users.active.sorted
 
     @organization.descendants.order("lft").each do |organization|
-      @subprojects_by_organization[organization] = organization.projects
+      @subprojects_by_organization[organization] = organization.projects.active
       @subusers[organization] = organization.users.active.sorted
     end
 

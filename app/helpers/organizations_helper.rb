@@ -58,6 +58,10 @@ module OrganizationsHelper
     html << " (#{users.size})" if users.any?
   end
 
+  def link_to_members_settings(label, project, organization)
+    link_to label, settings_project_path(project, tab: 'members', anchor: "organization-#{organization.id}")
+  end
+
   def render_users_for_new_members(project, users)
     disabled_users = project ? project.principals : []
     content_tag('div',
