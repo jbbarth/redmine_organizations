@@ -2,32 +2,21 @@ require 'redmine'
 
 # Patches to existing classes/modules
 ActiveSupport::Reloader.to_prepare do
-  #patches
-  ##
+
   require_dependency 'redmine_organizations/patches/user_patch'
-
-  ##
   require_dependency 'redmine_organizations/patches/group_patch'
-
   require_dependency 'redmine_organizations/patches/issue_patch'
-
-  ##
   require_dependency 'redmine_organizations/patches/issue_query_patch'
-
   require_dependency 'redmine_organizations/patches/queries_helper_patch'
-
   require_dependency 'redmine_organizations/patches/mailer_patch'
-
-  ##
   require_dependency 'redmine_organizations/patches/project_patch'
-
   require_dependency 'redmine_organizations/patches/users_helper_patch'
   require_dependency 'redmine_organizations/patches/member_role_patch'
-
   require_dependency 'redmine_organizations/patches/member_patch'
   require_dependency 'redmine_organizations/patches/members_helper_patch'
   require_dependency 'redmine_organizations/patches/users_controller_patch'
   require_dependency 'redmine_organizations/patches/application_controller_patch'
+  require_dependency 'redmine_organizations/patches/field_format_patch'
 
   #ensure our helper is included
   ActionView::Base.send(:include, OrganizationsHelper)
