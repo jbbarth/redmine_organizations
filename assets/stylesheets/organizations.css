@@ -21,7 +21,7 @@ table.memberships .buttons .icon-edit { display:none; }
 .organization .tab-content .members { text-align: left; }
 .organization .tab-content th.members {padding-left: 35px;}
 .organization .tab-content .members li { list-style: none; }
-.organization .tab-content td, .organization .tab-content th {border-bottom: 1px lightgrey solid;width: min-content;}
+.organization .tab-content .functions td, .organization .tab-content .functions th {border-bottom: 1px lightgrey solid;}
 .organization .tab-content li .manager, .organization li .team-leader {margin: 0 2px -2px 3px;}
 .selected-organization { background-color:#f3f6fe; padding:4px 7px !important; border-radius:4px; list-style-type: none;}
 .organizations .buttons { width:160px !important; }
