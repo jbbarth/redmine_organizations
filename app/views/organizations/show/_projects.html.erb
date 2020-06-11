@@ -1,12 +1,12 @@
-<% cf_facture = CustomField.where(name: 'Facturé').first %>
+<% cf_direction = CustomField.where(id: '102').first %>
 
 <table class="list projects" style="margin-bottom: 20px;">
 
   <thead>
   <tr>
     <th><%= t 'label_project_plural' %></th>
-    <% if cf_facture.present? %>
-      <th><%= cf_facture.name %></th>
+    <% if cf_direction.present? %>
+      <th><%= cf_direction.name %></th>
     <% end %>
     <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
       <th class="functions">Rôles fonctionnels</th>
@@ -19,11 +19,9 @@
 
     <tr>
       <td><%= link_to_project(project) %></td>
-      <% if cf_facture.present? %>
+      <% if cf_direction.present? %>
         <td>
-          <% if project.custom_value_for(cf_facture).value == '1' %>
-            <i class="icon icon-checked"></i>
-          <% end %>
+          <%= Organization.where(id: project.custom_value_for(cf_direction).value).map { |o| link_to_organization(o, link_ancestors: false) }.join(', ').html_safe %>
         </td>
       <% end %>
       <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
