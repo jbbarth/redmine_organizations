@@ -23,7 +23,8 @@ class Organization < ActiveRecord::Base
 
   SEPARATOR = '/'
 
-  scope :sorted, -> {order('lft')}
+  scope :sorted, -> { order('lft') }
+  scope :direction, -> { where(direction: true) }
 
   # Reorder tree after save on the fly
   # Less beautiful than Redmine method to keep tree sorted,
@@ -39,11 +40,11 @@ class Organization < ActiveRecord::Base
     self.name_with_parents = calculated_fullname
     self.identifier = calculated_identifier
   end
-  
+
   def <=>(other)
     other.name.casecmp(self.name)
   end
-  
+
   def name
     read_attribute(:name) || ""
   end
@@ -93,7 +94,7 @@ class Organization < ActiveRecord::Base
   end
 
   def default_roles_by_project(project)
-    organization_roles.for_project(project).includes(:role).map(&:role).compact.sort_by { |r| "#{r.position.to_s.rjust(5, '0')}-#{r.id}"}
+    organization_roles.for_project(project).includes(:role).map(&:role).compact.sort_by { |r| "#{r.position.to_s.rjust(5, '0')}-#{r.id}" }
   end
 
   # Yields the given block for each organization with its level in the tree
