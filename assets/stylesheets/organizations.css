@@ -18,7 +18,7 @@ table.memberships .buttons .icon-edit { display:none; }
 .organization .tab-content ul { padding-left:25px; }
 .organization .tab-content ul.sublist { margin-bottom: 0.4em }
 .organization .tab-content li { padding:2px 5px; }
-.organization .tab-content .members, .organization .tab-content .functions { text-align: left; }
+.organization .tab-content .members, .organization .tab-content td.functions, .organization .tab-content th.functions { text-align: left; }
 .organization .tab-content th.members, .organization .tab-content th.functions {padding-left: 35px;}
 .organization .tab-content .members li, .organization .tab-content .functions li { list-style: none; }
 .organization .tab-content .functions td, .organization .tab-content .functions th {border-bottom: 1px lightgrey solid;}
