@@ -3,21 +3,21 @@
 <% roles = OrganizationRole.includes(:role).where(project_id: @project.id, organization_id: o.id, non_member_role: true).map(&:role) %>
 
 <% if o %>
-  <tr id="non-member-orga-<%= o.id %>" class="even">
+  <tr id="non-member-org-<%= o.id %>" class="even">
     <td><span style="display:inline-block;width:25px"></span><%= link_to_organization o %></td>
     <td id="all_roles">
       <div class='role' style="float: left;">
-        <span id="non-member-orga-<%= o.id %>-roles">
+        <span id="non-member-org-<%= o.id %>-roles">
           <% if roles.any? %>
             <%= roles.map(&:name).join(", ") %>
           <% else %>
-            <span class="undefined"><%= l('undefined') %></span>
+            <span class="undefined"><%= t('undefined') %></span>
           <% end %>
         </span>
       </div>
       <%= form_for(o, :as => :membership, :remote => true, :method => :put,
                    :url => update_non_members_roles_organizations_membership_path(id: o.id, project_id: @project.id),
-                   :html => { :id => "non-member-orga-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
+                   :html => { :id => "non-member-org-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
         <div class='roles_checkboxes' style="float: left;">
           <p><% @givable_roles.each do |role| %>
               <label><%= check_box_tag 'membership[role_ids][]',
@@ -27,22 +27,22 @@
                                        :disabled => !User.current.managed_roles(@project).include?(role) %> <%=h role %></label><br />
             <% end %></p>
           <%= hidden_field_tag 'membership[role_ids][]', '' %>
-          <p><%= submit_tag l(:button_change), :class => "small" %>
-            <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{o.id}, 'non-member-orga'); return false;" %></p>
+          <p><%= submit_tag t(:button_change), :class => "small" %>
+            <%= link_to_function t(:button_cancel), "toggleOrgaForms(#{o.id}, 'non-member-org'); return false;" %></p>
         </div>
       <% end -%>
     </td>
     <td class="buttons">
-      <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{o.id}, 'non-member-orga'); return false;",
+      <%= link_to_function(t(:button_edit), "toggleOrgaForms(#{o.id}, 'non-member-org'); return false;",
                            :class => 'icon icon-edit') %>
-      <%= link_to(l(:button_delete),
+      <%= link_to(t(:button_delete),
                   destroy_non_members_roles_organizations_membership_path(id: o.id, :project_id => @project.id, :back_url => @back),
-                  :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
+                  :method => :delete, :class => 'icon icon-del', :title => t(:label_relation_delete)) %>
     </td>
   </tr>
 
 <% end %>
 
 <script type="application/javascript">
-  $('#non_member_orga_exception_select option[value="<%= o.id %>"]').attr("disabled", "disabled");
+  $('#non_member_org_exception_select option[value="<%= o.id %>"]').attr("disabled", "disabled");
 </script>

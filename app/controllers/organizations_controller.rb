@@ -61,7 +61,7 @@ class OrganizationsController < ApplicationController
     @organization = Organization.new
     @organization.safe_attributes = params[:organization]
     if @organization.save
-      flash[:notice] = l(:notice_successful_create)
+      flash[:notice] = t(:notice_successful_create)
       redirect_to(@organization)
     else
       render :action => "new"
@@ -71,7 +71,7 @@ class OrganizationsController < ApplicationController
   def update
     @organization.safe_attributes = params[:organization]
     if @organization.save
-      flash[:notice] = l(:notice_successful_update)
+      flash[:notice] = t(:notice_successful_update)
       redirect_to(@organization)
     else
       render :action => "edit"
@@ -80,7 +80,7 @@ class OrganizationsController < ApplicationController
 
   def destroy
     @organization.destroy
-    flash[:notice] = l(:notice_successful_delete)
+    flash[:notice] = t(:notice_successful_delete)
     redirect_to(organizations_url)
   end
 
@@ -88,7 +88,7 @@ class OrganizationsController < ApplicationController
     @users = User.active.where(id: params[:user_ids])
     @organization.users << @users if request.post?
     respond_to do |format|
-      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.identifier, :tab => 'users'}
+      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.id, :tab => 'users'}
       format.js
     end
   end
@@ -96,7 +96,7 @@ class OrganizationsController < ApplicationController
   def remove_user
     @organization.users.delete(User.find(params[:user_id])) if request.post?
     respond_to do |format|
-      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.identifier, :tab => 'users'}
+      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.id, :tab => 'users'}
       format.js
     end
   end
@@ -118,7 +118,7 @@ class OrganizationsController < ApplicationController
   end
 
   def fetch_users_by_orga
-    @users = User.active.sorted.where("organization_id = ? AND id != ?", params[:orga_id], params[:id])
+    @users = User.active.sorted.where("organization_id = ? AND id != ?", params[:org_id], params[:id])
   end
 
 end

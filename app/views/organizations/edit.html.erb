@@ -1,11 +1,10 @@
 <div class="contextual">
   <% if User.current.is_admin_or_manage?(@organization) %>
-    <%= link_to l(:label_organization_new), {:controller => 'organizations', :action => 'new'},
-                :class => 'icon icon-add' %>
-    <%= link_to l(:label_sign_up_new_user), {:controller => 'users', :action => 'new', :back_url => edit_organization_path(@organization)}, :class => 'icon icon-user' %>
+    <%= link_to t(:label_organization_new), {:controller => 'organizations', :action => 'new'}, :class => 'icon icon-add' %>
+    <%= link_to t(:label_user_new), {:controller => 'users', :action => 'new', :back_url => edit_organization_path(@organization)}, :class => 'icon icon-user' %>
   <% end %>
 </div>
 
-<h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%= link_to_organization @organization %></h2>
+<h2><%= link_to t(:label_organization_plural), organizations_path %> &#187; <%= link_to_organization @organization %></h2>
 
 <%= render_tabs organization_settings_tabs %>

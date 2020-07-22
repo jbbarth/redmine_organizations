@@ -56,12 +56,12 @@ describe IssuesController, :type => :controller do
     ActionMailer::Base.deliveries.clear
 
     user = User.find(2)
-    orga = Organization.find(2)
+    org = Organization.find(2)
 
-    user.update_attribute('organization_id', orga.id)
+    user.update_attribute('organization_id', org.id)
     # project = Project.find(1)
     # project.update_attribute('notify_organizations', true)
-    expect(orga.mail).to_not be_nil
+    expect(org.mail).to_not be_nil
 
     expect {
       post :create, params: {:project_id => 1,
@@ -77,7 +77,7 @@ describe IssuesController, :type => :controller do
     expect(notified_addresses).to include(User.find(3).mail)
 
     # TODO Make it works (broken by Redmine 4 update)
-    # expect(notified_addresses).to include(orga.mail) # Organization email is notified!
+    # expect(notified_addresses).to include(org.mail) # Organization email is notified!
   end
 
 end

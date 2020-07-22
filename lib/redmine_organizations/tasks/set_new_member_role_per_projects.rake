@@ -4,11 +4,11 @@ namespace :redmine do
     desc "Set new member roles per projects"
     task :set_new_member_role_per_projects => [:environment] do
 
-      # orga = Organization.find(382) # PROD
-      orga = Organization.find(704) # PNM6
-      puts "** Mise à jour pour l'organisation #{orga} **"
+      # org = Organization.find(382) # PROD
+      org = Organization.find(704) # PNM6
+      puts "** Mise à jour pour l'organisation #{org} **"
 
-      projects = orga.self_and_descendants.map{|org|org.projects}.flatten.uniq.compact.select(&:active?)
+      projects = org.self_and_descendants.map{|org|org.projects}.flatten.uniq.compact.select(&:active?)
       puts "Nombre de projets concernés : #{projects.size}"
 
       project_member = Role.find(4)

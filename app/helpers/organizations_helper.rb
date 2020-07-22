@@ -30,7 +30,7 @@ module OrganizationsHelper
                :fullname => true,
                :title => organization.fullname}.merge(options)
 
-    url = organization_path(organization.identifier)
+    url = organization_path(organization.id)
     html = {:title => options[:title]}
 
     if options[:fullname] && options[:link_ancestors]

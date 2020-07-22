@@ -7,7 +7,7 @@ class Organizations::ManagersController < ApplicationController
     @managers = User.active.where(id: params[:manager_ids])
     @organization.managers << @managers
     respond_to do |format|
-      format.html {redirect_to edit_organization_path(@organization.identifier, tab: 'managers')}
+      format.html {redirect_to edit_organization_path(@organization.id, tab: 'managers')}
       format.js {render :add_managers}
     end
   end
@@ -15,7 +15,7 @@ class Organizations::ManagersController < ApplicationController
   def destroy
     @organization.managers.delete(User.find(params[:manager_id]))
     respond_to do |format|
-      format.html {redirect_to edit_organization_path(@organization.identifier, tab: 'managers')}
+      format.html {redirect_to edit_organization_path(@organization.id, tab: 'managers')}
       format.js
     end
   end

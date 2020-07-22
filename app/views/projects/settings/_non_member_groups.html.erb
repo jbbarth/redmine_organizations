@@ -11,7 +11,7 @@
           <% if group_roles.any? %>
             <%= group_roles.map(&:name).join(", ") %>
           <% else %>
-            <span class="undefined"><%= l('undefined') %></span>
+            <span class="undefined"><%= t('undefined') %></span>
           <% end %>
         </span>
       </div>
@@ -27,32 +27,32 @@
                                        :disabled => !User.current.managed_roles(@project).include?(role) %> <%=h role %></label><br />
             <% end %></p>
           <%= hidden_field_tag 'membership[role_ids][]', '' %>
-          <p><%= submit_tag l(:button_change), :class => "small" %>
-            <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{group.id}, 'group'); return false;" %></p>
+          <p><%= submit_tag t(:button_change), :class => "small" %>
+            <%= link_to_function t(:button_cancel), "toggleOrgaForms(#{group.id}, 'group'); return false;" %></p>
         </div>
       <% end -%>
     </td>
     <td class="buttons">
-      <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{group.id}, 'group'); return false;",
+      <%= link_to_function(t(:button_edit), "toggleOrgaForms(#{group.id}, 'group'); return false;",
                            :class => 'icon icon-edit') %>
     </td>
   </tr>
 
-  <tr id="non_member_orga_exception_select">
+  <tr id="non_member_org_exception_select">
     <td colspan="3">
       <%= form_for :membership, :url => create_non_members_roles_organizations_memberships_path(:project_id => @project),
                    :remote => true, :html => {:id => 'organization-form'} do |f| -%>
           <%= f.select "organization_id", nested_set_options(Organization) { |i| i.fullname },
                        { :disabled => @project.organizations.map(&:id), :include_blank => true,
                          :label => :field_parent_organization },
-                       { :class => "orga-select2" } %>
-          <%= submit_tag l(:button_add_exception) %>
+                       { :class => "org-select2" } %>
+          <%= submit_tag t(:button_add_exception) %>
       <% end %>
     </td>
   </tr>
 
-  <% Organization.joins(:organization_roles).where("project_id = ? AND non_member_role = ?", @project.id, true).uniq.each do |orga| %>
-     <%= render :partial => 'projects/settings/non_member_organization', :locals => {:o => orga} %>
+  <% Organization.joins(:organization_roles).where("project_id = ? AND non_member_role = ?", @project.id, true).uniq.each do |org| %>
+     <%= render :partial => 'projects/settings/non_member_organization', :locals => {:o => org} %>
   <% end %>
 
 <% end %>

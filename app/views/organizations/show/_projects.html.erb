@@ -70,7 +70,7 @@
 
   <% if @projects_not_active.any? %>
     <li class="selected-organization">
-      <%= l(:project_status_archived).capitalize %>:
+      <%= t(:project_status_archived).capitalize %>:
       <ul>
         <% for project in @projects_not_active %>
           <li><%= link_to_organization_project(project, @organization.users_by_project(project)) %></li>

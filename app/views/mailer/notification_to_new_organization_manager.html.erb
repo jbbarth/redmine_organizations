@@ -1,17 +1,17 @@
-<p><%= l('hello', user: @user.firstname) %></p>
+<p><%= t('hello', user: @user.firstname) %></p>
 
 <p>
-  <%= l('mail_notification_1', author: @author, organization: @organization.fullname) %>
+  <%= t('mail_notification_1', author: @author, organization: @organization.fullname) %>
 </p>
 <p>
-  <%= l('mail_notification_2') %>
+  <%= t('mail_notification_2') %>
 </p>
 <p>
-  <%= l('mail_notification_3', url: edit_organization_url(@organization)) %>
+  <%= t('mail_notification_3', url: edit_organization_url(@organization)) %>
 </p>
 
 <p>
   <%= Setting.app_title %><br/>
-  <%= l(:field_user) %>: <strong><%= @author.login %></strong><br/>
-  <%= l(:label_date) %>: <strong><%= format_time Time.now, true %></strong>
+  <%= t(:field_user) %>: <strong><%= @author.login %></strong><br/>
+  <%= t(:label_date) %>: <strong><%= format_time Time.now, true %></strong>
 </p>

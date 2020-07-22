@@ -2,7 +2,7 @@
 
 <% if @users_by_role_and_organization.any? -%>
 <div class="members box">
-  <h3><%=l(:label_member_plural)%></h3>  
+  <h3><%=t(:label_member_plural)%></h3>
   <p><% @users_by_role_and_organization.keys.sort.each do |role| -%>
     <%=h role %>: 
     <%= @users_by_role_and_organization[role].keys.sort_by(&:name).map do |org|

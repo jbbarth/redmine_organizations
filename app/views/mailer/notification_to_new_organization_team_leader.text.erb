@@ -1,12 +1,12 @@
-<%= l('hello', user: @user.firstname) %>
+<%= t('hello', user: @user.firstname) %>
 
-<%= l('mail_notification_team_leader_1', author: @author, organization: @organization.fullname) %>
+<%= t('mail_notification_team_leader_1', author: @author, organization: @organization.fullname) %>
 
-<%= l('mail_notification_team_leader_2') %>
+<%= t('mail_notification_team_leader_2') %>
 
-<%= l('mail_notification_team_leader_3', url: edit_organization_url(@organization)) %>
+<%= t('mail_notification_team_leader_3', url: edit_organization_url(@organization)) %>
 
 
 <%= Setting.app_title %>
-<%= l(:field_user) %>: <%= @author.login %>
-<%= l(:label_date) %>: <%= format_time Time.now, true %>
+<%= t(:field_user) %>: <%= @author.login %>
+<%= t(:label_date) %>: <%= format_time Time.now, true %>

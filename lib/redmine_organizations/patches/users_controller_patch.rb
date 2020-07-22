@@ -21,7 +21,7 @@ module PluginOrganizations
 
           respond_to do |format|
             format.html {
-              flash[:notice] = l(:notice_user_successful_create, :id => view_context.link_to(@user.login, user_path(@user)))
+              flash[:notice] = t(:notice_user_successful_create, :id => view_context.link_to(@user.login, user_path(@user)))
               if params[:continue]
                 attrs = {:generate_password => @user.generate_password}
                 redirect_to new_user_path(:user => attrs, back_url: @back_url)
@@ -65,10 +65,10 @@ class UsersController < ApplicationController
 
       if @user.present? &&
           @user.errors.empty? &&
-          params[:user][:orga_update_method].present? &&
+          params[:user][:org_update_method].present? &&
           params[:user][:organization_id].present?
 
-        case params[:user][:orga_update_method]
+        case params[:user][:org_update_method]
           when "remove" # Remove all memberships for this user
             Member.where(user_id: @user.id).destroy_all
           when "replace"

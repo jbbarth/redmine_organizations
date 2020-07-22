@@ -5,7 +5,7 @@
         <thead>
         <tr>
           <th class="team_leaders hidden"><%= t 'field_team_leaders' %></th>
-          <th><%= l(:label_user) %></th>
+          <th><%= t(:label_user) %></th>
           <th style="width:15%"></th>
         </tr>
         </thead>
@@ -17,24 +17,24 @@
             </td>
             <td class="user">
               <%= link_to_user user %>
-              <%= content_tag(:span, "Gestionnaire", :class => "badge manager-badge") if @organization.managers.include?(user) %>
-              <%= content_tag(:span, "Chef d'équipe", :class => "badge team-leader-badge") if @organization.team_leaders.include?(user) %>
+              <%= content_tag(:span, t('manager'), :class => "badge manager-badge") if @organization.managers.include?(user) %>
+              <%= content_tag(:span, t('team_leader'), :class => "badge team-leader-badge") if @organization.team_leaders.include?(user) %>
             </td>
             <td class="buttons">
-              <%= link_to l(:button_delete), remove_user_organization_path(:id => @organization, :user_id => user), :method => :post, :remote => true, :class => 'icon icon-del' %>
+              <%= link_to t(:button_delete), remove_user_organization_path(:id => @organization, :user_id => user), :method => :post, :remote => true, :class => 'icon icon-del' %>
             </td>
           </tr>
         <% end %>
         </tbody>
       </table>
-      <%= f.submit "Modifier", class: "team_leaders hidden" %>
+      <%= f.submit t(:button_update), class: "team_leaders hidden" %>
     <% end %>
     <% if User.current.is_admin_or_manage?(@organization) %>
-      <%= link_to_function "Modifier les chefs d'équipe", "toggle_organization_team_leaders_form(true)", class: "team_leaders_show" %>
-      <%= link_to_function "Annuler", "toggle_organization_team_leaders_form(false)", class: "team_leaders_hide", style: "display:none;" %>
+      <%= link_to_function t(:team_leader_edit), "toggle_organization_team_leaders_form(true)", class: "team_leaders_show" %>
+      <%= link_to_function t(:button_cancel), "toggle_organization_team_leaders_form(false)", class: "team_leaders_hide", style: "display:none;" %>
     <% end %>
   <% else %>
-    <p class="nodata"><%= l(:label_no_data) %></p>
+    <p class="nodata"><%= t(:label_no_data) %></p>
   <% end %>
 </div>
 
@@ -42,9 +42,9 @@
 
   <% users = User.active.where("organization_id IS NULL").sorted.limit(50).to_a %>
   <% if users.any? %>
-    <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization.identifier}, :method => :post) do |f| %>
+    <%= form_for(@organization, :as => :organization, :remote => true, :url => {:controller => 'organizations', :action => 'add_users', :id => @organization.id}, :method => :post) do |f| %>
       <fieldset>
-        <legend><%= l(:label_user_new) %> parmi tous les inscrits sur le Portail</legend>
+        <legend><%= "#{t(:label_user_new)} #{t('users.search.from_all_registered')}" %></legend>
 
         <p><%= text_field_tag 'user_search', nil %></p>
         <%= javascript_tag "observeSearchfield('user_search', 'users', '#{escape_javascript autocomplete_for_user_organization_path(:id => @organization)}')" %>
@@ -53,7 +53,7 @@
           <%= users_check_box_tags 'user_ids[]', users %>
         </div>
 
-        <p><%= submit_tag l(:button_add) %></p>
+        <p><%= submit_tag t(:button_add) %></p>
       </fieldset>
     <% end %>
   <% end %>

@@ -111,17 +111,17 @@ class Organizations::MembershipsController < ApplicationController
 
     (existing_roles|new_non_member_roles).each do |role_id|
       if deleted_roles.include?(role_id)
-        orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
-        orga_role.non_member_role = false
-        orga_role.save
+        org_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
+        org_role.non_member_role = false
+        org_role.save
       else
         if brand_new_roles.include?(role_id)
           OrganizationRole.create(role_id: role_id, project_id: @project.id, organization_id: @organization.id, non_member_role: true)
         else
-          orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
-          unless orga_role.non_member_role
-            orga_role.non_member_role = true
-            orga_role.save
+          org_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
+          unless org_role.non_member_role
+            org_role.non_member_role = true
+            org_role.save
           end
         end
       end

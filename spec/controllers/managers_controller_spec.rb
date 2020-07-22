@@ -32,7 +32,7 @@ describe Organizations::ManagersController, :type => :controller do
                              manager_ids: [2, 7]}
     end
 
-    expect(response).to redirect_to(edit_organization_path(organization.identifier, tab: 'managers'))
+    expect(response).to redirect_to(edit_organization_path(organization.id, tab: 'managers'))
     organization.reload
     expect(organization.managers).to include(User.find(2))
     expect(organization.managers).to include(User.find(7))

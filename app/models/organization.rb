@@ -94,7 +94,7 @@ class Organization < ActiveRecord::Base
   end
 
   def default_roles_by_project(project)
-    organization_roles.for_project(project).includes(:role).map(&:role).compact.sort_by { |r| "#{r.position.to_s.rjust(5, '0')}-#{r.id}" }
+    organization_roles.for_project(project).includes(:role).map(&:role).compact.sort_by { |r| "#{r.position.to_s.rjust(1, '0')}-#{r.id}" }
   end
 
   # Yields the given block for each organization with its level in the tree

@@ -1,15 +1,15 @@
 <div class="contextual">
-  <%= link_to(l(:button_update),
-              {:controller => 'organizations', :action => 'edit', :id => @organization.identifier},
+  <%= link_to(t(:button_update),
+              {:controller => 'organizations', :action => 'edit', :id => @organization.id},
               :class => 'icon icon-edit') if User.current.is_admin_or_manage?(@organization) %>
-  <%= link_to(l(:button_delete),
-              {:controller => 'organizations', :action => 'destroy', :id => @organization.identifier},
+  <%= link_to(t(:button_delete),
+              {:controller => 'organizations', :action => 'destroy', :id => @organization.id},
               :class => 'icon icon-del',
-              :data => {:confirm => l(:text_are_you_sure)},
+              :data => {:confirm => t(:text_are_you_sure)},
               :method => :delete) if User.current.admin? %>
 </div>
 
-<h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%= link_to_organization @organization %></h2>
+<h2><%= link_to t(:label_organization_plural), organizations_path %> &#187; <%= link_to_organization @organization %></h2>
 
 <div class="organization">
 
@@ -21,4 +21,4 @@
 
 </div>
 
-<% html_title(l(:label_organization_plural)) -%>
+<% html_title(t(:label_organization_plural)) -%>

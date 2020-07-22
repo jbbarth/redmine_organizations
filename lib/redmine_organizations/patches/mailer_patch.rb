@@ -28,7 +28,7 @@ module MailerPatchWithOrganizations
     @author = change_author
     @organization = organization
     @user = new_manager
-    subject = "[#{Setting.app_title}] #{l('mail_subject_updated_role')}"
+    subject = "[#{Setting.app_title}] #{t('mail_subject_updated_role')}"
     mail :to => new_manager.mail,
          :subject => subject do |format|
       format.text
@@ -40,7 +40,7 @@ module MailerPatchWithOrganizations
     @author = change_author
     @organization = organization
     @user = manager
-    subject = "[#{Setting.app_title}] #{l('mail_subject_updated_role')}"
+    subject = "[#{Setting.app_title}] #{t('mail_subject_updated_role')}"
     mail :to => manager.mail,
          :subject => subject do |format|
       format.text
@@ -52,7 +52,7 @@ module MailerPatchWithOrganizations
     @author = change_author
     @organization = organization
     @user = user
-    subject = "[#{Setting.app_title}] #{l('mail_subject_updated_role')}"
+    subject = "[#{Setting.app_title}] #{t('mail_subject_updated_role')}"
     mail :to => user.mail,
          :subject => subject do |format|
       format.text
@@ -64,7 +64,7 @@ module MailerPatchWithOrganizations
     @author = change_author
     @organization = organization
     @user = user
-    subject = "[#{Setting.app_title}] #{l('mail_subject_updated_role')}"
+    subject = "[#{Setting.app_title}] #{t('mail_subject_updated_role')}"
     mail :to => user.mail,
          :subject => subject do |format|
       format.text

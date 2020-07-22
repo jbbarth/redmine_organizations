@@ -1,6 +1,7 @@
 <%= labelled_form_for :organization, @organization, :url => {:controller => 'organizations', :action => 'update'}, :html => {:class => nil, :method => :put} do |f| -%>
   <%= render :partial => 'form', :locals => {:f => f} %>
-  <p><%= submit_tag l(:button_update) %>
-    <%= link_to_function l('cancel'), "history.back()" %>
+  <p>
+    <%= submit_tag t(:button_update) %>
+    <%= link_to_function t('button_cancel'), "history.back()" %>
   </p>
 <% end -%>

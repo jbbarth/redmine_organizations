@@ -25,7 +25,7 @@ describe "Organization" do
   end
 
   it "should organization_validations" do
-    already_taken_orga = Organization.new(name: "Team A", parent_id: 1) #orga with same name and same parent already exists
+    already_taken_orga = Organization.new(name: "Team A", parent_id: 1) #org with same name and same parent already exists
     assert !already_taken_orga.valid?
     assert_match /already been taken/, already_taken_orga.errors[:name].first
 

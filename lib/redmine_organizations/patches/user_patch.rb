@@ -14,7 +14,7 @@ class User < Principal
   has_many :organization_team_leaders
 
   safe_attributes 'organization_id'
-  attr_accessor :orga_update_method
+  attr_accessor :org_update_method
 
   def destroy_membership_through_organization(project_id)
     if id

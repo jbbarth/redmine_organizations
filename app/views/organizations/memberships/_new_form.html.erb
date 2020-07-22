@@ -1,22 +1,22 @@
 <fieldset class="box">
-  <legend><%= label_tag("organization_search", l(:label_organization_search)) %></legend>
+  <legend><%= label_tag("organization_search", t(:label_organization_search)) %></legend>
   <p>
     <%= select_tag "organizations_ids", options_for_select(nested_set_options(User.current.managed_only_his_organization?(@project) ? User.current.organization : Organization) {|i| i.fullname} ) ,
                  {:include_blank => true,
                   :label => :field_parent_organization,
-                  :class => "orga-select2",
+                  :class => "org-select2",
                   :multiple => true} %>
 
   </p>
 </fieldset>
 
 <fieldset class="box">
-  <legend><%= label_tag("users_selection", l(:label_users_selection)) %> - <%= link_to l("select_all"), '#', id: "link_select_all" %> / <%= link_to l("select_none"), '#', id: "link_select_none" %></legend>
+  <legend><%= label_tag("users_selection", t(:label_users_selection)) %> - <%= link_to t(:button_check_all), '#', id: "link_select_all" %> / <%= link_to t(:button_uncheck_all), '#', id: "link_select_none" %></legend>
   <div id="principals_for_new_member">
   </div>
 </fieldset>
 <fieldset class="box">
-  <legend><%= toggle_checkboxes_link('.roles-selection input') %><%= l(:label_role_plural) %></legend>
+  <legend><%= toggle_checkboxes_link('.roles-selection input') %><%= t(:label_role_plural) %></legend>
   <div class="roles-selection">
     <% User.current.managed_roles(@project).each do |role| %>
       <label><%= check_box_tag 'membership[role_ids][]', role.id, false, :id => nil %> <%= role %></label>

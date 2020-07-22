@@ -10,16 +10,16 @@
 %>
 
 <p>
-  <%= link_to l(:label_member_new), new_project_membership_path(@project), :remote => true, :class => "icon icon-add" %>
-  <%= link_to l(:label_new_members_through_organization), new_organizations_membership_path(project_id: @project.id), :remote => true, :class => "icon icon-group", style: "margin-left:10px;background-position: top left;" %>
+  <%= link_to t(:label_member_new), new_project_membership_path(@project), :remote => true, :class => "icon icon-add" %>
+  <%= link_to t(:label_new_members_through_organization), new_organizations_membership_path(project_id: @project.id), :remote => true, :class => "icon icon-group", style: "margin-left:10px;background-position: top left;" %>
 </p>
 
 <% if members.any? %>
   <table class="list members organizations">
     <thead>
     <tr>
-      <th><%= l(:label_organization) %> / <%= l(:label_user) %></th>
-      <th class="roles"><%= l(:label_role_plural) %></th>
+      <th><%= t(:label_organization) %> / <%= t(:label_user) %></th>
+      <th class="roles"><%= t(:label_role_plural) %></th>
       <th></th>
       <th style="width:15%"></th>
     </tr>
@@ -38,7 +38,7 @@
               <% if organization_roles.any? %>
                 <%= organization_roles.collect(&:to_s).join(', ') %>
               <% else %>
-                <span class="undefined"><%= l('undefined') %></span>
+                <span class="undefined"><%= t('undefined') %></span>
               <% end %>
               <div id="organization-<%= organization.id %>-form"></div>
             </td>
@@ -46,7 +46,7 @@
               <div id="organization-<%= organization.id %>-users-form"></div>
             </td>
             <td class="buttons">
-              <%= link_to l(:button_edit),
+              <%= link_to t(:button_edit),
                           edit_organizations_membership_path(id: organization.id, project_id: @project.id),
                           :remote => true,
                           :class => 'icon icon-edit' if managed_organizations.include? organization %>
@@ -67,13 +67,13 @@
             <td class="users"></td>
             <td class="buttons">
               <% if organization.blank? || managed_organizations.include?(organization) %>
-                <%= link_to l(:button_edit),
+                <%= link_to t(:button_edit),
                             edit_membership_path(member),
                             :remote => true,
                             :class => 'icon icon-edit' %>
                 <%= delete_link membership_path(member),
                                 :remote => true,
-                                :data => (!User.current.admin? && member.include?(User.current) ? {:confirm => l(:text_own_membership_delete_confirmation)} : {}) if member.deletable? %>
+                                :data => (!User.current.admin? && member.include?(User.current) ? {:confirm => t(:text_own_membership_delete_confirmation)} : {}) if member.deletable? %>
               <% end %>
             </td>
           </tr>
@@ -82,18 +82,18 @@
     </tbody>
   </table>
 <% else %>
-  <p class="nodata"><%= l(:label_no_data) %></p>
+  <p class="nodata"><%= t(:label_no_data) %></p>
 <% end %>
 
 <% unless User.current.managed_only_his_organization?(@project) %>
 
 <div style="margin-top: 10px;border: 1px lightgrey solid;padding: 10px;">
-  <h3><%= l(:label_group_non_member) %></h3>
+  <h3><%= t(:label_group_non_member) %></h3>
   <table class="list non-members organizations">
     <thead>
       <tr>
-        <th class="organization"><%= l(:label_group_plural) %></th>
-        <th class="role"><%= l(:label_role_plural) %></th>
+        <th class="organization"><%= t(:label_group_plural) %></th>
+        <th class="role"><%= t(:label_role_plural) %></th>
         <th class="buttons"></th>
     </tr>
     </thead>

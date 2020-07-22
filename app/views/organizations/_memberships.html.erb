@@ -7,9 +7,9 @@
     <table class="list memberships">
       <thead>
       <tr>
-        <th><%= l(:label_project) %></th>
-        <th><%= l(:label_role_plural) %></th>
-        <!-- <th><%= l(:label_notifications) %></th> -->
+        <th><%= t(:label_project) %></th>
+        <th><%= t(:label_role_plural) %></th>
+        <!-- <th><%= t(:label_notifications) %></th> -->
       </tr>
       </thead>
       <tbody>
@@ -20,7 +20,7 @@
           <tr id="member-<%= project.id %>" class="<%= cycle 'odd', 'even' %> class">
             <td class="project">
               <%= link_to_if project.active?, project, project %>
-              <%= content_tag(:em, "(#{l(:project_status_archived)})", :class => "info", :style => "display:inline") unless project.active? %>
+              <%= content_tag(:em, "(#{t(:project_status_archived)})", :class => "info", :style => "display:inline") unless project.active? %>
             </td>
             <td class="roles">
               <span class="member-<%= project.id %>-roles"><%= h @organization.roles_by_project(project).sort.collect(&:to_s).join(', ') %></span>
@@ -45,16 +45,16 @@
       <% reset_cycle %>
     </table>
   <% else %>
-    <p class="nodata"><%= l(:label_no_data) %></p>
+    <p class="nodata"><%= t(:label_no_data) %></p>
   <% end %>
 </div>
 
 <div class="splitcontentright">
   <% if all_projects.any? && User.current.admin? %>
     <fieldset>
-      <legend><%= l(:label_project_new) %></legend>
+      <legend><%= t(:label_project_new) %></legend>
       <%= form_for(:membership, :remote => true) do %>
-        <% options = ("<option value=''>--- #{l(:actionview_instancetag_blank_option)} ---</option>").html_safe %>
+        <% options = ("<option value=''>--- #{t(:actionview_instancetag_blank_option)} ---</option>").html_safe %>
         <% options << project_tree_options_for_select(all_projects) {|p| {:value => settings_project_path(p, :tab => 'members'), :disabled => (current_projects.include?(p))}} %>
         <%= select_tag 'project_box', options, :onchange => 'if (this.value != \'\') { window.location = this.value; }' %>
       <% end %>

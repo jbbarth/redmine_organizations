@@ -7,12 +7,12 @@
 end -%>
 <fieldset>
   <p>
-    <label><%= l(:text_hide_groups_admin_menu) %></label>
+    <label><%= t(:text_hide_groups_admin_menu) %></label>
     <%= check_box_tag 'settings[hide_groups_admin_menu]', 1,
                       @settings['hide_groups_admin_menu'] %>
   </p>
   <p>
-    <label><%= l(:default_team_leader_role) %></label>
+    <label><%= t(:default_team_leader_role) %></label>
     <%= select_tag 'settings[default_team_leader_role]', options_from_collection_for_select(Role.all, "id", "name",
                                                                                             @settings['default_team_leader_role']) %>
   </p>

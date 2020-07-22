@@ -28,7 +28,7 @@ describe OrganizationsController, :type => :controller do
 
     it "should create organization" do
       assert_difference('Organization.count') do
-        post :create, params: {organization: {name: "orga-A"}}
+        post :create, params: {organization: {name: "org-A"}}
       end
 
       expect(response).to redirect_to(organization_path(assigns(:organization)))

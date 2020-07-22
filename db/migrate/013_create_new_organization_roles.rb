@@ -5,7 +5,7 @@ class CreateNewOrganizationRoles < ActiveRecord::Migration[4.2]
       t.column :project_id, :integer, :null => false
       t.column :role_id, :integer, :null => false
     end
-    add_index :organization_roles, [:organization_id], :name => :index_org_roles_on_orga_id
+    add_index :organization_roles, [:organization_id], :name => :index_org_roles_on_org_id
     add_index :organization_roles, [:project_id], :name => :index_org_roles_on_project_id
     add_index :organization_roles, [:role_id], :name => :index_org_roles_on_role_id
     add_index :organization_roles, [:role_id, :project_id, :organization_id], unique: true, :name => :unicity_index_org_roles_on_role_and_project

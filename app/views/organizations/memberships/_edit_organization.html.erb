@@ -43,8 +43,8 @@
   <%= hidden_field_tag 'membership[function_ids][]', '', :id => nil %>
   <%= hidden_field_tag 'membership[user_ids][]', '', :id => nil %>
   <p>
-    <%= submit_tag l(:button_save), :class => "small" %>
-    <%= link_to_function l(:button_cancel),
+    <%= submit_tag t(:button_save), :class => "small" %>
+    <%= link_to_function t(:button_cancel),
                          "$('#organization-#{@organization.id}-form').addClass('hidden');
                           $('tr#organization-#{@organization.id} td.roles').removeClass('hidden');
                           $('tr#organization-#{@organization.id} td.visibility_roles').removeClass('hidden');

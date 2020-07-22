@@ -68,7 +68,7 @@ describe Organizations::TeamLeadersController, :type => :controller do
     expect(mail['bcc'].to_s).to include(User.find(3).mail)
     expect(mail['bcc'].to_s).to_not include(User.find(1).mail)
     mail.parts.each do |part|
-      expect(part.body.raw_source).to include("Redmine Admin vient de vous donner les droits de 'Chef d'équipe' pour l'orga")
+      expect(part.body.raw_source).to include("Redmine Admin vient de vous donner les droits de 'Chef d'équipe' pour l'org")
       expect(part.body.raw_source).to_not include("vient de vous retirer")
     end
 
@@ -93,7 +93,7 @@ describe Organizations::TeamLeadersController, :type => :controller do
     expect(mail['bcc'].to_s).to include(User.find(1).mail)
     expect(mail['bcc'].to_s).to_not include(User.find(3).mail)
     mail.parts.each do |part|
-      expect(part.body.raw_source).to include("Redmine Admin vient de vous retirer les droits de 'Chef d'équipe' pour l'orga")
+      expect(part.body.raw_source).to include("Redmine Admin vient de vous retirer les droits de 'Chef d'équipe' pour l'org")
       expect(part.body.raw_source).to_not include("vient de vous donner")
     end
 

@@ -3,6 +3,6 @@ hideOnLoad();
 initOrgasSelect2();
 <% if @organization %>
   $("#organization-<%= @organization.id %>").effect("highlight");
-  $("#non-member-orga-<%= @organization.id %>").effect("highlight");
+  $("#non-member-org-<%= @organization.id %>").effect("highlight");
 <% end %>
 
