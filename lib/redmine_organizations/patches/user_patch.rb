@@ -8,7 +8,6 @@ require_dependency 'user'
 #User.scopes[:like] = Principal.scopes[:like]
 
 class User < Principal
-  unloadable
   belongs_to :organization
   has_many :organization_managers
   has_many :organization_team_leaders

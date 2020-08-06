@@ -3,7 +3,6 @@ require_dependency 'principal'
 require_dependency 'user'
 
 class Project < ActiveRecord::Base
-  unloadable
 
   has_many :organization_roles
   has_many :organization_notifications

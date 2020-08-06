@@ -1,7 +1,6 @@
 class Organization < ActiveRecord::Base
   include Redmine::SafeAttributes
 
-  unloadable
   acts_as_nested_set
 
   validates_presence_of :name

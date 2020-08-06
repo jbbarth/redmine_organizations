@@ -1,5 +1,4 @@
 class OrganizationsController < ApplicationController
-  unloadable
 
   before_action :find_organization_by_id, only: [:show, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user]
   before_action :require_admin_or_manager, :only => [:new, :create, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id]

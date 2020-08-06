@@ -8,20 +8,23 @@ module OrganizationsHelper
   end
 
   def render_organization_tabs
-    render_tabs [
+    tabs = [
         {:name => 'show_users',
          :partial => 'organizations/show/users',
          :label => :label_user_plural},
         {:name => 'show_projects',
          :partial => 'organizations/show/projects',
          :label => :label_project_plural},
-        {:name => 'show_functions',
-         :partial => 'organizations/show/functions',
-         :label => :label_functional_roles},
         {:name => 'show_issues',
          :partial => 'organizations/show/issues',
          :label => :label_issue_plural}
     ]
+    if Redmine::Plugin.installed?(:redmine_limited_visibility)
+      tabs.insert(-2, {:name => 'show_functions',
+                       :partial => 'organizations/show/functions',
+                       :label => :label_functional_roles})
+    end
+    render_tabs tabs
   end
 
   def link_to_organization(organization, options = {})

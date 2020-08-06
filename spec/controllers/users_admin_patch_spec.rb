@@ -17,7 +17,7 @@ describe "UsersAdminPatch", :type => :controller do
   end
 
   it "should display groups tab if option is not selected" do
-    Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = ""
+    Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = "0"
     get :edit, params: {:id => 3}
     assert_select "a[href='/users/3/edit?tab=groups']"
   end
