@@ -12,7 +12,9 @@ class User < Principal
   has_many :organization_managers
   has_many :organization_team_leaders
 
-  safe_attributes 'organization_id'
+  safe_attributes('organization_id',
+      :if => lambda {|user, current_user| current_user.admin?})
+
   attr_accessor :orga_update_method
 
   def destroy_membership_through_organization(project_id)
