@@ -67,10 +67,24 @@ class User < Principal
 
 end
 
-# with organization exceptions TODO Test it
+
+
 module PluginOrganizations
   module UserModel
-    def allowed_to?(action, context, options = {}, &block)
+
+    # with organization exceptions TODO Test it
+    #
+    # Return true if the user is allowed to do the specified action on a specific context
+    # Action can be:
+    # * a parameter-like Hash (eg. :controller => 'projects', :action => 'edit')
+    # * a permission Symbol (eg. :edit_project)
+    # Context can be:
+    # * a project : returns true if user is allowed to do the specified action on this project
+    # * an array of projects : returns true if user is allowed on every project
+    # * nil with options[:global] set : check if user has at least one role allowed for this action,
+    #   or falls back to Non Member / Anonymous permissions depending if the user is logged
+    def allowed_to?(action, context, options={}, &block)
+
       if context && context.is_a?(Project)
         return false unless context.allows_to?(action)
         # Admin users are authorized for anything else
@@ -78,10 +92,12 @@ module PluginOrganizations
 
         roles = roles_for_project(context)
 
+        ## START PATCH
         user_organization = User.current.try(:organization)
         user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
         organization_roles = OrganizationRole.where(project_id: context.id, organization_id: user_organization_and_parents_ids, non_member_role: true)
         roles += organization_roles.map(&:role) if organization_roles.present?
+        ## END PATCH
 
         return false unless roles
         roles.any? {|role|
@@ -89,18 +105,28 @@ module PluginOrganizations
               role.allowed_to?(action) &&
               (block_given? ? yield(role, self) : true)
         }
-      elsif context == nil && options[:global]
+      elsif context && context.is_a?(Array)
+        if context.empty?
+          false
+        else
+          # Authorize if user is authorized on every element of the array
+          context.map {|project| allowed_to?(action, project, options, &block)}.reduce(:&)
+        end
+      elsif context
+        raise ArgumentError.new("#allowed_to? context argument must be a Project, an Array of projects or nil")
+      elsif options[:global]
         # Admin users are always authorized
         return true if admin?
 
         # authorize if user has at least one role that has this permission
-        roles = memberships.includes(:roles).collect {|m| m.roles}.flatten.uniq
-        roles << (self.logged? ? Role.non_member : Role.anonymous)
+        roles = self.roles.to_a | [builtin_role]
 
+        ## START PATCH
         user_organization = User.current.try(:organization)
         user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
         organization_roles = OrganizationRole.where(organization_id: user_organization_and_parents_ids, non_member_role: true)
         roles += organization_roles.map(&:role) if organization_roles.present?
+        ## END PATCH
 
         roles.any? {|role|
           role.allowed_to?(action) &&
