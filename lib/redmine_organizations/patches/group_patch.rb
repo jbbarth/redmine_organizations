@@ -34,3 +34,9 @@ class Group
   }
   skip_callback(:validate, _callback.kind, _callback.filter)
 end
+
+class Principal
+  def roles
+    @roles ||= Role.joins(members: :project).where(["#{Project.table_name}.status <> ?", Project::STATUS_ARCHIVED]).where(Member.arel_table[:user_id].eq(id)).distinct
+  end
+end
