@@ -1,4 +1,5 @@
-require 'redmine'
+#hooks
+require_dependency 'redmine_organizations/hooks/view_layouts_base_html_head_hook'
 
 # Patches to existing classes/modules
 ActiveSupport::Reloader.to_prepare do
@@ -20,11 +21,6 @@ ActiveSupport::Reloader.to_prepare do
   #ensure our helper is included
   ActionView::Base.send(:include, OrganizationsHelper)
 end
-
-#hooks
-require 'redmine_organizations/hooks/view_layouts_base_html_head_hook'
-
-#ensure organizations helper is loaded
 
 Redmine::Plugin.register :redmine_organizations do
   name 'Redmine Organizations plugin'
@@ -53,3 +49,4 @@ Redmine::MenuManager.map :top_menu do |menu|
   menu.push :organizations, {:controller => 'organizations'}, :caption => :label_organization_plural,
             :if => Proc.new {User.current.logged?}, :last => true
 end
+
