@@ -1,3 +1,7 @@
+require 'redmine'
+require_dependency 'query'
+require_dependency 'issue_query'
+
 #hooks
 require_dependency 'redmine_organizations/hooks/view_layouts_base_html_head_hook'
 
