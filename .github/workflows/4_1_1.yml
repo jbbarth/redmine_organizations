@@ -42,29 +42,6 @@ jobs:
           ref: ${{ env.REDMINE_VERSION }}
           path: redmine
 
-      - name: Checkout dependencies - Base Deface plugin
-        uses: actions/checkout@v2
-        with:
-          repository: jbbarth/redmine_base_deface
-          path: redmine/plugins/redmine_base_deface
-
-      - name: Checkout dependencies - Base RSpec plugin
-        uses: actions/checkout@v2
-        with:
-          repository: jbbarth/redmine_base_rspec
-          path: redmine/plugins/redmine_base_rspec
-
-      - name: Checkout dependencies - Base StimulusJS plugin
-        uses: actions/checkout@v2
-        with:
-          repository: nanego/redmine_base_stimulusjs
-          path: redmine/plugins/redmine_base_stimulusjs
-
-      - name: Checkout plugin
-        uses: actions/checkout@v2
-        with:
-          path: redmine/plugins/${{ env.PLUGIN_NAME }}
-
       - name: Update package archives
         run: sudo apt-get update --yes --quiet
 
@@ -76,6 +53,13 @@ jobs:
           libicu-dev
           libpq-dev
           ghostscript
+
+      - name: Set up chromedriver
+        uses: nanasess/setup-chromedriver@master
+      - run: |
+          export DISPLAY=:99
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
 
       - name: Allow imagemagick to read PDF files
         run: |
@@ -93,12 +77,18 @@ jobs:
       - name: Setup Bundler
         run: gem install bundler -v '~> 1.0'
 
+      - name: Checkout dependencies - Base RSpec plugin
+        uses: actions/checkout@v2
+        with:
+          repository: jbbarth/redmine_base_rspec
+          path: redmine/plugins/redmine_base_rspec
+
       - name: Prepare Redmine source
         working-directory: redmine
         run: |
           sed -i '/rubocop/d' Gemfile
           rm -f .rubocop*
-          cp plugins/${{ env.PLUGIN_NAME }}/spec/support/database-${{ matrix.db }}.yml config/database.yml
+          cp plugins/redmine_base_rspec/spec/support/database-${{ matrix.db }}.yml config/database.yml
 
       - name: Install Ruby dependencies
         working-directory: redmine
@@ -117,10 +107,35 @@ jobs:
           RAILS_ENV: test
         working-directory: redmine
         run: |
-          bundle exec rake db:create db:migrate redmine:plugins:migrate
-          cp -i plugins/*/spec/fixtures/*yml test/fixtures/
-          bundle exec rails db:fixtures:load
+          bundle exec rake db:create db:migrate
           bundle exec rails test:scm:setup:subversion
+
+      - name: Checkout dependencies - Base Deface plugin
+        uses: actions/checkout@v2
+        with:
+          repository: jbbarth/redmine_base_deface
+          path: redmine/plugins/redmine_base_deface
+
+      - name: Checkout dependencies - Base StimulusJS plugin
+        uses: actions/checkout@v2
+        with:
+          repository: nanego/redmine_base_stimulusjs
+          path: redmine/plugins/redmine_base_stimulusjs
+
+      - name: Checkout plugin
+        uses: actions/checkout@v2
+        with:
+          path: redmine/plugins/${{ env.PLUGIN_NAME }}
+
+      - name: Install plugins dependencies and run plugins migrations
+        env:
+          RAILS_ENV: test
+        working-directory: redmine
+        run: |
+          bundle install --jobs=4 --retry=3 --without development
+          bundle exec rake redmine:plugins:migrate
+          # cp -i plugins/*/spec/fixtures/*yml test/fixtures/
+          bundle exec rails db:fixtures:load
 
       - name: Run core tests
         env:
