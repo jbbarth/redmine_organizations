@@ -15,7 +15,7 @@ Tests status
 |master       | 4.0.7             | [![Tests 4.0.7][2]][5] |
 |master       | master            | [![Tests master][3]][5]|
 
-[1]: https://github.com/jbbarth/redmine_organizations/workflows/Tests%204.1.1/badge.svg
-[2]: https://github.com/jbbarth/redmine_organizations/workflows/Tests%204.0.7/badge.svg
-[3]: https://github.com/jbbarth/redmine_organizations/workflows/Tests%20master/badge.svg
+[1]: https://github.com/jbbarth/redmine_organizations/actions/workflows/4_1_1.yml/badge.svg
+[2]: https://github.com/jbbarth/redmine_organizations/actions/workflows/4_0_7.yml/badge.svg
+[3]: https://github.com/jbbarth/redmine_organizations/actions/workflows/master.yml/badge.svg
 [5]: https://github.com/jbbarth/redmine_organizations/actions
