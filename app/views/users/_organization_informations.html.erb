@@ -13,7 +13,8 @@
               <legend><%= l(:role_propagation_for_team_leaders) %></legend>
 
               <p>
-                Donne des droits de "gestionnaire local" à ce chef d'équipe, sur tous les projets dans lesquels au moins
+                Donne des droits de "gestionnaire local" à ce chef d'équipe, sur tous les projets dans lesquels au
+                moins
                 un agent de l'entité a déjà des droits.
               </p>
 
@@ -48,4 +49,30 @@
 
     </li>
   </ul>
+
+  <% managed_organizations = @user.organization_managers.map(&:organization).compact %>
+  <% team_leader_organizations = @user.organization_team_leaders.map(&:organization).compact %>
+  <% if managed_organizations.present? || team_leader_organizations.present? %>
+    <h3><%= l(:label_managed_organizations) %></h3>
+    <% if managed_organizations.present? %>
+      <%= content_tag(:span, "Gestionnaire", :class => "badge manager-badge") %> :
+      <ul>
+        <% managed_organizations.each do |organization| %>
+          <li>
+            <%= link_to_organization organization %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+    <% if team_leader_organizations.present? %>
+      <%= content_tag(:span, "Chef d'équipe", :class => "badge team-leader-badge") %> :
+      <ul>
+        <% team_leader_organizations.each do |organization| %>
+          <li>
+            <%= link_to_organization organization %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
 <% end %>
