@@ -46,6 +46,7 @@ class OrganizationsController < ApplicationController
   def new
     @organization = Organization.new
     @managed_organizations = Organization.managed_by(user: User.current)
+    @organization.parent = Organization.find(params[:parent_id]) if params[:parent_id].present?
   end
 
   def edit
