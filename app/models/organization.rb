@@ -76,6 +76,10 @@ class Organization < ActiveRecord::Base
     @direction_organization ||= (direction? || root? ? self : parent.direction_organization)
   end
 
+  def root_direction_organization
+    self_and_ancestors.where(direction: true).first
+  end
+
   def memberships
     Member.joins(:user).where("users.organization_id = ? AND users.status = ?", self.id, User::STATUS_ACTIVE)
   end
