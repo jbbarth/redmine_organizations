@@ -27,7 +27,7 @@
                                        :disabled => !User.current.managed_roles(@project).include?(role) %> <%=h role %></label><br />
             <% end %></p>
           <%= hidden_field_tag 'membership[role_ids][]', '' %>
-          <p><%= submit_tag l(:button_change), :class => "small" %>
+          <p><%= submit_tag l(:button_save), :class => "small" %>
             <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{o.id}, 'non-member-orga'); return false;" %></p>
         </div>
       <% end -%>
