@@ -13,7 +13,7 @@ class User < Principal
   has_many :organization_team_leaders
 
   safe_attributes('organization_id',
-      :if => lambda {|user, current_user| current_user.admin?})
+      :if => lambda {|user, current_user| current_user.is_admin_or_instance_manager?})
 
   attr_accessor :orga_update_method
 
@@ -25,7 +25,7 @@ class User < Principal
   end
 
   def is_admin_or_manage?(organization)
-    admin? || is_a_manager?(organization)
+    is_admin_or_instance_manager? || is_a_manager?(organization)
   end
 
   def manage_his_organization?
@@ -40,6 +40,10 @@ class User < Principal
     !admin?
   end
 
+  def is_admin_or_instance_manager?
+    admin? || self.try(:instance_manager)
+  end
+
   def managers
     if self.organization.present?
       organization.all_managers
@@ -50,7 +54,7 @@ class User < Principal
 
   # Returns the roles that the user is allowed to manage for the given project
   def managed_organizations(project)
-    if admin?
+    if is_admin_or_instance_manager?
       Organization.all
     else
       membership(project).try(:managed_organizations) || []
@@ -58,7 +62,7 @@ class User < Principal
   end
 
   def managed_only_his_organization?(project)
-    if admin?
+    if is_admin_or_instance_manager?
       false
     else
       membership(project).try(:managed_only_his_organization?)

@@ -6,7 +6,7 @@
               {:controller => 'organizations', :action => 'destroy', :id => @organization.identifier},
               :class => 'icon icon-del',
               :data => {:confirm => l(:text_are_you_sure)},
-              :method => :delete) if User.current.admin? %>
+              :method => :delete) if User.current.is_admin_or_instance_manager? %>
 </div>
 
 <h2><%= link_to l(:label_organization_plural), organizations_path %> &#187; <%= link_to_organization @organization %></h2>

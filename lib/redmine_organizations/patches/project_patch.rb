@@ -62,7 +62,7 @@ module PluginOrganizations
       custom_statement = allowed_projects_ids.present? ? "(#{Project.table_name}.id IN (#{allowed_projects_ids.join(',')}))" : "1=0"
       standard_statement = super
 
-      "(#{standard_statement} OR #{custom_statement})"
+      "((#{standard_statement}) OR #{custom_statement})"
     end
   end
 end

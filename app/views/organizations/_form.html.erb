@@ -10,10 +10,10 @@
     <%= f.text_field :mail, :size => 80, label: t('functional_mail') %>
   </p>
   <p><%= f.select "parent_id",
-                  User.current.admin? ? nested_set_options(Organization, @organization){|i| i.fullname} : options_from_collection_for_select(@managed_organizations-@organization.self_and_descendants, 'id', 'fullname', @organization.parent_id),
-                  {:include_blank => (User.current.admin?), :label => :field_parent_organization},
+                  User.current.is_admin_or_instance_manager? ? nested_set_options(Organization, @organization){|i| i.fullname} : options_from_collection_for_select(@managed_organizations-@organization.self_and_descendants, 'id', 'fullname', @organization.parent_id),
+                  {:include_blank => (User.current.is_admin_or_instance_manager?), :label => :field_parent_organization},
                   {:class => "orga-select2"} %></p>
-  <% if User.current.admin? %>
+  <% if User.current.is_admin_or_instance_manager? %>
     <p><%= f.check_box :direction %></p>
   <% end %>
 </div>

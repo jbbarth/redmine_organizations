@@ -23,7 +23,7 @@ class Member
   # Returns the organizations that the member is allowed to manage
   # in the project the member belongs to
   def managed_organizations
-    if principal.try(:admin?)
+    if principal.try(:is_admin_or_instance_manager?)
       Organization.all
     else
       members_management_roles = roles.select do |role|
@@ -44,7 +44,7 @@ class Member
   end
 
   def managed_only_his_organization?
-    if principal.try(:admin?)
+    if principal.try(:is_admin_or_instance_manager?)
       false
     else
       members_management_roles = roles.select do |role|

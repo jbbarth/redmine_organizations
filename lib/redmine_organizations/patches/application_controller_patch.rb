@@ -22,7 +22,10 @@ module PluginOrganizations
     end
 
     def require_admin_or_manager
+
       return unless require_login
+      return true if User.current.is_admin_or_instance_manager?
+
       if @organization.present?
         managers_user_ids = OrganizationManager
                                 .where("organization_id IN (?)", @organization.self_and_ancestors.map(&:id))
@@ -30,11 +33,12 @@ module PluginOrganizations
       else
         managers_user_ids = OrganizationManager.pluck(:user_id)
       end
-      if managers_user_ids.exclude?(User.current.id) && User.current.is_not_admin?
+      if managers_user_ids.exclude?(User.current.id)
         render_403
         return false
       end
       true
+
     end
 
   end

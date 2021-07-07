@@ -3,7 +3,7 @@ module OrganizationsHelper
     tabs = [{:name => 'general', :partial => 'organizations/general', :label => :label_general},
             {:name => 'users', :partial => 'organizations/users', :label => :label_user_plural}]
     tabs << {:name => 'managers', :partial => 'organizations/managers', :label => :field_managers} if User.current.is_admin_or_manage?(@organization)
-    tabs << {:name => 'memberships', :partial => 'organizations/memberships', :label => :label_project_plural} if User.current.admin?
+    tabs << {:name => 'memberships', :partial => 'organizations/memberships', :label => :label_project_plural} if User.current.is_admin_or_instance_manager?
     tabs
   end
 

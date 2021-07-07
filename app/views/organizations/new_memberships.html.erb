@@ -1,0 +1,9 @@
+<%= render :partial => 'organizations/memberships/new_modal' %>
+
+<%= javascript_tag do %>
+  $(function () {
+    //use jQuery.select2 if available
+    initOrgasSelect2()
+    $('input#member-add-submit').prop('disabled', true)
+  });
+<% end %>
