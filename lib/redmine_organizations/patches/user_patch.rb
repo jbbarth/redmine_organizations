@@ -12,6 +12,8 @@ class User < Principal
   has_many :organization_managers
   has_many :organization_team_leaders
 
+  scope :team_leader, -> { joins(:organization_team_leaders) }
+
   safe_attributes('organization_id',
       :if => lambda {|user, current_user| current_user.is_admin_or_instance_manager?})
 
