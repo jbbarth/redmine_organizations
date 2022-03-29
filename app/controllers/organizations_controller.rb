@@ -4,6 +4,7 @@ class OrganizationsController < ApplicationController
   before_action :require_admin_or_manager, :only => [:new, :create, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id]
   before_action :require_login, :only => [:index, :show, :autocomplete_users]
   before_action :find_project_by_project_id, :only => [:autocomplete_users]
+  after_action :update_fullname_and_identifier_of_children, only: [:update]
 
   layout 'admin'
 
@@ -121,4 +122,15 @@ class OrganizationsController < ApplicationController
     @users = User.active.sorted.where("organization_id = ? AND id != ?", params[:orga_id], params[:id])
   end
 
+  private
+
+  def update_fullname_and_identifier_of_children
+    if @organization.previous_changes.include?(:name)
+      @organization.children.each do |child|
+        child.update_name_with_parents
+        child.calculated_identifier
+        child.save
+      end
+    end
+  end
 end
