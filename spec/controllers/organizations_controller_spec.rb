@@ -57,6 +57,15 @@ describe OrganizationsController, :type => :controller do
       expect(response).to redirect_to(organizations_path)
     end
 
+    it "delete an organization should set user.organization_id to nil" do
+      user = User.find(5)
+      user.organization = Organization.find(3)
+      user.save
+      delete :destroy, params: {:id => Organization.find(3).to_param}
+      user.reload
+      assert_equal user.organization_id, nil
+    end
+
     it "should autocomplete for users" do
       get :autocomplete_for_user, params: {:id => 2, :q => "adm"}
       expect(response).to be_successful
