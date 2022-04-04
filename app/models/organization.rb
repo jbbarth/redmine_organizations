@@ -7,7 +7,7 @@ class Organization < ActiveRecord::Base
   validates :name, :uniqueness => {:scope => :parent_id}
   validates_format_of :mail, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, :allow_blank => true
 
-  has_many :users
+  has_many :users, :dependent => :nullify
   has_many :organization_roles
   has_many :organization_managers
   has_many :organization_team_leaders
