@@ -128,7 +128,6 @@ class OrganizationsController < ApplicationController
     if @organization.previous_changes.include?(:name)
       @organization.children.each do |child|
         child.update_name_with_parents
-        child.calculated_identifier
         child.save
       end
     end
