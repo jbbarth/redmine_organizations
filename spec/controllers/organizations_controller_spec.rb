@@ -84,6 +84,24 @@ describe OrganizationsController, :type => :controller do
         post :create, params: {organization: {name: "Team A", parent_id: 3}}
       end
     end
+
+    it "Changing name of parent organization should update full_name and identifier of its children" do
+      org = Organization.find(1)
+      new_name = "name_test"
+      #Fill in the name_with_parents of the children of organization, because they are not filled in by the fixture
+      org.children.each do |child|
+        child.name_with_parents = org.name + Organization::SEPARATOR + child.name
+        child.save
+      end
+
+      put :update, params: {id: org.identifier, organization: { name: new_name }}
+      org.reload
+
+      org.children.each do |child|
+        assert_equal child.name_with_parents, new_name + Organization::SEPARATOR + child.name
+        assert_equal child.identifier, (new_name + Organization::SEPARATOR + child.name).parameterize
+      end
+    end
   end
 
   describe "Manager actions" do
