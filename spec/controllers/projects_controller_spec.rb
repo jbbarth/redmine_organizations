@@ -25,8 +25,8 @@ describe ProjectsController, :type => :controller do
       new_pro = Project.last
 
       expect(new_pro.organization_roles.count).to eq(2)
-      expect(new_pro.organization_roles.first.role.id  == role_manager.id)
-      expect(new_pro.organization_roles.last.role.id  == role_developer.id)
+      expect(new_pro.organization_roles.first.role.id).to eq (role_manager.id)
+      expect(new_pro.organization_roles.last.role.id).to eq (role_developer.id)
     end
 
     it "Should not copy any organization roles if the option (organizations_roles) is not selected" do
