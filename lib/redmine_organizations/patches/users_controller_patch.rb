@@ -70,7 +70,8 @@ class UsersController < ApplicationController
           when "remove" # Remove all memberships for this user
             Member.where(user_id: @user.id).destroy_all
           when "replace"
-            other_memberships = User.find(params[:copy_user]).memberships
+            other_memberships = []
+            other_memberships = User.find(params[:copy_user]).memberships if params[:copy_user].present?
             Member.where(user_id: @user.id).destroy_all
             other_memberships.each do |membership|
               new_membership = Member.new(project_id: membership.project_id)

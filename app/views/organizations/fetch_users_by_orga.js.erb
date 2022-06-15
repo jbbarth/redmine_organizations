@@ -1,3 +1,12 @@
+option_replace = $('#user_orga_update_method_replace');
+if ("<%= @users.count %>" > 0) {
+  option_replace.prop('disabled', false);
+} else {
+  option_replace.prop('disabled', true);
+  option_replace.prop('checked', false);
+  $('#user_orga_update_method_keep').prop('checked', true);
+}
+
 $('#copy_user').html("<%= escape_javascript(select_tag :copy_user,
-                         options_from_collection_for_select(@users, :id, :name)) %>"
+                        options_from_collection_for_select(@users, :id, :name)) %>"
 );

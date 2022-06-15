@@ -55,5 +55,14 @@ describe UsersController, type: :controller do
       expect(user.organization_id).to eq 2
       expect(user.memberships.map(&:project)).to eq User.find(3).memberships.map(&:project)
     end
+    # In the case of removing the property(disabled) from the option( Duplicate roles and projects) by the page inspector
+    it "Should not show any error if params == replace and copy_user is nil" do
+      put :update, params: {:id => 2,
+                            :user => {:organization_id => '2',
+                            :orga_update_method => 'replace'}}
+
+      expect(response).to have_http_status(:redirect)
+    end
+
   end
 end
