@@ -8,9 +8,9 @@ class Organization < ActiveRecord::Base
   validates_format_of :mail, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, :allow_blank => true
 
   has_many :users, :dependent => :nullify
-  has_many :organization_roles
-  has_many :organization_managers
-  has_many :organization_team_leaders
+  has_many :organization_roles, :dependent => :destroy
+  has_many :organization_managers, :dependent => :destroy
+  has_many :organization_team_leaders, :dependent => :destroy
   has_many :managers, through: :organization_managers, :source => :user
   has_many :team_leaders, through: :organization_team_leaders, :source => :user
   has_many :organization_notifications
