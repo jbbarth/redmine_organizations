@@ -9,6 +9,7 @@ require_dependency 'redmine_organizations/hooks/view_layouts_base_html_head_hook
 ActiveSupport::Reloader.to_prepare do
 
   require_dependency 'redmine_organizations/patches/user_patch'
+  require_dependency 'redmine_organizations/patches/role_patch'
   require_dependency 'redmine_organizations/patches/group_patch'
   require_dependency 'redmine_organizations/patches/issue_patch'
   require_dependency 'redmine_organizations/patches/issue_query_patch'

@@ -9,8 +9,8 @@ require_dependency 'user'
 
 class User < Principal
   belongs_to :organization
-  has_many :organization_managers
-  has_many :organization_team_leaders
+  has_many :organization_managers, :dependent => :destroy
+  has_many :organization_team_leaders, :dependent => :destroy
 
   scope :team_leader, -> { joins(:organization_team_leaders) }
 

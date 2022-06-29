@@ -2,6 +2,7 @@ require "spec_helper"
 
 describe "Organization" do
   fixtures :organizations, :users, :roles, :projects, :members, :member_roles, :organization_managers
+  fixtures :organization_functions if Redmine::Plugin.installed?(:redmine_limited_visibility)
 
   it "should test_organization_tree_sorting" do
     o = Organization.create(:name => "Team C", :parent_id => 1)
@@ -54,5 +55,39 @@ describe "Organization" do
     expect(Organization.find(2).all_managers).to eq [User.find(2), User.find(1)]
   end
 
+  describe "Update the relationship tables in case of cascade deleting" do
+    let(:organization) { Organization.find(1) }
+
+    if Redmine::Plugin.installed?(:redmine_limited_visibility)
+      it "Update OrganizationFunction table, when deleting a organization" do
+        expect do
+          organization.destroy
+        end.to change { OrganizationFunction.count }.by(-1)
+      end
+    end
+
+    it "Update OrganizationRole table, when deleting a organization" do
+      expect do
+        organization.destroy
+      end.to change { OrganizationRole.count }.by(-1)
+      .and change { OrganizationManager.count }.by(-1)
+      .and change { OrganizationTeamLeader.count }.by(-1)
+    end
+
+    it "when deleting a project" do
+      project = Project.find(1)
+      expect do
+        project.destroy
+      end.to change { OrganizationRole.count }.by(-2)
+    end
+
+    it "when deleting a role" do
+      role_test = Role.create!(:name => 'Test')
+      OrganizationRole.create(project_id: 1, role_id: role_test.id, organization_id: organization.id)
+      expect do
+        role_test.destroy
+      end.to change { OrganizationRole.count }.by(-1)
+    end
+  end
 
 end

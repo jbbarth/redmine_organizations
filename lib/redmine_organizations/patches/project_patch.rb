@@ -4,7 +4,7 @@ require_dependency 'user'
 
 class Project < ActiveRecord::Base
 
-  has_many :organization_roles
+  has_many :organization_roles, :dependent => :destroy
   has_many :organization_notifications
   has_many :notified_organizations, through: :organization_notifications, :source => :organization
 

@@ -18,4 +18,12 @@ describe "UserPatch" do
     expect(User.find(2).organization).to eq Organization.find(2)
     expect(User.find(2).managers).to eq [User.find(2), User.find(1)]
   end
+
+  it "Update OrganizationManager, OrganizationTeamLeader tables, when deleting a user" do
+    user = User.find(2)
+    expect do
+      user.destroy
+    end.to change { OrganizationManager.count }.by(-1)
+    .and change { OrganizationTeamLeader.count }.by(-1)
+  end
 end
