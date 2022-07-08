@@ -158,6 +158,19 @@ class Organizations::MembershipsController < ApplicationController
     end
   end
 
+  def destroy_organization
+    @organization.users_by_organization_in_project(@project).each do |member|
+      if member.deletable?
+        member.destroy
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to settings_project_path(@project, :tab => 'members') }
+      format.js
+    end
+  end
+
   private
 
   def find_organization

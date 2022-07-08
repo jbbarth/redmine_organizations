@@ -29,3 +29,5 @@ en:
   mail_subject_updated_role: "Modification des paramètres de votre compte"
   hello: "Bonjour %{user}"
   label_organizations_roles: Organizations roles
+  button_delete_all: "Delete all"
+  organization_delete_all_confirm: "Are you sure to remove all members of this organization?"
