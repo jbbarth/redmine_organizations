@@ -48,3 +48,5 @@ fr:
   label_direction_only: Seulement les directions
   label_my_organization: Mon organisation
   label_organizations_roles: Rôles des organisations
+  button_delete_all: "Tout supprimer"
+  organization_delete_all_confirm: "Êtes-vous sûr de vouloir supprimer tous les membres de cette organisation ?"

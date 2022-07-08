@@ -50,6 +50,7 @@
                           edit_organizations_membership_path(id: organization.id, project_id: @project.id),
                           :remote => true,
                           :class => 'icon icon-edit' if managed_organizations.include? organization %>
+              <%= link_to l(:button_delete_all), destroy_organization_organizations_membership_path(id: organization.id, project_id: @project.id), :method => :delete, :data => {:confirm => l(:organization_delete_all_confirm)}, :class => 'icon icon-del' %>
             </td>
           </tr>
         <% end %>
