@@ -1,11 +1,13 @@
-
+<% copy_user_list = User.sorted.active.where("organization_id = ? AND id != ?",
+                                              @user.organization.try(:id),
+                                              @user.id) %>
 <%= form_for @user, :url => { :controller => 'users', :action => "update", :tab => nil }, :html => { :method => :put, :class => nil } do |f| %>
   <div class="box">
     <h4><%= l :update_user_orga, username: @user %></h4>
     <%= f.select "organization_id", nested_set_options(Organization) { |i| i.fullname },
-               { :include_blank => true },
-               { :class => "orga-select2",
-                 :onChange=>"javascript: update_users_from_orga();"} %>
+                { :include_blank => true },
+                { :class => "orga-select2",
+                :onChange=>"javascript: update_users_from_orga();"} %>
 
     <p>
       <%= f.radio_button :orga_update_method, 'keep', checked: true %>
@@ -19,9 +21,7 @@
       <%= f.radio_button :orga_update_method, 'replace' %>
       <%= f.label :orga_update_method, l(:memberships_replace), :value => 'replace' %>
       <%= select_tag :copy_user,
-                     options_from_collection_for_select(User.sorted.active.where("organization_id = ? AND id != ?",
-                                                                 @user.organization.try(:id),
-                                                                 @user.id), :id, :name ) %>
+                    options_from_collection_for_select(copy_user_list, :id, :name) %>
     </p>
 
   </div>
@@ -29,6 +29,11 @@
 <% end %>
 
 <script>
+  $(function(){
+    if ("<%= copy_user_list.count %>" == 0) {
+      $('#user_orga_update_method_replace').prop('disabled', true);
+    }
+  });
   function update_users_from_orga(){
     $.post("fetch_users_by_orga.js", { orga_id: $('#user_organization_id').val() }, function() {});
   }

@@ -65,5 +65,40 @@ module PluginOrganizations
       "((#{standard_statement}) OR #{custom_statement})"
     end
   end
+  module CopyProjectModel
+    #Copies organizations_roles from +project+
+    def copy_organizations_roles(project)
+      orga_roles_to_copy = project.organization_roles
+      orga_roles_to_copy.each do |orga_role|
+        new_orga_role = OrganizationRole.new
+        new_orga_role.attributes = orga_role.attributes.dup.except("id", "project_id")
+        self.organization_roles << new_orga_role
+      end
+    end
+
+    def copy(project, options={})
+      super
+      project = project.is_a?(Project) ? project : Project.find(project)
+
+      to_be_copied = %w(organizations_roles)
+
+      to_be_copied = to_be_copied & Array.wrap(options[:only]) unless options[:only].nil?
+
+      Project.transaction do
+        if save
+          reload
+
+          to_be_copied.each do |name|
+            send "copy_#{name}", project
+          end
+
+          save
+        else
+          false
+        end
+      end
+    end
+  end
 end
 Project.singleton_class.prepend PluginOrganizations::ProjectModel
+Project.prepend PluginOrganizations::CopyProjectModel
