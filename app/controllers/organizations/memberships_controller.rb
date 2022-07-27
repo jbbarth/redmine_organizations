@@ -1,11 +1,13 @@
 class Organizations::MembershipsController < ApplicationController
-
+  include RedmineAdminActivity::Journalizable if Redmine::Plugin.installed?(:redmine_admin_activity)
   helper MembersHelper
 
   DEFAULT_ROLE_ID = 4 # role_id = 4 => project_member in our case #TODO Make it customizable in settings
 
   before_action :find_project_by_project_id, :is_allowed_to_manage_members?
   before_action :find_organization, except: [:new, :create_non_members_roles, :update_group_non_member_roles]
+  before_action :members_to_delete_from_organization_in_project, only: [:destroy_organization]
+  after_action :journalized_detroying_organization, only: [:destroy_organization] if Redmine::Plugin.installed?(:redmine_admin_activity)
 
   def new
     @member = Member.new
@@ -159,7 +161,7 @@ class Organizations::MembershipsController < ApplicationController
   end
 
   def destroy_organization
-    @organization.users_by_organization_in_project(@project).each do |member|
+    @members_to_delete.each do |member|
       if member.deletable?
         member.destroy
       end
@@ -192,6 +194,18 @@ class Organizations::MembershipsController < ApplicationController
     unless User.current.allowed_to?(:manage_members, @project)
       deny_access
       return
+    end
+  end
+
+  def members_to_delete_from_organization_in_project
+    @members_to_delete = @organization.members_by_organization_in_project(@project).select{ |member| member if member.deletable?}
+  end
+
+  def journalized_detroying_organization
+    @members_to_delete.each do |member|
+      previous_role_ids = member.role_ids
+      previous_function_ids = member.function_ids if limited_visibility_plugin_installed?
+      add_member_deletion_to_journal(member, previous_role_ids, previous_function_ids)
     end
   end
 

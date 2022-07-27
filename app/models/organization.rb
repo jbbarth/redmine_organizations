@@ -100,7 +100,7 @@ class Organization < ActiveRecord::Base
     users.joins(:members).where("users.status = ? AND members.project_id = ?", User::STATUS_ACTIVE, project.id)
   end
 
-  def users_by_organization_in_project(project)
+  def members_by_organization_in_project(project)
     Member.joins(:user).where("users.organization_id = ? AND members.project_id = ?", self.id, project.id)
   end
 
