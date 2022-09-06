@@ -37,7 +37,7 @@
                            :class => 'icon icon-edit') %>
       <%= link_to(l(:button_delete),
                   destroy_non_members_roles_organizations_membership_path(id: o.id, :project_id => @project.id, :back_url => @back),
-                  :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete)) %>
+                  :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete), :remote => true) %>
     </td>
   </tr>
 
