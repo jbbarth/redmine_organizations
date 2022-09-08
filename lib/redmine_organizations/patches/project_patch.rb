@@ -34,7 +34,7 @@ class Project < ActiveRecord::Base
           user[:organization] || dummy_org
         end
         hsh.each do |org, users_hsh|
-          hsh[org] = users_hsh.map{|h| h[:user]}.sort
+          hsh[org] = users_hsh.map { |h| h[:user] }.sort
         end
         memo[role] = hsh
         memo
@@ -45,17 +45,18 @@ end
 
 # TODO Test it
 module PluginOrganizations
+
   module ProjectModel
     # Returns true if usr or current user is allowed to view the issue with_organization_exceptions
-    def allowed_to_condition(user, permission, options={}, &block)
+    def allowed_to_condition(user, permission, options = {}, &block)
       user_organization = user.try(:organization)
       user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
       organization_roles = OrganizationRole.where(organization_id: user_organization_and_parents_ids, non_member_role: true)
 
       allowed_projects_ids = []
       organization_roles.each do |organization_role|
-        if organization_role.role.allowed_to?(permission)
-          allowed_projects_ids << organization_role.project_id
+        if organization_role.role.present?
+          allowed_projects_ids << organization_role.project_id if organization_role.role.allowed_to?(permission)
         end
       end
 
@@ -65,6 +66,7 @@ module PluginOrganizations
       "((#{standard_statement}) OR #{custom_statement})"
     end
   end
+
   module CopyProjectModel
     #Copies organizations_roles from +project+
     def copy_organizations_roles(project)
@@ -76,7 +78,7 @@ module PluginOrganizations
       end
     end
 
-    def copy(project, options={})
+    def copy(project, options = {})
       super
       project = project.is_a?(Project) ? project : Project.find(project)
 
