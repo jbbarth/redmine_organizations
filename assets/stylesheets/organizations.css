@@ -70,3 +70,30 @@ textarea#organization_description{
 #tab-content-managers fieldset label {display: block;}
 #tab-content-managers #principals {max-height: 400px; overflow: auto;}
 input#manager_search {width:90%}
+
+.ldap_sync_orga {
+    border-radius: 10px;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    margin-top: 2px;
+}
+.ldap_sync_orga.green {
+    border: 1px solid green;
+    background-color: lightgreen;
+}
+.ldap_sync_orga.red {
+    border: 1px solid red;
+    background-color: lightcoral;
+}
+
+ul.unknown_organizations {
+    list-style-type: none;
+    padding-left: 0;
+}
+ul.unknown_organizations span {
+    margin-right: 0.5em;
+}
+ul.unknown_organizations li {
+    height: 16px;
+}

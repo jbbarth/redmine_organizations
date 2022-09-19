@@ -3,6 +3,10 @@
     <%= link_to l(:label_organization_new), {:controller => 'organizations', :action => 'new'},
                 :class => 'icon icon-add' %>
   <% end %>
+  <% if Redmine::Plugin.installed?(:redmine_ldap_minequip) %>
+    <%= link_to l(:label_ldap_sync), {:controller => 'organizations', :action => 'ldap_sync'},
+                :class => 'icon icon-sync' %>
+  <% end %>
 </div>
 
 <% if @managed_organizations.any? %>

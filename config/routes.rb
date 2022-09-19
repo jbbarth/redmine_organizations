@@ -8,6 +8,8 @@ RedmineApp::Application.routes.draw do
     collection do
       get :autocomplete_user_from_id
       get :autocomplete_users
+      get :ldap_sync
+      get :ldap_sync_check_status
     end
   end
   namespace :organizations do

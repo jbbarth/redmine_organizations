@@ -1,8 +1,8 @@
 class OrganizationsController < ApplicationController
 
   before_action :find_organization_by_id, only: [:show, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user]
-  before_action :require_admin_or_manager, :only => [:new, :create, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id]
-  before_action :require_login, :only => [:index, :show, :autocomplete_users]
+  before_action :require_admin_or_manager, :only => [:new, :create, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id, :ldap_sync]
+  before_action :require_login, :only => [:index, :show, :autocomplete_users, :ldap_sync]
   before_action :find_project_by_project_id, :only => [:autocomplete_users]
   after_action :update_fullname_and_identifier_of_children, only: [:update]
 
@@ -122,6 +122,27 @@ class OrganizationsController < ApplicationController
 
   def fetch_users_by_orga
     @users = User.active.sorted.where("organization_id = ? AND id != ?", params[:orga_id], params[:id])
+  end
+
+  def ldap_sync
+    return render_error :status => 403 unless Redmine::Plugin.installed?(:redmine_ldap_minequip)
+
+    @organizations = Organization.order('lft')
+
+    ldap_organizations = LdapOrganization.pluck(:departmentnumber)
+    intern_organizations = Organization.pluck(:name_with_parents)
+    @unknown_organizations = ldap_organizations - intern_organizations
+    @synchronized_organizations = ldap_organizations & intern_organizations
+
+    render :layout => 'admin'
+  end
+
+  def ldap_sync_check_status
+    @organization = Organization.find(params[:organization_id])
+
+    LdapOrganization.reset_ldap_organizations(root: @organization.fullname)
+
+    redirect_to ldap_sync_organizations_path(:organization_id => @organization.id)
   end
 
   private

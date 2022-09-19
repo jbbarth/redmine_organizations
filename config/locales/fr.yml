@@ -50,3 +50,5 @@ fr:
   label_organizations_roles: Rôles des organisations
   button_delete_all: "Supprimer tous les membres"
   organization_delete_all_confirm: "Êtes-vous sûr de vouloir supprimer tous les membres de cette organisation ?"
+  label_organizations_ldap_sync: "Synchronisation des organisations avec le LDAP"
+  label_ldap_sync: "Synchronisation LDAP"

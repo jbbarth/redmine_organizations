@@ -1,0 +1,51 @@
+<div class="contextual">
+  <% if User.current.is_admin_or_instance_manager? || @managed_organizations.any? %>
+    <%= link_to l(:label_organization_new), { :controller => 'organizations', :action => 'new' },
+                :class => 'icon icon-add' %>
+  <% end %>
+</div>
+
+<h2><%= l(:label_organizations_ldap_sync) %></h2>
+
+<ul class="unknown_organizations">
+  <% @unknown_organizations.each do |unknown_orga| %>
+    <li><%= content_tag(:span, "", class: "ldap_sync_orga red") %><%= unknown_orga %></li>
+  <% end %>
+</ul>
+
+<table class="list attributes all-organizations">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Statut LDAP</th>
+    <th class=left style="width:270px">
+      <%= l(:field_name) %><br>
+      <input type=text name=filter-by-name id=filter-by-org-name class=filter>
+    </th>
+    <th><%= l(:field_description) %></th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% Organization.each_with_level(@organizations) do |organization, level| %>
+    <tr class="organization <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
+      <td><%= link_to "sync", action: "ldap_sync_check_status", controller: "organizations", params: { organization_id: organization.id } %></td>
+      <td><%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(organization.name_with_parents) %></td>
+      <td class="name" data-filter-value="<%= organization.fullname %>">
+        <%= link_to h(organization.name), { :controller => 'organizations', :action => 'show', :id => organization.identifier } %>
+      </td>
+      <td class="description"><%= h organization.description %></td>
+      <td class="buttons">
+        <% if User.current.is_admin_or_instance_manager? %>
+          <%= link_to l(:button_update), { :controller => 'organizations', :action => 'edit', :id => organization.identifier },
+                      :class => 'icon icon-edit' %>
+          <%= link_to l(:button_delete), { :controller => 'organizations', :action => 'destroy', :id => organization.identifier },
+                      :class => 'icon icon-del', :data => { :confirm => l(:text_are_you_sure) }, :method => :delete %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<% html_title(l(:label_organization_plural)) %>
