@@ -59,8 +59,8 @@
       </tr>
       </thead>
       <tbody>
-      <% @organizations.each do |organization| %>
-        <tr class="organization <%= organization.level > 0 ? "idnt idnt-#{organization.level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
+      <% Organization.each_with_level(@organizations) do |organization, level| %>
+        <tr class="organization <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
           <td class="name" data-filter-value="<%= organization.fullname %>">
             <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization.identifier} %>
           </td>
