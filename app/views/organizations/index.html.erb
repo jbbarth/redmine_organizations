@@ -65,8 +65,8 @@
             <%= link_to h(organization.name), {:controller => 'organizations', :action => 'show', :id => organization.identifier} %>
           </td>
           <td class="description"><%= h organization.description %></td>
-          <td class="team_leaders"><%= h organization.team_leaders.active.sorted.map(&:to_s).join(', ') %></td>
-          <td class="managers"><%= h organization.managers.active.sorted.map(&:to_s).join(', ') %></td>
+          <td class="team_leaders"><%= h @team_leaders_by_organization[organization.id].join(', ') %></td>
+          <td class="managers"><%= h @managers_by_organization[organization.id].join(', ') %></td>
           <td class="buttons">
             <% if User.current.is_admin_or_instance_manager? %>
               <%= link_to l(:button_update), {:controller => 'organizations', :action => 'edit', :id => organization.identifier},
