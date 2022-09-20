@@ -145,7 +145,7 @@ class OrganizationsController < ApplicationController
 
   def add_organization_from_ldap
     ldap_orga = LdapOrganization.find_by_departmentnumber(params[:departmentnumber])
-    @organization = Organization.find_or_create_from_ldap(departmentnumber: ldap_orga.departmentnumber)
+    @organization = Organization.find_or_create_from_ldap(departmentnumber: ldap_orga.departmentnumber, description: ldap_orga.cn)
     redirect_to ldap_sync_organizations_path(:organization_id => @organization.id)
   end
 
