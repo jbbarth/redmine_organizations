@@ -97,3 +97,8 @@ ul.unknown_organizations span {
 ul.unknown_organizations li {
     height: 16px;
 }
+.icon-sync  { background-image: url(../images/synchronize.png); }
+
+.organization .users.zero {
+    color: #d3054d;
+}

@@ -10,6 +10,7 @@ RedmineApp::Application.routes.draw do
       get :autocomplete_users
       get :ldap_sync
       get :ldap_sync_check_status
+      get :add_organization_from_ldap
     end
   end
   namespace :organizations do

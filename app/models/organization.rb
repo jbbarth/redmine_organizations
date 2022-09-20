@@ -162,4 +162,17 @@ class Organization < ActiveRecord::Base
     Organization.joins(:organization_managers).where("organization_managers.user_id = ?", user.id).order('lft').map(&:self_and_descendants).flatten.uniq
   end
 
+  def self.find_or_create_from_ldap(departmentnumber:)
+    organization = Organization.where(name_with_parents: departmentnumber).first
+    return organization if organization.present?
+
+    sub_organizations = departmentnumber.split(Organization::SEPARATOR)
+    parent = nil
+    sub_organizations.each do |sub_orga|
+      organization = Organization.find_or_create_by(name: sub_orga, parent: parent)
+      parent = organization
+    end
+    return organization
+  end
+
 end

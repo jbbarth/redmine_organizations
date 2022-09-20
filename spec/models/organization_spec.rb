@@ -90,4 +90,17 @@ describe "Organization" do
     end
   end
 
+  describe "organization synchronization with LDAP" do
+    it "creates new organization from ldap departmentnumber" do
+      expect do
+        Organization.find_or_create_from_ldap(departmentnumber: "DIR/SUBDIR/MAIN/TEAM")
+      end.to change { Organization.count }.by(4)
+    end
+
+    it "does not change existing organization" do
+      expect do
+        Organization.find_or_create_from_ldap(departmentnumber: "Org A/Team A")
+      end.to_not change { Organization.count }
+    end
+  end
 end

@@ -9,7 +9,13 @@
 
 <ul class="unknown_organizations">
   <% @unknown_organizations.each do |unknown_orga| %>
-    <li><%= content_tag(:span, "", class: "ldap_sync_orga red") %><%= unknown_orga %></li>
+    <li>
+      <%= content_tag(:span, "", class: "ldap_sync_orga red") %>
+      <%= content_tag(:span, unknown_orga, class: "unknown_orga") %>
+      <%= link_to add_organization_from_ldap_organizations_path(departmentnumber: unknown_orga) do %>
+        <%= content_tag(:span, "", class: "icon icon-add") %>
+      <% end %>
+    </li>
   <% end %>
 </ul>
 
@@ -23,21 +29,23 @@
       <input type=text name=filter-by-name id=filter-by-org-name class=filter>
     </th>
     <th><%= l(:field_description) %></th>
+    <th><%= l(:field_users) %></th>
     <th></th>
   </tr>
   </thead>
   <tbody>
   <% Organization.each_with_level(@organizations) do |organization, level| %>
     <tr class="organization <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
-      <td><%= link_to "sync", action: "ldap_sync_check_status", controller: "organizations", params: { organization_id: organization.id } %></td>
+      <td><%= link_to "", { action: "ldap_sync_check_status", controller: "organizations", params: { organization_id: organization.id } }, :class => 'icon icon-sync' %></td>
       <td><%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(organization.name_with_parents) %></td>
       <td class="name" data-filter-value="<%= organization.fullname %>">
         <%= link_to h(organization.name), { :controller => 'organizations', :action => 'show', :id => organization.identifier } %>
       </td>
       <td class="description"><%= h organization.description %></td>
+      <td class="users <%= "zero" if organization.users.size == 0 %>"><%= organization.users.size %></td>
       <td class="buttons">
         <% if User.current.is_admin_or_instance_manager? %>
-          <%= link_to l(:button_update), { :controller => 'organizations', :action => 'edit', :id => organization.identifier },
+          <%# link_to l(:button_update), { :controller => 'organizations', :action => 'edit', :id => organization.identifier },
                       :class => 'icon icon-edit' %>
           <%= link_to l(:button_delete), { :controller => 'organizations', :action => 'destroy', :id => organization.identifier },
                       :class => 'icon icon-del', :data => { :confirm => l(:text_are_you_sure) }, :method => :delete %>
