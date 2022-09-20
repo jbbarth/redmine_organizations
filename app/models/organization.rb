@@ -169,8 +169,12 @@ class Organization < ActiveRecord::Base
     sub_organizations = departmentnumber.split(Organization::SEPARATOR)
     parent = nil
     sub_organizations.each do |sub_orga|
-      organization = Organization.find_or_create_by(name: sub_orga, parent: parent)
-      organization.update(description: description) if description.present?
+      organization = Organization.find_or_initialize_by(name: sub_orga, parent: parent)
+      if !organization.persisted?
+        organization.description = description if description.present?
+        organization.save
+        organization.journalize_creation(User.current) if Redmine::Plugin.installed?(:redmine_admin_activity)
+      end
       parent = organization
     end
     return organization
