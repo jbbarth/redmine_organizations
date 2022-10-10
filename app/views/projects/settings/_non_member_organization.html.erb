@@ -1,6 +1,6 @@
 <% o ||= @organization %>
 <% @givable_roles ||= Role.givable.sorted %>
-<% roles = OrganizationRole.includes(:role).where(project_id: @project.id, organization_id: o.id, non_member_role: true).map(&:role) %>
+<% roles = OrganizationNonMemberRole.includes(:role).where(project_id: @project.id, organization_id: o.id).map(&:role) %>
 
 <% if o %>
   <tr id="non-member-orga-<%= o.id %>" class="even">

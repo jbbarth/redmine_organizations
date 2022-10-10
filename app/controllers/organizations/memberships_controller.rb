@@ -34,7 +34,7 @@ class Organizations::MembershipsController < ApplicationController
     ActiveRecord::Base.transaction do
       not_manageable_roles = Role.givable.to_a - User.current.managed_roles(@project)
       @organization.delete_all_organization_roles(@project, not_manageable_roles)
-      organization_roles = roles.map{ |role| OrganizationRole.new(role_id: role.id, project_id: @project.id) }
+      organization_roles = roles.map { |role| OrganizationRole.new(role_id: role.id, project_id: @project.id) }
       organization_roles.each do |r|
         @organization.organization_roles << r
       end
@@ -44,7 +44,7 @@ class Organizations::MembershipsController < ApplicationController
         functions = params[:membership][:function_ids] ? Function.where(id: params[:membership][:function_ids].reject(&:empty?)) : []
         not_manageable_functions = Function.all.to_a - User.current.managed_functions(@project)
         @organization.delete_all_organization_functions(@project, not_manageable_functions)
-        organization_functions = functions.map{ |function| OrganizationFunction.new(function_id: function.id, project_id: @project.id) }
+        organization_functions = functions.map { |function| OrganizationFunction.new(function_id: function.id, project_id: @project.id) }
         organization_functions.each do |of|
           @organization.organization_functions << of
         end
@@ -78,7 +78,7 @@ class Organizations::MembershipsController < ApplicationController
     # Remove unchecked users (only if deletable)
     to_be_deleted_users = current_users - users
     to_be_deleted_members = Member.where(user: to_be_deleted_users, project: project)
-    deletable_members = to_be_deleted_members.select{|m| (m.roles & current_user.managed_roles(project)) == m.roles}
+    deletable_members = to_be_deleted_members.select { |m| (m.roles & current_user.managed_roles(project)) == m.roles }
     deletable_members.each do |member|
       member.try(:destroy)
     end
@@ -87,15 +87,9 @@ class Organizations::MembershipsController < ApplicationController
   def create_non_members_roles
     @organization = Organization.find(params['membership']['organization_id'])
     if @organization.present?
-      @current_organization_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id)
-      if @current_organization_roles.empty?
-        @current_organization_roles = [OrganizationRole.create!(project_id: @project.id,
-                                                                organization_id: @organization.id,
-                                                                non_member_role: true,
-                                                                role_id: DEFAULT_ROLE_ID)]
-      else
-        @current_organization_roles.update_all(non_member_role: true)
-      end
+      @current_organization_roles = OrganizationNonMemberRole.find_or_create_by(project_id: @project.id,
+                                                                                organization_id: @organization.id,
+                                                                                role_id: DEFAULT_ROLE_ID)
     end
 
     respond_to do |format|
@@ -104,34 +98,24 @@ class Organizations::MembershipsController < ApplicationController
     end
   end
 
-
   def update_non_members_roles
     new_non_member_roles = params[:membership][:role_ids].reject(&:empty?).map(&:to_i)
-    existing_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id).map(&:role_id)
-    deleted_roles = existing_roles-new_non_member_roles
-    brand_new_roles = new_non_member_roles-existing_roles
+    existing_roles = OrganizationNonMemberRole.where(project_id: @project.id, organization_id: @organization.id).map(&:role_id)
+    deleted_roles = existing_roles - new_non_member_roles
+    brand_new_roles = new_non_member_roles - existing_roles
 
-    (existing_roles|new_non_member_roles).each do |role_id|
-      if deleted_roles.include?(role_id)
-        orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
-        orga_role.non_member_role = false
-        orga_role.save
-      else
-        if brand_new_roles.include?(role_id)
-          OrganizationRole.create(role_id: role_id, project_id: @project.id, organization_id: @organization.id, non_member_role: true)
-        else
-          orga_role = OrganizationRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
-          unless orga_role.non_member_role
-            orga_role.non_member_role = true
-            orga_role.save
-          end
-        end
-      end
+    deleted_roles.each do |role_id|
+      orga_role = OrganizationNonMemberRole.where(role_id: role_id, project_id: @project.id, organization_id: @organization.id).first
+      orga_role.destroy
+    end
+
+    brand_new_roles.each do |role_id|
+      OrganizationNonMemberRole.create(role_id: role_id, project_id: @project.id, organization_id: @organization.id)
     end
 
     respond_to do |format|
       format.html { redirect_to settings_project_path(@project, :tab => 'members') }
-      format.js {render :update}
+      format.js { render :update }
     end
   end
 
@@ -147,13 +131,13 @@ class Organizations::MembershipsController < ApplicationController
     end
     respond_to do |format|
       format.html { redirect_to settings_project_path(@project, :tab => 'members') }
-      format.js {render :update}
+      format.js { render :update }
     end
   end
 
   def destroy_non_members_roles
-    @current_organization_roles = OrganizationRole.where(project_id: @project.id, organization_id: @organization.id)
-    @current_organization_roles.update_all(non_member_role: false)
+    @current_organization_roles = OrganizationNonMemberRole.where(project_id: @project.id, organization_id: @organization.id)
+    @current_organization_roles.destroy_all
     respond_to do |format|
       format.html { redirect_to settings_project_path(@project, :tab => 'members') }
       format.js
@@ -198,7 +182,7 @@ class Organizations::MembershipsController < ApplicationController
   end
 
   def members_to_delete_from_organization_in_project
-    @members_to_delete = @organization.members_by_organization_in_project(@project).select{ |member| member if member.deletable?}
+    @members_to_delete = @organization.members_by_organization_in_project(@project).select { |member| member if member.deletable? }
   end
 
   def journalized_detroying_organization

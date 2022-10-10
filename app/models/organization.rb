@@ -9,6 +9,7 @@ class Organization < ActiveRecord::Base
 
   has_many :users, :dependent => :nullify
   has_many :organization_roles, :dependent => :destroy
+  has_many :organization_non_member_roles, :dependent => :destroy
   has_many :organization_managers, :dependent => :destroy
   has_many :organization_team_leaders, :dependent => :destroy
   has_many :managers, through: :organization_managers, :source => :user

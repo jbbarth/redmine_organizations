@@ -51,7 +51,7 @@ module PluginOrganizations
     def allowed_to_condition(user, permission, options = {}, &block)
       user_organization = user.try(:organization)
       user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
-      organization_roles = OrganizationRole.where(organization_id: user_organization_and_parents_ids, non_member_role: true)
+      organization_roles = OrganizationNonMemberRole.where(organization_id: user_organization_and_parents_ids)
 
       allowed_projects_ids = []
       organization_roles.each do |organization_role|
