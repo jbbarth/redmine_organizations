@@ -13,12 +13,12 @@ describe "AdminMenuPatch", :type => :controller do
   it "should hide groups menu if option is selected" do
     Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = "1"
     get :index
-    assert_select "a[href='/groups']", false
+    expect(response.body).to_not include(groups_path)
   end
 
   it "should display groups menu if option is not selected" do
     Setting["plugin_redmine_organizations"]["hide_groups_admin_menu"] = "0"
     get :index
-    assert_select "a[href='/groups']"
+    expect(response.body).to include(groups_path)
   end
 end
