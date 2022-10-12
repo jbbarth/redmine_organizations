@@ -1,7 +1,11 @@
 require "spec_helper"
 
 describe "AdminMenuPatch", :type => :controller do
+
   render_views
+
+  fixtures :users, :members, :member_roles, :roles, :projects
+
   before do
     @controller = AdminController.new
     @request    = ActionDispatch::TestRequest.create
