@@ -19,12 +19,13 @@
                    :url => update_non_members_roles_organizations_membership_path(id: o.id, project_id: @project.id),
                    :html => { :id => "non-member-orga-#{o.id}-roles-form", :class => 'hol' }) do |f| -%>
         <div class='roles_checkboxes' style="float: left;">
-          <p><% @givable_roles.each do |role| %>
+          <p>
+            <% @givable_roles.each do |role| %>
               <label><%= check_box_tag 'membership[role_ids][]',
                                        role.id,
                                        roles.include?(role),
                                        :id => nil,
-                                       :disabled => !User.current.managed_roles(@project).include?(role) %> <%=h role %></label><br />
+                                       :disabled => !User.current.managed_roles(@project).include?(role) %> <%= h role %></label><br/>
             <% end %></p>
           <%= hidden_field_tag 'membership[role_ids][]', '' %>
           <p><%= submit_tag l(:button_save), :class => "small" %>
@@ -32,6 +33,40 @@
         </div>
       <% end -%>
     </td>
+
+    <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
+      <% @givable_functions ||= Function.available_functions_for(@project).sorted %>
+      <% functions = OrganizationNonMemberFunction.includes(:function).where(project_id: @project.id, organization_id: o.id).map(&:function) %>
+      <td id="all_functions">
+        <div class='function' style="float: left;">
+        <span id="non-member-orga-<%= o.id %>-functions">
+          <% if functions.any? %>
+            <%= functions.map(&:name).join(", ") %>
+          <% else %>
+            <span class="undefined"><%= l('undefined') %></span>
+          <% end %>
+        </span>
+        </div>
+        <%= form_for(o, :as => :membership, :remote => true, :method => :put,
+                     :url => update_non_members_functions_organizations_membership_path(id: o.id, project_id: @project.id),
+                     :html => { :id => "non-member-orga-#{o.id}-functions-form", :class => 'hol' }) do |f| -%>
+          <div class='functions_checkboxes' style="float: left;">
+            <p>
+              <% @givable_functions.each do |function| %>
+                <label><%= check_box_tag 'membership[function_ids][]',
+                                         function.id,
+                                         functions.include?(function),
+                                         :id => nil,
+                                         :disabled => !User.current.managed_functions(@project).include?(function) %> <%= h function %></label><br/>
+              <% end %></p>
+            <%= hidden_field_tag 'membership[function_ids][]', '' %>
+            <p><%= submit_tag l(:button_save), :class => "small" %>
+              <%= link_to_function l(:button_cancel), "toggleOrgaForms(#{o.id}, 'non-member-orga'); return false;" %></p>
+          </div>
+        <% end -%>
+      </td>
+    <% end %>
+
     <td class="buttons">
       <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{o.id}, 'non-member-orga'); return false;",
                            :class => 'icon icon-edit') %>
@@ -44,5 +79,5 @@
 <% end %>
 
 <script type="application/javascript">
-  $('#non_member_orga_exception_select option[value="<%= o.id %>"]').attr("disabled", "disabled");
+    $('#non_member_orga_exception_select option[value="<%= o.id %>"]').attr("disabled", "disabled");
 </script>

@@ -119,6 +119,27 @@ class Organizations::MembershipsController < ApplicationController
     end
   end
 
+  def update_non_members_functions
+    new_non_member_functions = params[:membership][:function_ids].reject(&:empty?).map(&:to_i)
+    existing_functions = OrganizationNonMemberFunction.where(project_id: @project.id, organization_id: @organization.id).map(&:function_id)
+    deleted_functions = existing_functions - new_non_member_functions
+    brand_new_functions = new_non_member_functions - existing_functions
+
+    deleted_functions.each do |function_id|
+      orga_function = OrganizationNonMemberFunction.where(function_id: function_id, project_id: @project.id, organization_id: @organization.id).first
+      orga_function.destroy
+    end
+
+    brand_new_functions.each do |function_id|
+      OrganizationNonMemberFunction.create(function_id: function_id, project_id: @project.id, organization_id: @organization.id)
+    end
+
+    respond_to do |format|
+      format.html { redirect_to settings_project_path(@project, :tab => 'members') }
+      format.js { render :update }
+    end
+  end
+
   def update_group_non_member_roles
     new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
     group = GroupBuiltin.find(params[:group_id])
@@ -138,6 +159,12 @@ class Organizations::MembershipsController < ApplicationController
   def destroy_non_members_roles
     @current_organization_roles = OrganizationNonMemberRole.where(project_id: @project.id, organization_id: @organization.id)
     @current_organization_roles.destroy_all
+
+    if Redmine::Plugin.installed?(:redmine_limited_visibility)
+      @current_organization_functions = OrganizationNonMemberFunction.where(project_id: @project.id, organization_id: @organization.id)
+      @current_organization_functions.destroy_all
+    end
+
     respond_to do |format|
       format.html { redirect_to settings_project_path(@project, :tab => 'members') }
       format.js

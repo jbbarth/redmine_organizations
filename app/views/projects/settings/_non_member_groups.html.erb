@@ -33,6 +33,9 @@
         </div>
       <% end -%>
     </td>
+    <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
+      <td class="function"></td>
+    <% end %>
     <td class="buttons">
       <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{group.id}, 'group'); return false;",
                            :class => 'icon icon-edit') %>
@@ -54,7 +57,7 @@
     </td>
   </tr>
 
-  <% Organization.joins(:organization_non_member_roles).where("project_id = ?", @project.id).uniq.each do |orga| %>
+  <% (OrganizationNonMemberRole.for_project(@project).map(&:organization) | OrganizationNonMemberFunction.for_project(@project).map(&:organization)).each do |orga| %>
     <%= render :partial => 'projects/settings/non_member_organization', :locals => { :o => orga } %>
   <% end %>
 

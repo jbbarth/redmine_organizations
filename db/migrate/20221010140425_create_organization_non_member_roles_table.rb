@@ -6,10 +6,10 @@ class CreateOrganizationNonMemberRolesTable < ActiveRecord::Migration[4.2]
       t.column :project_id, :integer, :null => false
       t.column :role_id, :integer, :null => false
     end
-    add_index :organization_roles, [:organization_id], :name => :index_org_non_member_roles_on_orga_id
-    add_index :organization_roles, [:project_id], :name => :index_org_non_member_roles_on_project_id
-    add_index :organization_roles, [:role_id], :name => :index_org_non_member_roles_on_role_id
-    add_index :organization_roles, [:role_id, :project_id, :organization_id], unique: true, :name => :unicity_index_org_non_member_roles_on_role_and_project
+    add_index :organization_non_member_roles, [:organization_id], :name => :index_org_non_member_roles_on_orga_id
+    add_index :organization_non_member_roles, [:project_id], :name => :index_org_non_member_roles_on_project_id
+    add_index :organization_non_member_roles, [:role_id], :name => :index_org_non_member_roles_on_role_id
+    add_index :organization_non_member_roles, [:role_id, :project_id, :organization_id], unique: true, :name => :unicity_index_org_non_member_roles_on_role_and_project
 
     # recreate current organizations non member roles
     OrganizationRole.where("organization_roles.non_member_role = ?", true).each do |org_role|

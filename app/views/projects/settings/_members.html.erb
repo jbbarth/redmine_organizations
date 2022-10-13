@@ -95,6 +95,9 @@
       <tr>
         <th class="organization"><%= l(:label_group_plural) %></th>
         <th class="role"><%= l(:label_role_plural) %></th>
+        <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
+          <th class="function"><%= l(:label_functional_roles) %></th>
+        <% end %>
         <th class="buttons"></th>
     </tr>
     </thead>

@@ -32,6 +32,7 @@ RedmineApp::Application.routes.draw do
       end
       member do
         put :update_non_members_roles
+        put :update_non_members_functions
         delete :destroy_non_members_roles
         delete :destroy_organization
       end

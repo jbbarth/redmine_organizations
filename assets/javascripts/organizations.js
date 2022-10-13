@@ -1,10 +1,10 @@
 /* Organizations plugin javascripts */
 function toggleOrgaForms(id, type) {
     var orga_id = "#" + type + "-" + id;
-    var $texts = $(orga_id + "-roles," + orga_id + "-members");
+    var $texts = $(orga_id + "-roles," + orga_id + "-members," + orga_id + "-functions");
     //=> doesn't work with forms, don't know why ... :/
     $texts.toggle(0, function () {
-        var $forms = $(orga_id + "-roles-form," + orga_id + "-members-form");
+        var $forms = $(orga_id + "-roles-form," + orga_id + "-members-form," + orga_id + "-functions-form");
         if ($texts.is(":visible")) {
             $forms.hide()
         } else {

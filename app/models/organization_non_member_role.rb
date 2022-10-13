@@ -9,6 +9,6 @@ class OrganizationNonMemberRole < ActiveRecord::Base
 
   safe_attributes :role_id, :project_id, :organization_id
 
-  scope :for_project, ->(project) { where("organization_roles.project_id = ?", project.id) if project.present? }
+  scope :for_project, ->(project) { where("organization_non_member_roles.project_id = ?", project.id) if project.present? }
 
 end
