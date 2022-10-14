@@ -57,7 +57,9 @@
     </td>
   </tr>
 
-  <% (OrganizationNonMemberRole.for_project(@project).map(&:organization) | OrganizationNonMemberFunction.for_project(@project).map(&:organization)).each do |orga| %>
+  <% non_member_organizations = OrganizationNonMemberRole.for_project(@project).map(&:organization)
+     non_member_organizations |= OrganizationNonMemberFunction.for_project(@project).map(&:organization) if Redmine::Plugin.installed?(:redmine_limited_visibility)
+     non_member_organizations.each do |orga| %>
     <%= render :partial => 'projects/settings/non_member_organization', :locals => { :o => orga } %>
   <% end %>
 
