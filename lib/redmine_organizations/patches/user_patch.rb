@@ -78,6 +78,18 @@ end
 module PluginOrganizations
   module UserModel
 
+    # Return user's roles for project
+    def roles_for_project(project)
+      # No role on archived projects
+      return [] if project.nil? || project.archived?
+
+      roles = super
+      if project.is_public? && self.organization.present?
+        roles |= self.organization.organization_non_member_roles_for_project(project)
+      end
+      roles
+    end
+
     # with organization exceptions TODO Test it
     #
     # Return true if the user is allowed to do the specified action on a specific context

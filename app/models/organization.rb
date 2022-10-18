@@ -181,4 +181,12 @@ class Organization < ActiveRecord::Base
     return organization
   end
 
+  def organization_non_member_roles_for_project(project)
+    roles = []
+    self.self_and_ancestors.each do |orga|
+      roles |= orga.organization_non_member_roles.where(project_id: project.id).includes(:role).map(&:role)
+    end
+    roles
+  end
+
 end
