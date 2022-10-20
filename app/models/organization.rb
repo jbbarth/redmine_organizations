@@ -4,7 +4,7 @@ class Organization < ActiveRecord::Base
   acts_as_nested_set
 
   validates_presence_of :name
-  validates :name, :uniqueness => {:scope => :parent_id}
+  validates :name, :uniqueness => { :scope => :parent_id }
   validates_format_of :mail, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, :allow_blank => true
 
   has_many :users, :dependent => :nullify
@@ -182,11 +182,7 @@ class Organization < ActiveRecord::Base
   end
 
   def organization_non_member_roles_for_project(project)
-    roles = []
-    self.self_and_ancestors.each do |orga|
-      roles |= orga.organization_non_member_roles.where(project_id: project.id).includes(:role).map(&:role)
-    end
-    roles
+    OrganizationNonMemberRole.where(project_id: project.id, organization_id: self.self_and_ancestors.map(&:id)).includes(:role).map(&:role)
   end
 
 end

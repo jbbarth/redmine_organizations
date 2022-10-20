@@ -46,27 +46,6 @@ end
 # TODO Test it
 module PluginOrganizations
 
-  module ProjectModel
-    # Returns true if usr or current user is allowed to view the issue with_organization_exceptions
-    def allowed_to_condition(user, permission, options = {}, &block)
-      user_organization = user.try(:organization)
-      user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
-      organization_roles = OrganizationNonMemberRole.where(organization_id: user_organization_and_parents_ids)
-
-      allowed_projects_ids = []
-      organization_roles.each do |organization_role|
-        if organization_role.role.present?
-          allowed_projects_ids << organization_role.project_id if organization_role.role.allowed_to?(permission)
-        end
-      end
-
-      custom_statement = allowed_projects_ids.present? ? "(#{Project.table_name}.id IN (#{allowed_projects_ids.join(',')}))" : "1=0"
-      standard_statement = super
-
-      "((#{standard_statement}) OR #{custom_statement})"
-    end
-  end
-
   module CopyProjectModel
     #Copies organizations_roles from +project+
     def copy_organizations_roles(project)
@@ -102,5 +81,5 @@ module PluginOrganizations
     end
   end
 end
-Project.singleton_class.prepend PluginOrganizations::ProjectModel
+
 Project.prepend PluginOrganizations::CopyProjectModel

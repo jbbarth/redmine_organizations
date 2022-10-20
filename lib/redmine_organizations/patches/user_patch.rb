@@ -84,10 +84,24 @@ module PluginOrganizations
       return [] if project.nil? || project.archived?
 
       roles = super
-      if project.is_public? && self.organization.present?
+      if self.organization.present?
         roles |= self.organization.organization_non_member_roles_for_project(project)
       end
       roles
+    end
+
+    # Returns a hash of project ids grouped by roles.
+    # Includes the projects that the user is a member of and the projects
+    # that grant custom permissions to the builtin groups.
+    def project_ids_by_role
+      @project_ids_by_role = super
+      if self.organization.present?
+        OrganizationNonMemberRole.where(organization_id: self.organization.self_and_ancestors.map(&:id)).includes(:role).each do |non_member_role|
+          @project_ids_by_role[non_member_role.role] ||= []
+          @project_ids_by_role[non_member_role.role] << non_member_role.project_id
+        end
+      end
+      return @project_ids_by_role
     end
 
     # with organization exceptions TODO Test it
@@ -114,7 +128,7 @@ module PluginOrganizations
         user_organization = User.current.try(:organization)
         user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
         organization_roles = OrganizationNonMemberRole.where(project_id: context.id, organization_id: user_organization_and_parents_ids)
-        roles += organization_roles.map(&:role).reject(&:blank?) if organization_roles.present?
+        roles |= organization_roles.map(&:role).reject(&:blank?) if organization_roles.present?
         ## END PATCH
 
         return false unless roles
