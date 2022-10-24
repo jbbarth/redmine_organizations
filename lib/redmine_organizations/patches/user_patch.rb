@@ -98,7 +98,7 @@ module PluginOrganizations
       if self.organization.present?
         OrganizationNonMemberRole.where(organization_id: self.organization.self_and_ancestors.map(&:id)).includes(:role).each do |non_member_role|
           @project_ids_by_role[non_member_role.role] ||= []
-          @project_ids_by_role[non_member_role.role] << non_member_role.project_id
+          @project_ids_by_role[non_member_role.role] |= [non_member_role.project_id]
         end
       end
       return @project_ids_by_role
