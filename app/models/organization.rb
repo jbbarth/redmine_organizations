@@ -163,11 +163,11 @@ class Organization < ActiveRecord::Base
     Organization.joins(:organization_managers).where("organization_managers.user_id = ?", user.id).order('lft').map(&:self_and_descendants).flatten.uniq
   end
 
-  def self.find_or_create_from_ldap(departmentnumber:, description: nil)
-    organization = Organization.where(name_with_parents: departmentnumber).first
+  def self.find_or_create_from_ldap(fullpath:, description: nil)
+    organization = Organization.where(name_with_parents: fullpath).first
     return organization if organization.present?
 
-    sub_organizations = departmentnumber.split(Organization::SEPARATOR)
+    sub_organizations = fullpath.split(Organization::SEPARATOR)
     parent = nil
     sub_organizations.each do |sub_orga|
       organization = Organization.find_or_initialize_by(name: sub_orga, parent: parent)

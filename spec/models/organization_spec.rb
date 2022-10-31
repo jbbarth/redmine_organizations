@@ -91,16 +91,16 @@ describe "Organization" do
   end
 
   describe "organization synchronization with LDAP" do
-    it "creates new organization from ldap departmentnumber" do
+    it "creates new organization from ldap fullpath" do
       expect do
-        Organization.find_or_create_from_ldap(departmentnumber: "DIR/SUBDIR/MAIN/TEAM", description: "Team A working with Main Group")
+        Organization.find_or_create_from_ldap(fullpath: "DIR/SUBDIR/MAIN/TEAM", description: "Team A working with Main Group")
       end.to change { Organization.count }.by(4)
       expect(Organization.last.description).to eq "Team A working with Main Group"
     end
 
     it "does not change existing organization" do
       expect do
-        Organization.find_or_create_from_ldap(departmentnumber: "Org A/Team A")
+        Organization.find_or_create_from_ldap(fullpath: "Org A/Team A")
       end.to_not change { Organization.count }
     end
   end

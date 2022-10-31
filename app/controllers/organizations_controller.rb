@@ -129,7 +129,7 @@ class OrganizationsController < ApplicationController
 
     @organizations = Organization.order('lft').includes(:users)
 
-    ldap_organizations = LdapOrganization.order(:departmentnumber).pluck(:departmentnumber)
+    ldap_organizations = LdapOrganization.order(:fullpath).pluck(:fullpath)
     intern_organizations = @organizations.pluck(:name_with_parents)
     @unknown_organizations = ldap_organizations - intern_organizations
     @synchronized_organizations = ldap_organizations & intern_organizations
@@ -144,8 +144,8 @@ class OrganizationsController < ApplicationController
   end
 
   def add_organization_from_ldap
-    ldap_orga = LdapOrganization.find_by_departmentnumber(params[:departmentnumber])
-    @organization = Organization.find_or_create_from_ldap(departmentnumber: ldap_orga.departmentnumber, description: ldap_orga.cn)
+    ldap_orga = LdapOrganization.find_by_fullpath(params[:fullpath])
+    @organization = Organization.find_or_create_from_ldap(fullpath: ldap_orga.fullpath, description: ldap_orga.cn)
     redirect_to ldap_sync_organizations_path(:organization_id => @organization.id)
   end
 

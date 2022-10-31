@@ -12,7 +12,7 @@
     <li>
       <%= content_tag(:span, "", class: "ldap_sync_orga red") %>
       <%= content_tag(:span, unknown_orga, class: "unknown_orga") %>
-      <%= link_to add_organization_from_ldap_organizations_path(departmentnumber: unknown_orga) do %>
+      <%= link_to add_organization_from_ldap_organizations_path(fullpath: unknown_orga) do %>
         <%= content_tag(:span, "", class: "icon icon-add") %>
       <% end %>
     </li>
