@@ -139,7 +139,7 @@ class OrganizationsController < ApplicationController
 
   def ldap_sync_check_status
     @organization = Organization.find(params[:organization_id])
-    LdapOrganization.reset_ldap_organizations(root: @organization.fullname + "*")
+    LdapOrganization.reset_ldap_organizations(root: @organization.fullname)
     redirect_to ldap_sync_organizations_path(:organization_id => @organization.id)
   end
 
