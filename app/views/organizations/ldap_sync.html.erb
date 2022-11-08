@@ -42,7 +42,10 @@
         <%= link_to h(organization.name), { :controller => 'organizations', :action => 'show', :id => organization.identifier } %>
       </td>
       <td class="description"><%= h organization.description %></td>
-      <td class="users <%= "zero" if organization.users.size == 0 %>"><%= organization.users.size %></td>
+      <% nb_users = organization.users.size %>
+      <td class="users <%= "zero" if nb_users == 0 && organization.descendants.empty? %>">
+        <%= nb_users %>
+      </td>
       <td class="buttons">
         <% if User.current.is_admin_or_instance_manager? %>
           <%# link_to l(:button_update), { :controller => 'organizations', :action => 'edit', :id => organization.identifier },
