@@ -1,0 +1,21 @@
+<h3 class="title"><%= l(:label_ldap_sync) %></h3>
+
+<div class="ldap-sync-modal">
+  <ul class="organizations">
+    <% @combined_organizations.each do |orga| %>
+      <li>
+        <%= content_tag(:span, "", class: "ldap_sync_orga red") if @unknown_organizations.include?(orga) %>
+        <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(orga) %>
+        <%= content_tag(:span, "", class: "ldap_sync_orga orange") if @desynchronized_organizations.include?(orga) %>
+        <%= content_tag(:span, orga, class: "orga") %>
+        <%= link_to add_organization_from_ldap_organizations_path(fullpath: orga, parent_id: @organization.id), remote: true do %>
+          <%= content_tag(:span, "", class: "icon icon-add") %>
+        <% end if @unknown_organizations.include?(orga) %>
+      </li>
+    <% end %>
+  </ul>
+
+  <% if @unknown_organizations.any? %>
+    <%= button_to l(:add_all_missing_organizations), add_all_organizations_from_ldap_organizations_path(parent_organization_id: @organization.id) %>
+  <% end %>
+</div>

@@ -52,3 +52,6 @@ fr:
   organization_delete_all_confirm: "Êtes-vous sûr de vouloir supprimer tous les membres de cette organisation ?"
   label_organizations_ldap_sync: "Synchronisation des organisations avec le LDAP"
   label_ldap_sync: "Synchronisation LDAP"
+  missing_organizations: "Organisations manquantes"
+  add_all: "Ajouter toutes ces organisations"
+  add_all_missing_organizations: "Ajouter toutes les organisations manquantes"

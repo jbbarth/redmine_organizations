@@ -7,17 +7,23 @@
 
 <h2><%= l(:label_organizations_ldap_sync) %></h2>
 
-<ul class="unknown_organizations">
-  <% @unknown_organizations.each do |unknown_orga| %>
-    <li>
-      <%= content_tag(:span, "", class: "ldap_sync_orga red") %>
-      <%= content_tag(:span, unknown_orga, class: "unknown_orga") %>
-      <%= link_to add_organization_from_ldap_organizations_path(fullpath: unknown_orga) do %>
-        <%= content_tag(:span, "", class: "icon icon-add") %>
-      <% end %>
-    </li>
-  <% end %>
-</ul>
+<% if @unknown_organizations.any? %>
+  <h3><%= l(:missing_organizations) %></h3>
+
+  <%= button_to l(:add_all), add_all_organizations_from_ldap_organizations_path %>
+
+  <ul class="unknown_organizations">
+    <% @unknown_organizations.each do |unknown_orga| %>
+      <li>
+        <%= content_tag(:span, "", class: "ldap_sync_orga red") %>
+        <%= content_tag(:span, unknown_orga, class: "unknown_orga") %>
+        <%= link_to add_organization_from_ldap_organizations_path(fullpath: unknown_orga) do %>
+          <%= content_tag(:span, "", class: "icon icon-add") %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
 
 <table class="list attributes all-organizations">
   <thead>
@@ -36,8 +42,15 @@
   <tbody>
   <% Organization.each_with_level(@organizations) do |organization, level| %>
     <tr class="organization <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
-      <td><%= link_to "", { action: "ldap_sync_check_status", controller: "organizations", params: { organization_id: organization.id } }, :class => 'icon icon-sync' %></td>
-      <td><%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(organization.name_with_parents) %></td>
+      <td><%= button_to "", { action: "ldap_sync_check_status",
+                              controller: "organizations",
+                              method: :post,
+                              params: { organization_id: organization.id } },
+                        remote: true,
+                        :class => 'icon icon-sync' %></td>
+      <td>
+        <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(organization.name_with_parents) %>
+      </td>
       <td class="name" data-filter-value="<%= organization.fullname %>">
         <%= link_to h(organization.name), { :controller => 'organizations', :action => 'show', :id => organization.identifier } %>
       </td>

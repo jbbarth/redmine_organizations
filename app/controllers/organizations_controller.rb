@@ -1,8 +1,8 @@
 class OrganizationsController < ApplicationController
 
   before_action :find_organization_by_id, only: [:show, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user]
-  before_action :require_admin_or_manager, :only => [:new, :create, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user, :autocomplete_user_from_id, :ldap_sync]
-  before_action :require_login, :only => [:index, :show, :autocomplete_users, :ldap_sync]
+  before_action :require_admin_or_manager, :except => [:index, :show, :autocomplete_users, :fetch_users_by_orga]
+  before_action :require_login, :only => [:index, :show, :autocomplete_users]
   before_action :find_project_by_project_id, :only => [:autocomplete_users]
   after_action :update_fullname_and_identifier_of_children, only: [:update]
 
@@ -10,8 +10,8 @@ class OrganizationsController < ApplicationController
 
   def index
     @organizations = Organization.order('lft').includes(:managers, :team_leaders)
-    @managers_by_organization = @organizations.map {|o| [o.id, o.managers.map(&:name)]}.to_h
-    @team_leaders_by_organization = @organizations.map {|o| [o.id, o.team_leaders.map(&:name)]}.to_h
+    @managers_by_organization = @organizations.map { |o| [o.id, o.managers.map(&:name)] }.to_h
+    @team_leaders_by_organization = @organizations.map { |o| [o.id, o.team_leaders.map(&:name)] }.to_h
     @managed_organizations = Organization.managed_by(user: User.current)
     render :layout => (User.current.admin? ? 'admin' : 'base')
   end
@@ -91,7 +91,7 @@ class OrganizationsController < ApplicationController
     @users = User.active.where(id: params[:user_ids])
     @organization.users << @users if request.post?
     respond_to do |format|
-      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.identifier, :tab => 'users'}
+      format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.identifier, :tab => 'users' }
       format.js
     end
   end
@@ -99,7 +99,7 @@ class OrganizationsController < ApplicationController
   def remove_user
     @organization.users.delete(User.find(params[:user_id])) if request.post?
     respond_to do |format|
-      format.html {redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.identifier, :tab => 'users'}
+      format.html { redirect_to :controller => 'organizations', :action => 'edit', :id => @organization.identifier, :tab => 'users' }
       format.js
     end
   end
@@ -116,7 +116,7 @@ class OrganizationsController < ApplicationController
 
   def autocomplete_users
     @organizations = Organization.where(id: params[:organization_ids])
-    @users = @organizations.map {|o| o.users.active}.flatten.compact.uniq.sort_by(&:name)
+    @users = @organizations.map { |o| o.users.active }.flatten.compact.uniq.sort_by(&:name)
     render :layout => false
   end
 
@@ -139,17 +139,48 @@ class OrganizationsController < ApplicationController
 
   def ldap_sync_check_status
     @organization = Organization.find(params[:organization_id])
+
+    # Fetch LDAP data
     LdapOrganization.reset_ldap_organizations(root: @organization.fullname)
-    redirect_to ldap_sync_organizations_path(:organization_id => @organization.id)
+
+    # Data to display
+    load_data_for_ldap_sync_check_status(@organization)
+
   end
 
   def add_organization_from_ldap
     ldap_orga = LdapOrganization.find_by_fullpath(params[:fullpath])
     @organization = Organization.find_or_create_from_ldap(fullpath: ldap_orga.fullpath, description: ldap_orga.cn)
-    redirect_to ldap_sync_organizations_path(:organization_id => @organization.id)
+    respond_to do |format|
+      format.html { redirect_to ldap_sync_organizations_path(:organization_id => @organization.id) }
+      format.js {
+        @organization = Organization.where(id: params[:parent_id]).first if params[:parent_id].present?
+        load_data_for_ldap_sync_check_status(@organization)
+        render :ldap_sync_check_status
+      }
+    end
+
+  end
+
+  def add_all_organizations_from_ldap
+    ldap_orgas = LdapOrganization.all
+    ldap_orgas.each do |ldap_orga|
+      Organization.find_or_create_from_ldap(fullpath: ldap_orga.fullpath,
+                                            description: ldap_orga.cn)
+    end
+    redirect_to ldap_sync_organizations_path
   end
 
   private
+
+  def load_data_for_ldap_sync_check_status(organization)
+    ldap_organizations = LdapOrganization.where("fullpath LIKE ?", "#{organization.name_with_parents}%").order(:fullpath).pluck(:fullpath)
+    intern_organizations = organization.self_and_descendants.map(&:name_with_parents)
+    @unknown_organizations = ldap_organizations - intern_organizations
+    @synchronized_organizations = ldap_organizations & intern_organizations
+    @desynchronized_organizations = intern_organizations - ldap_organizations
+    @combined_organizations = (intern_organizations + @unknown_organizations).sort
+  end
 
   def update_fullname_and_identifier_of_children
     if @organization.previous_changes.include?(:name)
