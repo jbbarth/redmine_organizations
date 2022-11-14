@@ -1,11 +1,14 @@
 <div class="contextual">
+  <%= link_to(l(:label_organization_new),
+              { :controller => 'organizations', :action => 'new', parent_id: @organization.id },
+              :class => 'icon icon-add') if User.current.is_admin_or_manage?(@organization) %>
   <%= link_to(l(:button_update),
-              {:controller => 'organizations', :action => 'edit', :id => @organization.identifier},
+              { :controller => 'organizations', :action => 'edit', :id => @organization.identifier },
               :class => 'icon icon-edit') if User.current.is_admin_or_manage?(@organization) %>
   <%= link_to(l(:button_delete),
-              {:controller => 'organizations', :action => 'destroy', :id => @organization.identifier},
+              { :controller => 'organizations', :action => 'destroy', :id => @organization.identifier },
               :class => 'icon icon-del',
-              :data => {:confirm => l(:text_are_you_sure)},
+              :data => { :confirm => l(:text_are_you_sure) },
               :method => :delete) if User.current.is_admin_or_instance_manager? %>
 </div>
 
