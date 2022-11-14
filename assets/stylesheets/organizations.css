@@ -101,13 +101,17 @@ ul.unknown_organizations span {
 ul.unknown_organizations li {
     height: 16px;
 }
-input.icon-sync  {
+
+input.icon-sync, a.icon-sync  {
     background-image: url(../images/synchronize.png);
     height: 18px;
     width: 18px;
     padding: 0;
     background-color: transparent;
     border: none;
+}
+a.icon-sync {
+    padding-left: 20px;
 }
 input.icon-sync:hover {
     background-color: inherit;
