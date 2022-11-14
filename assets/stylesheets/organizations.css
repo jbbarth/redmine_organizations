@@ -91,15 +91,22 @@ input#manager_search {width:90%}
     background-color: lightyellow;
 }
 
+#unknown_organizations_fieldset {
+    margin-bottom: 12px;
+}
 ul.unknown_organizations {
     list-style-type: none;
     padding-left: 0;
+    max-height: 270px;
+    overflow: auto;
+    max-width: 500px;
 }
 ul.unknown_organizations span {
     margin-right: 0.5em;
 }
 ul.unknown_organizations li {
     height: 16px;
+    margin-bottom: 2px;
 }
 
 input.icon-sync, a.icon-sync  {
