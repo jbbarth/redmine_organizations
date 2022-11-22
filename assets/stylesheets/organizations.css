@@ -90,6 +90,11 @@ input#manager_search {width:90%}
     border: 1px solid orange;
     background-color: lightyellow;
 }
+.ldap_sync_orga.icon-actions {
+    border: none;
+    background-color: transparent;
+    background-size: 10px;
+}
 
 #unknown_organizations_fieldset {
     margin-bottom: 12px;

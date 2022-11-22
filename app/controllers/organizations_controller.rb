@@ -153,13 +153,8 @@ class OrganizationsController < ApplicationController
     @organization = Organization.find_or_create_from_ldap(fullpath: ldap_orga.fullpath, description: ldap_orga.cn)
     respond_to do |format|
       format.html { redirect_to ldap_sync_organizations_path(:organization_id => @organization.id) }
-      format.js {
-        @organization = Organization.where(id: params[:parent_id]).first if params[:parent_id].present?
-        load_data_for_ldap_sync_check_status(@organization)
-        render :ldap_sync_check_status
-      }
+      format.js
     end
-
   end
 
   def add_all_organizations_from_ldap

@@ -3,12 +3,12 @@
 <div class="ldap-sync-modal">
   <ul class="organizations">
     <% @combined_organizations.each do |orga| %>
-      <li>
+      <li class="orga-<%= orga.parameterize %>">
         <%= content_tag(:span, "", class: "ldap_sync_orga red") if @unknown_organizations.include?(orga) %>
         <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(orga) %>
         <%= content_tag(:span, "", class: "ldap_sync_orga orange") if @desynchronized_organizations.include?(orga) %>
         <%= content_tag(:span, orga, class: "orga") %>
-        <%= link_to add_organization_from_ldap_organizations_path(fullpath: orga, parent_id: @organization.id), remote: true do %>
+        <%= link_to '#', :onclick => "addOrganizationFromLdap(this); return false;", class: 'action', data: { 'orga' => orga, 'parent-orga-id' => @organization.id } do %>
           <%= content_tag(:span, "", class: "icon icon-add") %>
         <% end if @unknown_organizations.include?(orga) %>
       </li>
@@ -19,3 +19,15 @@
     <%= button_to l(:add_all_missing_organizations), add_all_organizations_from_ldap_organizations_path(parent_organization_id: @organization.id) %>
   <% end %>
 </div>
+
+<script type="text/javascript" charset="utf-8">
+    function addOrganizationFromLdap(event) {
+        $(event).closest('li').find('.ldap_sync_orga').addClass('icon-actions');
+        var orga = $(event).data('orga');
+        var parentOrgaId = $(event).data('parent-orga-id');
+        var url = "/organizations/add_organization_from_ldap.js?fullpath=" + orga + "&parent_id=" + parentOrgaId
+        $.ajax({
+            url: url, type: 'GET'
+        });
+    }
+</script>
