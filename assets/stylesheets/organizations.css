@@ -151,3 +151,9 @@ input.icon-sync:hover {
     margin-top: 2px;
     margin-right: 5px;
 }
+.ldap-sync-modal .orga {
+    font-weight: bold;
+}
+.ldap-sync-modal .people {
+    padding-left: 10px;
+}

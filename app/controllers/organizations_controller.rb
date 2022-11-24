@@ -141,10 +141,11 @@ class OrganizationsController < ApplicationController
     @organization = Organization.find(params[:organization_id])
 
     # Fetch LDAP data
-    LdapOrganization.reset_ldap_organizations(root: @organization.fullname)
+    LdapOrganization.reset_ldap_organizations(root: @organization.fullname, with_people: true)
 
     # Data to display
     load_data_for_ldap_sync_check_status(@organization)
+    load_people_data_for_ldap_sync_check_status(@organization)
 
   end
 
@@ -175,6 +176,15 @@ class OrganizationsController < ApplicationController
     @synchronized_organizations = ldap_organizations & intern_organizations
     @desynchronized_organizations = intern_organizations - ldap_organizations
     @combined_organizations = (intern_organizations + @unknown_organizations).sort
+  end
+
+  def load_people_data_for_ldap_sync_check_status(organization)
+    @ldap_people = LdapPerson.where("organization_fullpath LIKE ?", "#{organization.name_with_parents}%").order(:organization_fullpath, :sn, :givenname)
+    # intern_people = organization.self_and_descendants.map(&:name_with_parents)
+    # @unknown_people = @ldap_people - intern_people
+    # @synchronized_people = @ldap_people & intern_people
+    # @desynchronized_people = intern_people - @ldap_people
+    # @combined_people = (intern_people + @unknown_people).sort
   end
 
   def update_fullname_and_identifier_of_children

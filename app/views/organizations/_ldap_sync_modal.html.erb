@@ -3,14 +3,27 @@
 <div class="ldap-sync-modal">
   <ul class="organizations">
     <% @combined_organizations.each do |orga| %>
-      <li class="orga-<%= orga.parameterize %>">
-        <%= content_tag(:span, "", class: "ldap_sync_orga red") if @unknown_organizations.include?(orga) %>
-        <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(orga) %>
-        <%= content_tag(:span, "", class: "ldap_sync_orga orange") if @desynchronized_organizations.include?(orga) %>
-        <%= content_tag(:span, orga, class: "orga") %>
-        <%= link_to '#', :onclick => "addOrganizationFromLdap(this); return false;", class: 'action', data: { 'orga' => orga, 'parent-orga-id' => @organization.id } do %>
-          <%= content_tag(:span, "", class: "icon icon-add") %>
-        <% end if @unknown_organizations.include?(orga) %>
+      <li class="orga-<%= orga.parameterize %>" style="display: flex;flex-direction: column;">
+        <div style="display: flex;">
+          <%= content_tag(:span, "", class: "ldap_sync_orga red") if @unknown_organizations.include?(orga) %>
+          <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(orga) %>
+          <%= content_tag(:span, "", class: "ldap_sync_orga orange") if @desynchronized_organizations.include?(orga) %>
+          <%= content_tag(:span, orga, class: "orga") %>
+          <%= link_to '#', :onclick => "addOrganizationFromLdap(this); return false;", class: 'action', data: { 'orga' => orga, 'parent-orga-id' => @organization.id } do %>
+            <%= content_tag(:span, "", class: "icon icon-add") %>
+          <% end if @unknown_organizations.include?(orga) %>
+        </div>
+
+        <div>
+          <% organization_people = @ldap_people.select { |p| p.organization_fullpath == orga } %>
+          <% if organization_people.any? %>
+            <ul class="people">
+              <% organization_people.each do |person| %>
+                <li><%= person.name %></li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
       </li>
     <% end %>
   </ul>
