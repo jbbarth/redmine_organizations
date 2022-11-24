@@ -15,8 +15,8 @@
         </div>
 
         <div>
-          <% organization_people = @ldap_people.select { |p| p.organization_fullpath == orga } %>
-          <% if organization_people.any? %>
+          <% organization_people = @ldap_people&.select { |p| p.organization_fullpath == orga } %>
+          <% if organization_people.present? %>
             <ul class="people">
               <% organization_people.each do |person| %>
                 <li><%= person.name %></li>

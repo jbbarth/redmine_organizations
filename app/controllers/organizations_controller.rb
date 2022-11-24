@@ -139,14 +139,14 @@ class OrganizationsController < ApplicationController
 
   def ldap_sync_check_status
     @organization = Organization.find(params[:organization_id])
+    sync_members = params[:with_members].present?
 
     # Fetch LDAP data
-    LdapOrganization.reset_ldap_organizations(root: @organization.fullname, with_people: true)
+    LdapOrganization.reset_ldap_organizations(root: @organization.fullname, with_people: sync_members)
 
     # Data to display
     load_data_for_ldap_sync_check_status(@organization)
-    load_people_data_for_ldap_sync_check_status(@organization)
-
+    load_people_data_for_ldap_sync_check_status(@organization) if sync_members
   end
 
   def add_organization_from_ldap

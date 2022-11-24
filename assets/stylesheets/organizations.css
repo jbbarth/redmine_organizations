@@ -114,19 +114,25 @@ ul.unknown_organizations li {
     margin-bottom: 2px;
 }
 
-input.icon-sync, a.icon-sync  {
+input.icon-sync, a.icon-sync {
     background-image: url(../images/synchronize.png);
+}
+table.ldap-sync input.icon-sync, a.icon-sync, table.ldap-sync input.icon-group  {
     height: 18px;
     width: 18px;
     padding: 0;
     background-color: transparent;
     border: none;
 }
-a.icon-sync {
+table.ldap-sync a.icon-sync, table.ldap-sync a.icon-group {
     padding-left: 20px;
 }
-input.icon-sync:hover {
+table.ldap-sync input.icon-sync:hover, table.ldap-sync input.icon-group:hover {
     background-color: inherit;
+}
+table.ldap-sync input.icon-sync, table.ldap-sync input.icon-group {
+    background-position: 3px 50%;
+    padding-left: 23px;
 }
 
 .organization .users.zero {
