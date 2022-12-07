@@ -1,8 +1,8 @@
-name: Tests 4.2.7
+name: Tests 4.2.9
 
 env:
   PLUGIN_NAME: redmine_organizations
-  REDMINE_VERSION: 4.2.7
+  REDMINE_VERSION: 4.2.9
 
 on:
   push:
