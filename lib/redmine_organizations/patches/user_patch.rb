@@ -126,9 +126,13 @@ module PluginOrganizations
 
         ## START PATCH
         user_organization = User.current.try(:organization)
-        user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
-        organization_roles = OrganizationNonMemberRole.where(project_id: context.id, organization_id: user_organization_and_parents_ids)
-        roles |= organization_roles.map(&:role).reject(&:blank?) if organization_roles.present?
+        if user_organization.present?
+          user_organization_and_parents_ids = user_organization.self_and_ancestors.pluck(:id)
+          organization_roles = Role.joins(:organization_non_member_roles)
+                                   .where("organization_id IN (?)", user_organization_and_parents_ids)
+                                   .where("project_id = ?", context.id)
+          roles |= organization_roles
+        end
         ## END PATCH
 
         return false unless roles
@@ -155,9 +159,11 @@ module PluginOrganizations
 
         ## START PATCH
         user_organization = User.current.try(:organization)
-        user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
-        organization_roles = OrganizationNonMemberRole.where(organization_id: user_organization_and_parents_ids)
-        roles += organization_roles.map(&:role).reject(&:blank?) if organization_roles.present?
+        if user_organization.present?
+          user_organization_and_parents_ids = user_organization.self_and_ancestors.pluck(:id)
+          organization_roles = Role.joins(:organization_non_member_roles).where("organization_id IN (?)", user_organization_and_parents_ids)
+          roles |= organization_roles
+        end
         ## END PATCH
 
         roles.any? {|role|
