@@ -15,13 +15,13 @@ class User < Principal
   scope :team_leader, -> { joins(:organization_team_leaders) }
 
   safe_attributes('organization_id',
-      :if => lambda {|user, current_user| current_user.is_admin_or_instance_manager?})
+                  :if => lambda { |user, current_user| current_user.is_admin_or_instance_manager? })
 
   attr_accessor :orga_update_method
 
   def destroy_membership_through_organization(project_id)
     if id
-      attributes = {:user_id => id, :project_id => project_id}
+      attributes = { :user_id => id, :project_id => project_id }
       Member.where(attributes).first.try(:destroy)
     end
   end
@@ -73,8 +73,6 @@ class User < Principal
 
 end
 
-
-
 module PluginOrganizations
   module UserModel
 
@@ -94,14 +92,18 @@ module PluginOrganizations
     # Includes the projects that the user is a member of and the projects
     # that grant custom permissions to the builtin groups.
     def project_ids_by_role
+      return @project_ids_by_role if @project_ids_by_role
+
       @project_ids_by_role = super
       if self.organization.present?
-        OrganizationNonMemberRole.where(organization_id: self.organization.self_and_ancestors.map(&:id)).includes(:role).each do |non_member_role|
+        OrganizationNonMemberRole.where(organization_id: self.organization.self_and_descendants_ids)
+                                 .includes(:role)
+                                 .each do |non_member_role|
           @project_ids_by_role[non_member_role.role] ||= []
           @project_ids_by_role[non_member_role.role] |= [non_member_role.project_id]
         end
       end
-      return @project_ids_by_role
+      @project_ids_by_role
     end
 
     # with organization exceptions TODO Test it
@@ -115,7 +117,7 @@ module PluginOrganizations
     # * an array of projects : returns true if user is allowed on every project
     # * nil with options[:global] set : check if user has at least one role allowed for this action,
     #   or falls back to Non Member / Anonymous permissions depending if the user is logged
-    def allowed_to?(action, context, options={}, &block)
+    def allowed_to?(action, context, options = {}, &block)
 
       if context && context.is_a?(Project)
         return false unless context.allows_to?(action)
@@ -127,7 +129,7 @@ module PluginOrganizations
         ## START PATCH
         user_organization = User.current.try(:organization)
         if user_organization.present?
-          user_organization_and_parents_ids = user_organization.self_and_ancestors.pluck(:id)
+          user_organization_and_parents_ids = user_organization.self_and_descendants_ids
           organization_roles = Role.joins(:organization_non_member_roles)
                                    .where("organization_id IN (?)", user_organization_and_parents_ids)
                                    .where("project_id = ?", context.id)
@@ -136,17 +138,17 @@ module PluginOrganizations
         ## END PATCH
 
         return false unless roles
-        roles.any? {|role|
+        roles.any? { |role|
           (context.is_public? || role.member?) &&
-              role.allowed_to?(action) &&
-              (block_given? ? yield(role, self) : true)
+            role.allowed_to?(action) &&
+            (block_given? ? yield(role, self) : true)
         }
       elsif context && context.is_a?(Array)
         if context.empty?
           false
         else
           # Authorize if user is authorized on every element of the array
-          context.map {|project| allowed_to?(action, project, options, &block)}.reduce(:&)
+          context.map { |project| allowed_to?(action, project, options, &block) }.reduce(:&)
         end
       elsif context
         raise ArgumentError.new("#allowed_to? context argument must be a Project, an Array of projects or nil")
@@ -155,20 +157,20 @@ module PluginOrganizations
         return true if admin?
 
         # authorize if user has at least one role that has this permission
-        roles = self.roles.to_a | [builtin_role] | Group.non_member.roles.to_a | Group.anonymous.roles.to_a
+        roles = self.roles.to_a # | [builtin_role] | Group.non_member.roles.to_a | Group.anonymous.roles.to_a
 
         ## START PATCH
         user_organization = User.current.try(:organization)
         if user_organization.present?
           user_organization_and_parents_ids = user_organization.self_and_ancestors.pluck(:id)
-          organization_roles = Role.joins(:organization_non_member_roles).where("organization_id IN (?)", user_organization_and_parents_ids)
+          organization_roles = Role.distinct.joins(:organization_non_member_roles).where("organization_id IN (?)", user_organization_and_parents_ids)
           roles |= organization_roles
         end
         ## END PATCH
 
-        roles.any? {|role|
+        roles.any? { |role|
           role.allowed_to?(action) &&
-              (block_given? ? yield(role, self) : true)
+            (block_given? ? yield(role, self) : true)
         }
       else
         super

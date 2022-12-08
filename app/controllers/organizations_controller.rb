@@ -36,7 +36,7 @@ class OrganizationsController < ApplicationController
     @subusers_count = (@organization.users.active | @subusers.values.flatten.uniq).count
 
     #issues for projects of this organization + sub organizations
-    organization_ids = @organization.self_and_descendants.map(&:id)
+    organization_ids = @organization.self_and_descendants_ids
     project_ids = Member.joins(:user).where('users.status = ? AND users.organization_id IN (?)', User::STATUS_ACTIVE, organization_ids).map(&:project_id).uniq
     @issues = Issue.open.visible.on_active_project.where(project_id: project_ids).joins(:priority).order("enumerations.position desc").limit(50)
 
