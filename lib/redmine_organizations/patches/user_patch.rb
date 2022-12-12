@@ -96,7 +96,7 @@ module PluginOrganizations
 
       @project_ids_by_role = super
       if self.organization.present?
-        OrganizationNonMemberRole.where(organization_id: self.organization.self_and_descendants_ids)
+        OrganizationNonMemberRole.where(organization_id: self.organization.self_and_ancestors_ids)
                                  .includes(:role)
                                  .each do |non_member_role|
           @project_ids_by_role[non_member_role.role] ||= []
@@ -129,10 +129,11 @@ module PluginOrganizations
         ## START PATCH
         user_organization = User.current.try(:organization)
         if user_organization.present?
-          user_organization_and_parents_ids = user_organization.self_and_descendants_ids
+          user_organization_and_parents_ids = user_organization.self_and_ancestors_ids
           organization_roles = Role.joins(:organization_non_member_roles)
-                                   .where("organization_id IN (?)", user_organization_and_parents_ids)
-                                   .where("project_id = ?", context.id)
+                                   .where("organization_non_member_roles.organization_id IN (?)", user_organization_and_parents_ids)
+                                   .where("organization_non_member_roles.project_id = ?", context.id)
+
           roles |= organization_roles
         end
         ## END PATCH
@@ -162,7 +163,7 @@ module PluginOrganizations
         ## START PATCH
         user_organization = User.current.try(:organization)
         if user_organization.present?
-          user_organization_and_parents_ids = user_organization.self_and_ancestors.pluck(:id)
+          user_organization_and_parents_ids = user_organization.self_and_ancestors_ids
           organization_roles = Role.distinct.joins(:organization_non_member_roles).where("organization_id IN (?)", user_organization_and_parents_ids)
           roles |= organization_roles
         end

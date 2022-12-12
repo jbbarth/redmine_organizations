@@ -110,6 +110,7 @@ describe IssuesController, :type => :controller do
     end
 
     it "displays a list of issues if user's organization has a non-member role" do
+      expect(OrganizationNonMemberRole.count).to eq(1)
       get :index, params: { :project_id => project_onlinestore.id }
       expect(assigns(:issues)).to_not be_nil
       expect(assigns(:issues)).to_not be_empty

@@ -19,7 +19,7 @@ class Organization < ActiveRecord::Base
 
   safe_attributes :name, :parent_id, :description, :mail, :direction, :name_with_parents, :notified
 
-  attr_accessor :self_and_descendants_ids
+  attr_accessor :self_and_descendants_cached_ids, :self_and_ancestors_cached_ids
 
   before_validation :update_name_with_parents
 
@@ -39,7 +39,11 @@ class Organization < ActiveRecord::Base
   end
 
   def self_and_descendants_ids
-    @self_and_descendants_ids ||= self.self_and_descendants.pluck(:id)
+    @self_and_descendants_cached_ids ||= self.self_and_descendants.pluck(:id)
+  end
+
+  def self_and_ancestors_ids
+    @self_and_ancestors_cached_ids ||= self.self_and_ancestors.pluck(:id)
   end
 
   def update_name_with_parents
@@ -188,7 +192,10 @@ class Organization < ActiveRecord::Base
   end
 
   def organization_non_member_roles_for_project(project)
-    OrganizationNonMemberRole.where(project_id: project.id, organization_id: self.self_and_ancestors.pluck(&:id)).includes(:role).map(&:role)
+    OrganizationNonMemberRole.where(project_id: project.id,
+                                    organization_id: self.self_and_ancestors_ids)
+                             .includes(:role)
+                             .map(&:role).uniq.compact
   end
 
 end
