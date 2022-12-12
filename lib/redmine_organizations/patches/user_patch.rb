@@ -158,7 +158,7 @@ module PluginOrganizations
         return true if admin?
 
         # authorize if user has at least one role that has this permission
-        roles = self.roles.to_a # | [builtin_role] | Group.non_member.roles.to_a | Group.anonymous.roles.to_a
+        roles = self.roles.to_a | [builtin_role] | Group.non_member.roles.to_a | Group.anonymous.roles.to_a
 
         ## START PATCH
         user_organization = User.current.try(:organization)
