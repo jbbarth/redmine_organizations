@@ -95,6 +95,7 @@ describe IssuesController, :type => :controller do
     let!(:role_reporter) { Role.find(3) }
     let!(:orga_a) { Organization.find(1) }
     let!(:orga_a_team_b) { Organization.find(3) }
+    let!(:project_ecookbook) { Project.find(1) }
 
     before do
       @request.session[:user_id] = non_member_user.id
@@ -111,10 +112,38 @@ describe IssuesController, :type => :controller do
 
     it "displays a list of issues if user's organization has a non-member role" do
       expect(OrganizationNonMemberRole.count).to eq(1)
+      non_member_role = OrganizationNonMemberRole.first
+      non_member_role.update_attribute(:organization_id, 3)
       get :index, params: { :project_id => project_onlinestore.id }
       expect(assigns(:issues)).to_not be_nil
       expect(assigns(:issues)).to_not be_empty
       expect(assigns(:issues)).to include Issue.find(4)
+    end
+
+    it "displays a list of issues if user's upper-organization has a non-member role" do
+      expect(OrganizationNonMemberRole.count).to eq(1)
+      expect(OrganizationNonMemberRole.first.organization).to eq(orga_a)
+      get :index, params: { :project_id => project_onlinestore.id }
+      expect(assigns(:issues)).to_not be_nil
+      expect(assigns(:issues)).to_not be_empty
+      expect(assigns(:issues)).to include Issue.find(4)
+    end
+
+    it "displays a list of issues if project is a sub-project and parent project has a non-member role" do
+      expect(OrganizationNonMemberRole.count).to eq(1)
+      non_member_role = OrganizationNonMemberRole.first
+      non_member_role.update_attribute(:project_id, project_ecookbook.id)
+      get :index, params: { :project_id => 3 } # eCookbook Subproject 1
+      expect(assigns(:issues)).to_not be_nil
+      expect(assigns(:issues)).to_not be_empty
+      expect(assigns(:issues)).to include Issue.find(5)
+    end
+
+    it "DOES NOT display a list of issues if project is a sub-project and parent project has NO non-member role" do
+      OrganizationNonMemberRole.delete_all
+      get :index, params: { :project_id => 3 } # eCookbook Subproject 1
+      expect(assigns(:issues)).to be_nil
+      expect(response.status).to eq 403 # Forbidden
     end
 
   end

@@ -66,14 +66,14 @@ class Project < ActiveRecord::Base
 
       ### START PATCH FOR NON-MEMBER EXCEPTIONS BY ORGANIZATION ###
       if user.organization.present?
-        non_member_organization_statement_by_role = {}
+        non_member_organization_statements = []
         OrganizationNonMemberRole.where(organization_id: user.organization.self_and_ancestors_ids)
                                  .includes(:project).each do |non_member_role|
-          non_member_organization_statement_by_role[non_member_role.role_id] = "(#{Project.table_name}.lft >= #{non_member_role.project.lft} AND #{Project.table_name}.rgt <= #{non_member_role.project.rgt})"
+          non_member_organization_statements << "(#{Project.table_name}.lft >= #{non_member_role.project.lft} AND #{Project.table_name}.rgt <= #{non_member_role.project.rgt})"
         end
       end
 
-      if statement_by_role.empty? && non_member_organization_statement_by_role.blank?
+      if statement_by_role.empty? && non_member_organization_statements.blank?
         "1=0"
       else
         if block_given?
@@ -83,8 +83,8 @@ class Project < ActiveRecord::Base
             end
           end
         end
-        if non_member_organization_statement_by_role.present?
-          statements_by_role = statement_by_role.values + non_member_organization_statement_by_role.values
+        if non_member_organization_statements.present?
+          statements_by_role = statement_by_role.values + non_member_organization_statements
           "((#{base_statement}) AND (#{statements_by_role.join(' OR ')}))"
         else
           "((#{base_statement}) AND (#{statement_by_role.values.join(' OR ')}))"

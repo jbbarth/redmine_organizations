@@ -192,7 +192,7 @@ class Organization < ActiveRecord::Base
   end
 
   def organization_non_member_roles_for_project(project)
-    OrganizationNonMemberRole.where(project_id: project.id,
+    OrganizationNonMemberRole.where(project_id: project.self_and_ancestors.ids,
                                     organization_id: self.self_and_ancestors_ids)
                              .includes(:role)
                              .map(&:role).uniq.compact

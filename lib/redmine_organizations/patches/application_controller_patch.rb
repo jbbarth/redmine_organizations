@@ -4,10 +4,10 @@ module PluginOrganizations
   module ApplicationController
 
     def authorize(ctrl = params[:controller], action = params[:action], global = false)
-      if @project.present?
-        user_organization = User.current.try(:organization)
-        user_organization_and_parents_ids = user_organization.self_and_ancestors.map(&:id) if user_organization.present?
-        organization_roles = OrganizationNonMemberRole.where(project_id: @project.id, organization_id: user_organization_and_parents_ids)
+      if @project.present? && User.current.try(:organization).present?
+        user_organization_and_parents_ids = User.current.organization.self_and_ancestors_ids
+        project_and_parents_ids = @project.self_and_ancestors.ids
+        organization_roles = OrganizationNonMemberRole.where(project_id: project_and_parents_ids, organization_id: user_organization_and_parents_ids)
       end
       if organization_roles.present?
         true

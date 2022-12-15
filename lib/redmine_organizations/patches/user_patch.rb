@@ -108,18 +108,6 @@ module PluginOrganizations
 
         roles = roles_for_project(context)
 
-        ## START PATCH
-        user_organization = User.current.try(:organization)
-        if user_organization.present?
-          user_organization_and_parents_ids = user_organization.self_and_ancestors_ids
-          organization_roles = Role.joins(:organization_non_member_roles)
-                                   .where("organization_non_member_roles.organization_id IN (?)", user_organization_and_parents_ids)
-                                   .where("organization_non_member_roles.project_id = ?", context.id)
-
-          roles |= organization_roles
-        end
-        ## END PATCH
-
         return false unless roles
         roles.any? { |role|
           (context.is_public? || role.member?) &&
