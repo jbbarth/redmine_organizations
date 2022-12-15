@@ -21,7 +21,7 @@ class OrganizationsController < ApplicationController
 
     @projects_not_active = @organization.projects.where(:status => [Project::STATUS_CLOSED, Project::STATUS_ARCHIVED])
 
-    @memberships = @organization.memberships.includes(:project).where(Project.visible_condition(User.current))
+    @memberships = @organization.memberships.includes(:project).where(Project.visible_condition(User.current, { :skip_pre_condition => true }))
 
     @subprojects_by_organization = {}
     @subusers = {}

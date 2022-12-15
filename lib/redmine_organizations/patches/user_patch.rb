@@ -88,24 +88,6 @@ module PluginOrganizations
       roles
     end
 
-    # Returns a hash of project ids grouped by roles.
-    # Includes the projects that the user is a member of and the projects
-    # that grant custom permissions to the builtin groups.
-    def project_ids_by_role
-      return @project_ids_by_role if @project_ids_by_role
-
-      @project_ids_by_role = super
-      if self.organization.present?
-        OrganizationNonMemberRole.where(organization_id: self.organization.self_and_ancestors_ids)
-                                 .includes(:role)
-                                 .each do |non_member_role|
-          @project_ids_by_role[non_member_role.role] ||= []
-          @project_ids_by_role[non_member_role.role] |= [non_member_role.project_id]
-        end
-      end
-      @project_ids_by_role
-    end
-
     # with organization exceptions TODO Test it
     #
     # Return true if the user is allowed to do the specified action on a specific context
