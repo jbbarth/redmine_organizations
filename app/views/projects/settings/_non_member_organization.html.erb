@@ -1,6 +1,9 @@
 <% o ||= @organization %>
 <% @givable_roles ||= Role.givable.sorted %>
-<% roles = OrganizationNonMemberRole.includes(:role).where(project_id: @project.id, organization_id: o.id).map(&:role) %>
+<% roles = Role.joins(:organization_non_member_roles)
+               .where("organization_non_member_roles.organization_id IN (?)", o.id)
+               .where("organization_non_member_roles.project_id IN (?)", @project.self_and_ancestors.ids)
+               .sorted %>
 
 <% if o %>
   <tr id="non-member-orga-<%= o.id %>" class="even">
@@ -36,7 +39,10 @@
 
     <% if Redmine::Plugin.installed?(:redmine_limited_visibility) %>
       <% @givable_functions ||= Function.available_functions_for(@project).sorted %>
-      <% functions = OrganizationNonMemberFunction.includes(:function).where(project_id: @project.id, organization_id: o.id).map(&:function) %>
+      <% functions = Function.joins(:organization_non_member_functions)
+                             .where("organization_non_member_functions.organization_id IN (?)", o.id)
+                             .where("organization_non_member_functions.project_id IN (?)", @project.self_and_ancestors.ids)
+                             .sorted %>
       <td id="all_functions">
         <div class='function' style="float: left;">
         <span id="non-member-orga-<%= o.id %>-functions">
@@ -68,11 +74,17 @@
     <% end %>
 
     <td class="buttons">
-      <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{o.id}, 'non-member-orga'); return false;",
-                           :class => 'icon icon-edit') %>
-      <%= link_to(l(:button_delete),
-                  destroy_non_members_roles_organizations_membership_path(id: o.id, :project_id => @project.id, :back_url => @back),
-                  :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete), :remote => true) %>
+      <% if OrganizationNonMemberRole.where(project: @project).exists? %>
+
+        <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{o.id}, 'non-member-orga'); return false;",
+                             :class => 'icon icon-edit') %>
+        <%= link_to(l(:button_delete),
+                    destroy_non_members_roles_organizations_membership_path(id: o.id, :project_id => @project.id, :back_url => @back),
+                    :method => :delete, :class => 'icon icon-del', :title => l(:label_relation_delete), :remote => true) %>
+
+      <% else %>
+        <div><%= l(:inherited_from_parent_project) %></div>
+      <% end %>
     </td>
   </tr>
 
