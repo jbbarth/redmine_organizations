@@ -144,12 +144,16 @@ class Organizations::MembershipsController < ApplicationController
     new_roles = Role.find(params[:membership][:role_ids].reject(&:empty?))
     group = GroupBuiltin.find(params[:group_id])
     membership = Member.where(user_id: group.id, project_id: @project.id).first_or_initialize
+    previous_role_ids = membership.roles.ids     
     if new_roles.present?
       membership.roles = new_roles
       membership.save
     else
       membership.try(:destroy)
     end
+
+    add_member_edition_to_journal(membership, previous_role_ids, membership.roles.ids) if Redmine::Plugin.installed?(:redmine_admin_activity)
+    
     respond_to do |format|
       format.html { redirect_to settings_project_path(@project, :tab => 'members') }
       format.js { render :update }
