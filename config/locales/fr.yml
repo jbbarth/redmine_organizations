@@ -55,4 +55,5 @@ fr:
   missing_organizations: "Organisations manquantes"
   add_all: "Ajouter toutes ces organisations"
   add_all_missing_organizations: "Ajouter toutes les organisations manquantes"
+  no_missing_organizations: "Aucune organisation manquante"
   inherited_from_parent_project: "Hérité du projet parent"

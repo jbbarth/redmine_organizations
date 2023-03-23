@@ -1,5 +1,5 @@
 <div class="contextual">
-  <% if User.current.is_admin_or_instance_manager? || @managed_organizations.any? %>
+  <% if User.current.is_admin_or_instance_manager? || @managed_organizations.present? %>
     <%= link_to l(:label_organization_new), { :controller => 'organizations', :action => 'new' },
                 :class => 'icon icon-add' %>
   <% end %>
