@@ -104,6 +104,7 @@ class Organization < ActiveRecord::Base
   end
 
   def name_to_(organization)
+    return "" if organization.nil?
     if self != organization
       parent.name_to_(organization) + Organization::SEPARATOR + name
     else

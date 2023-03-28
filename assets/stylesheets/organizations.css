@@ -1,5 +1,6 @@
 .icon-organizations, #admin-menu a.organizations { background-image: url(../images/building.png); }
 tr.organization.direction td.name, tr.organization.direction td.description { font-weight:bold; }
+tr.organization td.name .icon { margin-left: 0.5em; }
 tr.organization.idnt td.name a {background: url(../../../images/arrow_right.png) no-repeat 0 50%; padding-left: 16px;}
 p.idnt { margin:0; }
 tr.organization.idnt-1 td.name, p.idnt-1 {padding-left: 0.5em;}

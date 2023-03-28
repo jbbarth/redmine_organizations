@@ -31,14 +31,14 @@
                               params: { organization_id: organization.id } },
                         remote: true,
                         title: "Synchroniser l'organisation",
-                        :class => 'icon icon-sync' %></td>
+                        :class => 'icon icon-sync' if @synchronizable_organizations.include?(organization) %></td>
       <td><%= button_to "", { action: "ldap_sync_check_status",
                                                          controller: "organizations",
                                                          method: :post,
                                                          params: { organization_id: organization.id, with_members: true } },
                         remote: true,
                         title: "Synchroniser les membres",
-                        :class => 'icon icon-group' %></td>
+                        :class => 'icon icon-group' if @synchronizable_organizations.include?(organization) %></td>
       <td>
         <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(organization.name_with_parents) %>
       </td>

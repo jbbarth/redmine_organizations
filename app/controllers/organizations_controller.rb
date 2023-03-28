@@ -130,9 +130,11 @@ class OrganizationsController < ApplicationController
     @organizations = Organization.order('lft').includes(:users)
 
     ldap_organizations = LdapOrganization.order(:fullpath).pluck(:fullpath)
-    intern_organizations = @organizations.pluck(:name_with_parents)
+    intern_organizations = @organizations.map(&:fullpath_from_top_department_in_ldap_organization)
     @unknown_organizations = ldap_organizations - intern_organizations
     @synchronized_organizations = ldap_organizations & intern_organizations
+
+    @synchronizable_organizations = Organization.order('lft').where(top_department_in_ldap: true).map(&:self_and_descendants).flatten.uniq
 
     render :layout => 'admin'
   end
@@ -170,8 +172,8 @@ class OrganizationsController < ApplicationController
   private
 
   def load_data_for_ldap_sync_check_status(organization)
-    ldap_organizations = LdapOrganization.where("fullpath LIKE ?", "#{organization.name_with_parents}%").order(:fullpath).pluck(:fullpath)
-    intern_organizations = organization.self_and_descendants.map(&:name_with_parents)
+    ldap_organizations = LdapOrganization.where("fullpath LIKE ?", "#{organization.fullpath_from_top_department_in_ldap_organization}%").order(:fullpath).pluck(:fullpath)
+    intern_organizations = organization.self_and_descendants.map(&:fullpath_from_top_department_in_ldap_organization)
     @unknown_organizations = ldap_organizations - intern_organizations
     @synchronized_organizations = ldap_organizations & intern_organizations
     @desynchronized_organizations = intern_organizations - ldap_organizations
@@ -179,7 +181,7 @@ class OrganizationsController < ApplicationController
   end
 
   def load_people_data_for_ldap_sync_check_status(organization)
-    @ldap_people = LdapPerson.where("organization_fullpath LIKE ?", "#{organization.name_with_parents}%").order(:organization_fullpath, :sn, :givenname)
+    @ldap_people = LdapPerson.where("organization_fullpath LIKE ?", "#{organization.fullpath_from_top_department_in_ldap_organization}%").order(:organization_fullpath, :sn, :givenname)
     # intern_people = organization.self_and_descendants.map(&:name_with_parents)
     # @unknown_people = @ldap_people - intern_people
     # @synchronized_people = @ldap_people & intern_people

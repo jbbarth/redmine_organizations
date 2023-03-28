@@ -66,8 +66,8 @@
       <% Organization.each_with_level(@organizations) do |organization, level| %>
         <tr class="organization <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
           <td class="name" data-filter-value="<%= organization.fullname %>">
-            <%= content_tag :span, '', class: "icon icon-roles", title: t('field_top_department_in_ldap') if organization.top_department_in_ldap %>
             <%= link_to h(organization.name), { :controller => 'organizations', :action => 'show', :id => organization.identifier } %>
+            <%= content_tag :span, '', class: "icon icon-roles", title: t('field_top_department_in_ldap') if organization.top_department_in_ldap %>
           </td>
           <td class="description"><%= h organization.description %></td>
           <td class="team_leaders"><%= h @team_leaders_by_organization[organization.id].join(', ') %></td>

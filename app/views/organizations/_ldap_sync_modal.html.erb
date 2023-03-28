@@ -31,7 +31,7 @@
   <% if @unknown_organizations.any? %>
     <%= button_to l(:add_all_missing_organizations), add_all_organizations_from_ldap_organizations_path(parent_organization_id: @organization.id) %>
   <% else %>
-    <%= l(:no_missing_organizations, path: @organization.fullname) %>
+    <%= l(:no_missing_organizations, path: @organization.fullpath_from_top_department_in_ldap_organization) %>
   <% end %>
 </div>
 
