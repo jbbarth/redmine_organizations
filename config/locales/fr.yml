@@ -55,5 +55,6 @@ fr:
   missing_organizations: "Organisations manquantes"
   add_all: "Ajouter toutes ces organisations"
   add_all_missing_organizations: "Ajouter toutes les organisations manquantes"
-  no_missing_organizations: "Aucune organisation manquante"
+  no_missing_organizations: "Aucune organisation à ajouter depuis le LDAP pour ce chemin : %{path}"
   inherited_from_parent_project: "Hérité du projet parent"
+  field_top_department_in_ldap: "Département racine dans le LDAP"

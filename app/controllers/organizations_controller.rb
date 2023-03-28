@@ -142,7 +142,7 @@ class OrganizationsController < ApplicationController
     sync_members = params[:with_members].present?
 
     # Fetch LDAP data
-    LdapOrganization.reset_ldap_organizations(root: @organization.fullname, with_people: sync_members)
+    LdapOrganization.reset_ldap_organizations(root: @organization.fullpath_from_top_department_in_ldap_organization, with_people: sync_members)
 
     # Data to display
     load_data_for_ldap_sync_check_status(@organization)

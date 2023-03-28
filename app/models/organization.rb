@@ -17,7 +17,7 @@ class Organization < ActiveRecord::Base
   has_many :organization_notifications
   has_many :notified_projects, through: :organization_notifications, :source => :project
 
-  safe_attributes :name, :parent_id, :description, :mail, :direction, :name_with_parents, :notified
+  safe_attributes :name, :parent_id, :description, :mail, :direction, :name_with_parents, :notified, :top_department_in_ldap
 
   attr_accessor :self_and_descendants_cached_ids, :self_and_ancestors_cached_ids
 
@@ -93,6 +93,14 @@ class Organization < ActiveRecord::Base
 
   def name_to_root_direction_organization
     name_to_(root_direction_organization)
+  end
+
+  def top_department_in_ldap_organization
+    self_and_ancestors.where(top_department_in_ldap: true).first
+  end
+
+  def fullpath_from_top_department_in_ldap_organization
+    name_to_(top_department_in_ldap_organization)
   end
 
   def name_to_(organization)

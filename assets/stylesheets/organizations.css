@@ -124,7 +124,7 @@ table.ldap-sync input.icon-sync, a.icon-sync, table.ldap-sync input.icon-group  
     background-color: transparent;
     border: none;
 }
-table.ldap-sync a.icon-sync, table.ldap-sync a.icon-group {
+table.ldap-sync a.icon-sync, table.ldap-sync a.icon-group, a.icon-sync {
     padding-left: 20px;
 }
 table.ldap-sync input.icon-sync:hover, table.ldap-sync input.icon-group:hover {
