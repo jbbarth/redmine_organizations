@@ -79,6 +79,11 @@ class Organization < ActiveRecord::Base
     fullname
   end
 
+  def parent_fullname
+    return "" if parent_id.nil?
+    parent.fullname
+  end
+
   def calculated_identifier
     name_with_parents.parameterize
   end

@@ -35,7 +35,7 @@ class OrganizationsController < ApplicationController
 
     @subusers_count = (@organization.users.active | @subusers.values.flatten.uniq).count
 
-    #issues for projects of this organization + sub organizations
+    # issues for projects of this organization + sub organizations
     organization_ids = @organization.self_and_descendants_ids
     project_ids = Member.joins(:user).where('users.status = ? AND users.organization_id IN (?)', User::STATUS_ACTIVE, organization_ids).map(&:project_id).uniq
     @issues = Issue.open.visible.on_active_project.where(project_id: project_ids).joins(:priority).order("enumerations.position desc").limit(50)
@@ -129,12 +129,12 @@ class OrganizationsController < ApplicationController
 
     @organizations = Organization.order('lft').includes(:users)
 
+    @synchronizable_organizations = Organization.order('lft').where(top_department_in_ldap: true).map(&:self_and_descendants).flatten.uniq
+
     ldap_organizations = LdapOrganization.order(:fullpath).pluck(:fullpath)
-    intern_organizations = @organizations.map(&:fullpath_from_top_department_in_ldap_organization)
+    intern_organizations = @organizations.map { |o| @synchronizable_organizations.include?(o) ? o.fullpath_from_top_department_in_ldap_organization : o.name_with_parents }
     @unknown_organizations = ldap_organizations - intern_organizations
     @synchronized_organizations = ldap_organizations & intern_organizations
-
-    @synchronizable_organizations = Organization.order('lft').where(top_department_in_ldap: true).map(&:self_and_descendants).flatten.uniq
 
     render :layout => 'admin'
   end
@@ -153,7 +153,10 @@ class OrganizationsController < ApplicationController
 
   def add_organization_from_ldap
     ldap_orga = LdapOrganization.find_by_fullpath(params[:fullpath])
-    @organization = Organization.find_or_create_from_ldap(fullpath: ldap_orga.fullpath, description: ldap_orga.cn)
+    if params[:upper_intern_organizations].present?
+      upper_intern_organizations = params[:upper_intern_organizations] + "/"
+    end
+    @organization = Organization.find_or_create_from_ldap(fullpath: "#{upper_intern_organizations}#{ldap_orga.fullpath}", description: ldap_orga.cn)
     respond_to do |format|
       format.html { redirect_to ldap_sync_organizations_path(:organization_id => @organization.id) }
       format.js
@@ -161,9 +164,12 @@ class OrganizationsController < ApplicationController
   end
 
   def add_all_organizations_from_ldap
+    parent_organization = Organization.find(params[:parent_organization_id])
+    upper_intern_organizations = parent_organization.top_department_in_ldap_organization.try(:parent_fullname)
+    upper_intern_organizations = upper_intern_organizations + "/" if upper_intern_organizations.present?
     ldap_orgas = LdapOrganization.all
     ldap_orgas.each do |ldap_orga|
-      Organization.find_or_create_from_ldap(fullpath: ldap_orga.fullpath,
+      Organization.find_or_create_from_ldap(fullpath: "#{upper_intern_organizations}#{ldap_orga.fullpath}",
                                             description: ldap_orga.cn)
     end
     redirect_to ldap_sync_organizations_path
@@ -178,6 +184,8 @@ class OrganizationsController < ApplicationController
     @synchronized_organizations = ldap_organizations & intern_organizations
     @desynchronized_organizations = intern_organizations - ldap_organizations
     @combined_organizations = (intern_organizations + @unknown_organizations).sort
+
+    @intern_upper_organizations = organization.top_department_in_ldap_organization.try(:parent_fullname)
   end
 
   def load_people_data_for_ldap_sync_check_status(organization)
