@@ -8,7 +8,12 @@
 <h2><%= l(:label_organizations_ldap_sync) %></h2>
 
 <p>
-  <em class="info">* Seules peuvent être synchronisées les organisations ayant un parent identifié comme "1er niveau dans le LDAP" </em>
+  <em class="info">* Seules peuvent être synchronisées les organisations ayant un parent identifié comme "1er niveau
+    dans le LDAP" </em>
+  <em class="info"><%= content_tag(:span, "", class: "ldap_sync_orga green") %> Organisation synchronisée avec le
+    LDAP </em>
+  <em class="info">  <%= content_tag(:span, "", class: "ldap_sync_orga orange") %> Organisation non trouvée dans le
+    LDAP </em>
 </p>
 
 <table class="list attributes ldap-sync all-organizations">
@@ -37,14 +42,15 @@
                         title: "Synchroniser l'organisation",
                         :class => 'icon icon-sync' if @synchronizable_organizations.include?(organization) %></td>
       <td><%= button_to "", { action: "ldap_sync_check_status",
-                                                         controller: "organizations",
-                                                         method: :post,
-                                                         params: { organization_id: organization.id, with_members: true } },
+                              controller: "organizations",
+                              method: :post,
+                              params: { organization_id: organization.id, with_members: true } },
                         remote: true,
                         title: "Synchroniser les membres",
                         :class => 'icon icon-group' if @synchronizable_organizations.include?(organization) %></td>
       <td>
-        <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(organization.fullpath_from_top_department_in_ldap_organization) %>
+        <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(@fullpaths_from_top_department_in_ldap_by_organization_id[organization.id]) %>
+        <%= content_tag(:span, "", class: "ldap_sync_orga orange") if @desynchronized_organizations.include?(@fullpaths_from_top_department_in_ldap_by_organization_id[organization.id]) %>
       </td>
       <td class="name" data-filter-value="<%= organization.fullname %>">
         <%= link_to h(organization.name), { :controller => 'organizations', :action => 'show', :id => organization.identifier } %>
@@ -71,16 +77,16 @@
   <fieldset id="unknown_organizations_fieldset">
     <h3><%= l(:missing_organizations) %></h3>
 
-    <%= button_to l(:add_all), add_all_organizations_from_ldap_organizations_path %>
+    <%# button_to l(:add_all), add_all_organizations_from_ldap_organizations_path %>
 
     <ul class="unknown_organizations">
       <% @unknown_organizations.each do |unknown_orga| %>
         <li>
           <%= content_tag(:span, "", class: "ldap_sync_orga red") %>
           <%= content_tag(:span, unknown_orga, class: "unknown_orga") %>
-          <%= link_to add_organization_from_ldap_organizations_path(fullpath: unknown_orga) do %>
-            <%= content_tag(:span, "", class: "icon icon-add") %>
-          <% end %>
+          <%# link_to add_organization_from_ldap_organizations_path(fullpath: unknown_orga) do %>
+            <%# content_tag(:span, "", class: "icon icon-add") %>
+          <%# end %>
         </li>
       <% end %>
     </ul>

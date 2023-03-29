@@ -130,11 +130,13 @@ class OrganizationsController < ApplicationController
     @organizations = Organization.order('lft').includes(:users)
 
     @synchronizable_organizations = Organization.order('lft').where(top_department_in_ldap: true).map(&:self_and_descendants).flatten.uniq
+    @fullpaths_from_top_department_in_ldap_by_organization_id = @synchronizable_organizations.map { |o| [o.id, o.fullpath_from_top_department_in_ldap_organization] }.to_h
 
     ldap_organizations = LdapOrganization.order(:fullpath).pluck(:fullpath)
-    intern_organizations = @organizations.map { |o| @synchronizable_organizations.include?(o) ? o.fullpath_from_top_department_in_ldap_organization : o.name_with_parents }
+    intern_organizations = @organizations.map { |o| @synchronizable_organizations.include?(o) ? @fullpaths_from_top_department_in_ldap_by_organization_id[o.id] : o.name_with_parents }
     @unknown_organizations = ldap_organizations - intern_organizations
     @synchronized_organizations = ldap_organizations & intern_organizations
+    @desynchronized_organizations = intern_organizations - ldap_organizations
 
     render :layout => 'admin'
   end
