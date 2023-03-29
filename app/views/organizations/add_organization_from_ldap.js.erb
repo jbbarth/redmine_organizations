@@ -1,3 +1,4 @@
-$('.orga-<%= @organization.name_with_parents.parameterize %> .ldap_sync_orga').removeClass('icon-actions red');
-$('.orga-<%= @organization.name_with_parents.parameterize %> .ldap_sync_orga').addClass('green');
-$('.orga-<%= @organization.name_with_parents.parameterize %> .action').remove();
+<% orga_path = @organization.fullpath_from_top_department_in_ldap_organization.parameterize %>
+$('.orga-<%= orga_path %> .ldap_sync_orga').removeClass('icon-actions red');
+$('.orga-<%= orga_path %> .ldap_sync_orga').addClass('green');
+$('.orga-<%= orga_path %> .action').remove();

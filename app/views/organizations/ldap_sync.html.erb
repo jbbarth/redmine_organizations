@@ -44,7 +44,7 @@
                         title: "Synchroniser les membres",
                         :class => 'icon icon-group' if @synchronizable_organizations.include?(organization) %></td>
       <td>
-        <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(organization.name_with_parents) %>
+        <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(organization.fullpath_from_top_department_in_ldap_organization) %>
       </td>
       <td class="name" data-filter-value="<%= organization.fullname %>">
         <%= link_to h(organization.name), { :controller => 'organizations', :action => 'show', :id => organization.identifier } %>
