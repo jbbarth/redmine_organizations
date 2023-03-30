@@ -169,7 +169,7 @@ class OrganizationsController < ApplicationController
     parent_organization = Organization.find(params[:parent_organization_id])
     upper_intern_organizations = parent_organization.top_department_in_ldap_organization.try(:parent_fullname)
     upper_intern_organizations = upper_intern_organizations + "/" if upper_intern_organizations.present?
-    ldap_orgas = LdapOrganization.all
+    ldap_orgas = LdapOrganization.where("fullpath LIKE ?", "#{parent_organization.fullpath_from_top_department_in_ldap_organization}%")
     ldap_orgas.each do |ldap_orga|
       Organization.find_or_create_from_ldap(fullpath: "#{upper_intern_organizations}#{ldap_orga.fullpath}",
                                             description: ldap_orga.cn)

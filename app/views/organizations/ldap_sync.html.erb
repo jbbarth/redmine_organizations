@@ -34,24 +34,30 @@
   <tbody>
   <% Organization.each_with_level(@organizations) do |organization, level| %>
     <tr class="organization <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
-      <td><%= button_to "", { action: "ldap_sync_check_status",
-                              controller: "organizations",
-                              method: :post,
-                              params: { organization_id: organization.id } },
-                        remote: true,
-                        title: "Synchroniser l'organisation",
-                        :class => 'icon icon-sync' if @synchronizable_organizations.include?(organization) %></td>
-      <td><%= button_to "", { action: "ldap_sync_check_status",
-                              controller: "organizations",
-                              method: :post,
-                              params: { organization_id: organization.id, with_members: true } },
-                        remote: true,
-                        title: "Synchroniser les membres",
-                        :class => 'icon icon-group' if @synchronizable_organizations.include?(organization) %></td>
-      <td>
-        <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(@fullpaths_from_top_department_in_ldap_by_organization_id[organization.id]) %>
-        <%= content_tag(:span, "", class: "ldap_sync_orga orange") if @desynchronized_organizations.include?(@fullpaths_from_top_department_in_ldap_by_organization_id[organization.id]) %>
-      </td>
+      <% if @synchronizable_organizations.include?(organization) %>
+        <td><%= button_to "", { action: "ldap_sync_check_status",
+                                controller: "organizations",
+                                method: :post,
+                                params: { organization_id: organization.id } },
+                          remote: true,
+                          title: "Synchroniser l'organisation",
+                          :class => 'icon icon-sync' %></td>
+        <td><%= button_to "", { action: "ldap_sync_check_status",
+                                controller: "organizations",
+                                method: :post,
+                                params: { organization_id: organization.id, with_members: true } },
+                          remote: true,
+                          title: "Synchroniser les membres",
+                          :class => 'icon icon-group' %></td>
+        <td>
+          <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(@fullpaths_from_top_department_in_ldap_by_organization_id[organization.id]) %>
+          <%= content_tag(:span, "", class: "ldap_sync_orga orange") if @desynchronized_organizations.include?(@fullpaths_from_top_department_in_ldap_by_organization_id[organization.id]) %>
+        </td>
+      <% else %>
+        <td></td>
+        <td></td>
+        <td></td>
+      <% end %>
       <td class="name" data-filter-value="<%= organization.fullname %>">
         <%= link_to h(organization.name), { :controller => 'organizations', :action => 'show', :id => organization.identifier } %>
       </td>
@@ -85,7 +91,7 @@
           <%= content_tag(:span, "", class: "ldap_sync_orga red") %>
           <%= content_tag(:span, unknown_orga, class: "unknown_orga") %>
           <%# link_to add_organization_from_ldap_organizations_path(fullpath: unknown_orga) do %>
-            <%# content_tag(:span, "", class: "icon icon-add") %>
+          <%# content_tag(:span, "", class: "icon icon-add") %>
           <%# end %>
         </li>
       <% end %>
