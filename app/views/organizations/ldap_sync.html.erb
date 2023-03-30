@@ -63,7 +63,7 @@
       </td>
       <td class="description"><%= h organization.description %></td>
       <% nb_users = organization.users.size %>
-      <td class="users <%= "zero" if nb_users == 0 && organization.descendants.empty? %>">
+      <td class="users <%= "zero" if nb_users == 0 && organization.children.empty? %>">
         <%= nb_users %>
       </td>
       <td class="buttons">

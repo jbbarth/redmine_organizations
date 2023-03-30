@@ -127,13 +127,13 @@ class OrganizationsController < ApplicationController
   def ldap_sync
     return render_error :status => 403 unless Redmine::Plugin.installed?(:redmine_ldap_minequip)
 
-    @organizations = Organization.order('lft').includes(:users)
+    @organizations = Organization.order('lft').includes(:users, :children)
 
     @synchronizable_organizations = Organization.order('lft').where(top_department_in_ldap: true).map(&:self_and_descendants).flatten.uniq
     @fullpaths_from_top_department_in_ldap_by_organization_id = @synchronizable_organizations.map { |o| [o.id, o.fullpath_from_top_department_in_ldap_organization] }.to_h
 
     ldap_organizations = LdapOrganization.order(:fullpath).pluck(:fullpath)
-    intern_organizations = @organizations.map { |o| @synchronizable_organizations.include?(o) ? @fullpaths_from_top_department_in_ldap_by_organization_id[o.id] : o.name_with_parents }
+    intern_organizations = Organization.order('lft').map { |o| @synchronizable_organizations.include?(o) ? @fullpaths_from_top_department_in_ldap_by_organization_id[o.id] : o.name_with_parents }
     @unknown_organizations = ldap_organizations - intern_organizations
     @synchronized_organizations = ldap_organizations & intern_organizations
     @desynchronized_organizations = intern_organizations - ldap_organizations
