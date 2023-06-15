@@ -17,7 +17,11 @@ module PluginOrganizations
     end
 
     def find_organization_by_id
-      @organization = Organization.where("identifier = lower(?) OR id = ?", params[:id], params[:id].to_i).first
+      if params[:id].to_i.to_s == params[:id].to_s
+        @organization = Organization.where(id: params[:id]).first
+      else
+        @organization = Organization.where(identifier: params[:id].to_s.parameterize).first
+      end
       render_404 if @organization.blank?
     end
 
@@ -27,9 +31,8 @@ module PluginOrganizations
       return true if User.current.is_admin_or_instance_manager?
 
       if @organization.present?
-        managers_user_ids = OrganizationManager
-                                .where("organization_id IN (?)", @organization.self_and_ancestors.map(&:id))
-                                .pluck(:user_id)
+        managers_user_ids = OrganizationManager.where("organization_id IN (?)", @organization.self_and_ancestors.map(&:id))
+                                               .pluck(:user_id)
       else
         managers_user_ids = OrganizationManager.pluck(:user_id)
       end
