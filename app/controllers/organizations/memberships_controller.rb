@@ -153,7 +153,7 @@ class Organizations::MembershipsController < ApplicationController
     end
 
     add_member_edition_to_journal(membership, previous_role_ids, membership.roles.ids) if Redmine::Plugin.installed?(:redmine_admin_activity)
-    
+
     respond_to do |format|
       format.html { redirect_to settings_project_path(@project, :tab => 'members') }
       format.js { render :update }
