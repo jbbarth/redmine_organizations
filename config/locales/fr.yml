@@ -58,3 +58,4 @@ fr:
   no_missing_organizations: "Aucune organisation à ajouter depuis le LDAP pour ce chemin : %{path}"
   inherited_from_parent_project: "Hérité du projet parent"
   field_top_department_in_ldap: "Département racine dans le LDAP"
+  field_updated_by_organization: Mise à jour par un membre de
