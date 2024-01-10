@@ -28,9 +28,10 @@ describe "IssueQueryPatch" do
 
       query = IssueQuery.new(:name => '_')
       filter_name = "updated_by_organization"
+
       query.filters = { filter_name => {:operator => '=', :values => [@org.id.to_s] }}
 
-      expect(find_issues_with_query(query).map(&:id).sort).to include([2, 3])
+      expect(find_issues_with_query(query).map(&:id).sort).to include(2, 3)
     end
 
     it "operator equal ! , one organization" do
@@ -42,7 +43,7 @@ describe "IssueQueryPatch" do
       filter_name = "updated_by_organization"
       query.filters = { filter_name => {:operator => '!', :values => [@org.id.to_s] }}
 
-      expect(find_issues_with_query(query).map(&:id).sort).to_not include([2, 3])
+      expect(find_issues_with_query(query).map(&:id).sort).to_not include(2, 3)
     end
 
     it "operator equal = , multi organizations" do
