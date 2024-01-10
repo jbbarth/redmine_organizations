@@ -2,8 +2,6 @@ require_dependency 'issue_query'
 
 class IssueQuery < Query
   self.available_columns << QueryColumn.new(:author_organization, :groupable => false) if self.available_columns.select { |c| c.name == :author_organization }.empty?
-  self.available_columns << QueryColumn.new(:updated_by_organization, :sortable => "#{Journal.table_name}.created_on",
-                              :default_order => 'desc', :groupable => true) if self.available_columns.select { |c| c.name == :updated_by_organization }.empty?
 end
 
 module PluginOrganizations

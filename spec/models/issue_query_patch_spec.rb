@@ -3,7 +3,7 @@ require "spec_helper"
 describe "IssueQueryPatch" do
   fixtures :organizations, :users, :roles, :projects, :members, :trackers
 
-  context "should filter issues with updated_by_organization" do
+  context "filter issues with updated_by_organization" do
     before do
       @org = Organization.create(:name => "Team C")
       @user = User.generate!
@@ -21,7 +21,7 @@ describe "IssueQueryPatch" do
       expect(query.available_filters.keys).to include('updated_by_organization')
     end
 
-    it "operator equal =, one organization" do
+    it "operator equal = , one organization" do
       Journal.create!(:user_id => @user.id, :journalized => Issue.find(2), :notes => 'Notes')
       Journal.create!(:user_id => @user.id, :journalized => Issue.find(3), :notes => 'Notes')
       Journal.create!(:user_id => 2, :journalized => Issue.find(4), :notes => 'Notes')
