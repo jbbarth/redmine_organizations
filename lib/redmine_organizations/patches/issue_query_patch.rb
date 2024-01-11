@@ -24,6 +24,10 @@ module PluginOrganizations
                            :type => :list_optional,
                            :values => lambda {organization_values},
                            :label => :field_author_organization
+      add_available_filter "updated_by_organization",
+                           :type => :list_optional,
+                           :values => lambda {organization_values},
+                           :label => :field_updated_by_organization
     end
 
     def sql_for_author_organization_field(field, operator, value)
@@ -44,6 +48,24 @@ module PluginOrganizations
         sql_not = operator == "!" ? 'NOT' : ''
         "(#{Issue.table_name}.author_id #{sql_not} IN (SELECT DISTINCT #{User.table_name}.id FROM #{User.table_name} WHERE #{cond}))"
       end
+    end
+
+    def sql_for_updated_by_organization_field(field, operator, value)
+      if value.delete('mine')
+        value.push User.current&.organization&.id&.to_s
+      end
+      cond = value.any? ?
+            "#{User.table_name}.organization_id IN (" + value.collect{|val| "'#{self.class.connection.quote_string(val)}'"}.join(",") + ")" :
+            "1=0"
+
+      neg = (operator == '!' ? 'NOT' : '')
+
+      subquery = "SELECT 1 FROM #{Journal.table_name}" +
+      " WHERE #{Journal.table_name}.journalized_type='Issue' AND #{Journal.table_name}.journalized_id=#{Issue.table_name}.id" +
+      " AND (journals.user_id IN (SELECT DISTINCT #{User.table_name}.id FROM #{User.table_name} WHERE #{cond}))" +
+      " AND (#{Journal.visible_notes_condition(User.current, :skip_pre_condition => true)})"
+
+      "#{neg} EXISTS (#{subquery})"
     end
 
     def organization_values
