@@ -25,7 +25,7 @@ module PluginOrganizations
                            :values => lambda {organization_values},
                            :label => :field_author_organization
       add_available_filter "updated_by_organization",
-                           :type => :list_optional,
+                           :type => :list,
                            :values => lambda {organization_values},
                            :label => :field_updated_by_organization
     end
