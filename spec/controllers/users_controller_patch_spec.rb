@@ -1,5 +1,4 @@
 require "spec_helper"
-require 'redmine_organizations/patches/users_controller_patch'
 
 describe UsersController, type: :controller do
 

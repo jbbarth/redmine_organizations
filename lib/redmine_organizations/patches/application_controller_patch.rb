@@ -1,7 +1,7 @@
 require_dependency 'application_controller'
 
-module PluginOrganizations
-  module ApplicationController
+module RedmineOrganizations::Patches
+  module ApplicationControllerPatch
 
     def authorize(ctrl = params[:controller], action = params[:action], global = false)
       if @project.present? && User.current.try(:organization).present?
@@ -47,4 +47,4 @@ module PluginOrganizations
   end
 end
 
-ApplicationController.prepend PluginOrganizations::ApplicationController
+ApplicationController.prepend RedmineOrganizations::Patches::ApplicationControllerPatch

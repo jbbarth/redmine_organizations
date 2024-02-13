@@ -1,9 +1,9 @@
 require 'redmine/field_format'
 
-module Redmine
-  module FieldFormat
+module RedmineOrganizations::Patches
+  module FieldFormatPatch
 
-    class OrganizationFormat < RecordList
+    class OrganizationFormat < Redmine::FieldFormat::RecordList
       add 'organization'
       self.form_partial = 'custom_fields/formats/organization'
       field_attributes :direction_only
@@ -26,6 +26,8 @@ module Redmine
 
   end
 end
+
+Redmine::FieldFormat.include RedmineOrganizations::Patches::FieldFormatPatch
 
 class CustomField < ActiveRecord::Base
   safe_attributes('direction_only')
