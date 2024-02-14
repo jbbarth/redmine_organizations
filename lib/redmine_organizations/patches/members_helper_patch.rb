@@ -1,6 +1,6 @@
 require_dependency 'members_helper'
 
-module MembersHelper
+module RedmineOrganizations::Patches::MembersHelperPatch
   def render_principals_for_new_members(project, limit=100, organization=nil)
     scope = Principal.active.visible.sorted.not_member_of(project).like(params[:q])
     if organization
@@ -22,3 +22,6 @@ module MembersHelper
     s + content_tag('span', links, :class => 'pagination')
   end
 end
+
+MembersHelper.prepend RedmineOrganizations::Patches::MembersHelperPatch
+ActionView::Base.prepend MembersHelper

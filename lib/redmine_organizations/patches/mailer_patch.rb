@@ -1,6 +1,6 @@
 require_dependency 'mailer'
 
-module MailerPatchWithOrganizations
+module RedmineOrganizations::Patches::MailerPatch
 
   module ClassMethods
     def notify_new_organization_manager(change_author, new_manager, organization)
@@ -89,4 +89,4 @@ module MailerPatchWithOrganizations
   end
 end
 
-Mailer.prepend MailerPatchWithOrganizations
+Mailer.prepend RedmineOrganizations::Patches::MailerPatch

@@ -2,10 +2,10 @@
 require_dependency 'principal'
 require_dependency 'user'
 
-#Here's a hack to avoid User class missing Principal scopes
-#TODO: find a better hack...
-#TODO: confirm the bug is gone in rails 3
-#User.scopes[:like] = Principal.scopes[:like]
+# Here's a hack to avoid User class missing Principal scopes
+# TODO: find a better hack...
+# TODO: confirm the bug is gone in rails 3
+# User.scopes[:like] = Principal.scopes[:like]
 
 class User < Principal
   belongs_to :organization
@@ -43,7 +43,11 @@ class User < Principal
   end
 
   def is_admin_or_instance_manager?
-    admin? || self.try(:instance_manager)
+
+    puts "self.try(:instance_manager): #{self.try(:instance_manager)}"
+    puts "admin?: #{admin?}"
+
+    admin? || (self.try(:instance_manager) == true)
   end
 
   def managers
@@ -73,80 +77,78 @@ class User < Principal
 
 end
 
-module PluginOrganizations
-  module UserModel
+module RedmineOrganizations::Patches::UserPatch
 
-    # Return user's roles for project
-    def roles_for_project(project)
-      # No role on archived projects
-      return [] if project.nil? || project.archived?
+  # Return user's roles for project
+  def roles_for_project(project)
+    # No role on archived projects
+    return [] if project.nil? || project.archived?
 
-      roles = super
-      if self.organization.present?
-        roles |= self.organization.organization_non_member_roles_for_project(project)
-      end
-      roles
+    roles = super
+    if self.organization.present?
+      roles |= self.organization.organization_non_member_roles_for_project(project)
     end
+    roles
+  end
 
-    # with organization exceptions TODO Test it
-    #
-    # Return true if the user is allowed to do the specified action on a specific context
-    # Action can be:
-    # * a parameter-like Hash (eg. :controller => 'projects', :action => 'edit')
-    # * a permission Symbol (eg. :edit_project)
-    # Context can be:
-    # * a project : returns true if user is allowed to do the specified action on this project
-    # * an array of projects : returns true if user is allowed on every project
-    # * nil with options[:global] set : check if user has at least one role allowed for this action,
-    #   or falls back to Non Member / Anonymous permissions depending if the user is logged
-    def allowed_to?(action, context, options = {}, &block)
+  # with organization exceptions TODO Test it
+  #
+  # Return true if the user is allowed to do the specified action on a specific context
+  # Action can be:
+  # * a parameter-like Hash (eg. :controller => 'projects', :action => 'edit')
+  # * a permission Symbol (eg. :edit_project)
+  # Context can be:
+  # * a project : returns true if user is allowed to do the specified action on this project
+  # * an array of projects : returns true if user is allowed on every project
+  # * nil with options[:global] set : check if user has at least one role allowed for this action,
+  #   or falls back to Non Member / Anonymous permissions depending if the user is logged
+  def allowed_to?(action, context, options = {}, &block)
 
-      if context && context.is_a?(Project)
-        return false unless context.allows_to?(action)
-        # Admin users are authorized for anything else
-        return true if admin?
+    if context && context.is_a?(Project)
+      return false unless context.allows_to?(action)
+      # Admin users are authorized for anything else
+      return true if admin?
 
-        roles = roles_for_project(context)
+      roles = roles_for_project(context)
 
-        return false unless roles
-        roles.any? { |role|
-          (context.is_public? || role.member?) &&
-            role.allowed_to?(action) &&
-            (block_given? ? yield(role, self) : true)
-        }
-      elsif context && context.is_a?(Array)
-        if context.empty?
-          false
-        else
-          # Authorize if user is authorized on every element of the array
-          context.map { |project| allowed_to?(action, project, options, &block) }.reduce(:&)
-        end
-      elsif context
-        raise ArgumentError.new("#allowed_to? context argument must be a Project, an Array of projects or nil")
-      elsif options[:global]
-        # Admin users are always authorized
-        return true if admin?
-
-        # authorize if user has at least one role that has this permission
-        roles = self.roles.to_a | [builtin_role] | Group.non_member.roles.to_a | Group.anonymous.roles.to_a
-
-        ## START PATCH
-        user_organization = User.current.try(:organization)
-        if user_organization.present?
-          user_organization_and_parents_ids = user_organization.self_and_ancestors_ids
-          organization_roles = Role.distinct.joins(:organization_non_member_roles).where("organization_id IN (?)", user_organization_and_parents_ids)
-          roles |= organization_roles
-        end
-        ## END PATCH
-
-        roles.any? { |role|
+      return false unless roles
+      roles.any? { |role|
+        (context.is_public? || role.member?) &&
           role.allowed_to?(action) &&
-            (block_given? ? yield(role, self) : true)
-        }
+          (block_given? ? yield(role, self) : true)
+      }
+    elsif context && context.is_a?(Array)
+      if context.empty?
+        false
       else
-        super
+        # Authorize if user is authorized on every element of the array
+        context.map { |project| allowed_to?(action, project, options, &block) }.reduce(:&)
       end
+    elsif context
+      raise ArgumentError.new("#allowed_to? context argument must be a Project, an Array of projects or nil")
+    elsif options[:global]
+      # Admin users are always authorized
+      return true if admin?
+
+      # authorize if user has at least one role that has this permission
+      roles = self.roles.to_a | [builtin_role] | Group.non_member.roles.to_a | Group.anonymous.roles.to_a
+
+      ## START PATCH
+      user_organization = User.current.try(:organization)
+      if user_organization.present?
+        user_organization_and_parents_ids = user_organization.self_and_ancestors_ids
+        organization_roles = Role.distinct.joins(:organization_non_member_roles).where("organization_id IN (?)", user_organization_and_parents_ids)
+        roles |= organization_roles
+      end
+      ## END PATCH
+
+      roles.any? { |role|
+        role.allowed_to?(action) &&
+          (block_given? ? yield(role, self) : true)
+      }
+    else
+      super
     end
   end
 end
-User.prepend PluginOrganizations::UserModel
+User.prepend RedmineOrganizations::Patches::UserPatch

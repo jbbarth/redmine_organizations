@@ -27,6 +27,8 @@ end
 
 require_dependency 'group'
 
+# Disable this patch as it may not be needed anymore, and remove it in a future version
+=begin
 class Group
   _callback = _validate_callbacks.find { |c|
     c.raw_filter.is_a?(ActiveModel::Validations::LengthValidator) &&
@@ -34,6 +36,7 @@ class Group
   }
   skip_callback(:validate, _callback.kind, _callback.filter)
 end
+=end
 
 class Principal
   def roles

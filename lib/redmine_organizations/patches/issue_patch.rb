@@ -2,28 +2,28 @@ require_dependency "issue"
 
 class Issue < ActiveRecord::Base
 
-# Preloads author's organization for a collection of issues
+  # Preloads author's organization for a collection of issues
   def self.load_author_organization(issues, user = User.current)
     if issues.any?
       issue_ids = issues.map(&:id)
       author_organization_per_issue = Issue.joins(author: :organization).
-          select('issues.id as issue_id, organizations.id as organization_id').
-          where('issues.id' => issue_ids).map do |issue|
+        select('issues.id as issue_id, organizations.id as organization_id').
+        where('issues.id' => issue_ids).map do |issue|
         {
-            issue_id: issue.issue_id,
-            organization_id: issue.organization_id
+          issue_id: issue.issue_id,
+          organization_id: issue.organization_id
         }
       end
       organizations_names = Organization.all.map do |o|
         {
-            id: o.id,
-            name: o.to_s
+          id: o.id,
+          name: o.to_s
         }
       end
       issues.each do |issue|
-        organization = author_organization_per_issue.detect {|i| i[:issue_id] == issue.id}
+        organization = author_organization_per_issue.detect { |i| i[:issue_id] == issue.id }
         if organization
-          organization_name = organizations_names.detect {|n| n[:id] == organization[:organization_id]}
+          organization_name = organizations_names.detect { |n| n[:id] == organization[:organization_id] }
           issue.instance_variable_set("@author_organization", organization_name ? organization_name[:name] : '')
         else
           issue.instance_variable_set("@author_organization", '')
@@ -42,8 +42,7 @@ class Issue < ActiveRecord::Base
 
 end
 
-
-module IssuePatchWithOrganizations
+module RedmineOrganizations::Patches::IssuePatch
   def organization_emails
     organization_ids = project.users.active.pluck(:organization_id)
     # here we use #where instead of #find because #find will throw an
@@ -57,4 +56,4 @@ module IssuePatchWithOrganizations
                 .select(&:present?)
   end
 end
-Issue.prepend IssuePatchWithOrganizations
+Issue.prepend RedmineOrganizations::Patches::IssuePatch

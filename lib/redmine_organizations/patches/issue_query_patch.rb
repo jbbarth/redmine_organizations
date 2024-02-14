@@ -4,7 +4,7 @@ class IssueQuery < Query
   self.available_columns << QueryColumn.new(:author_organization, :groupable => false) if self.available_columns.select { |c| c.name == :author_organization }.empty?
 end
 
-module PluginOrganizations
+module RedmineOrganizations::Patches
 
   module IssueQueryPatch
 
@@ -92,4 +92,4 @@ module PluginOrganizations
 
 end
 
-IssueQuery.prepend PluginOrganizations::IssueQueryPatch
+IssueQuery.prepend RedmineOrganizations::Patches::IssueQueryPatch

@@ -28,8 +28,8 @@ describe Organizations::ManagersController, :type => :controller do
     expect(organization.managers).to_not include(User.find(7))
 
     assert_difference 'OrganizationManager.count', 2 do
-      post :create, params: {id: 2,
-                             manager_ids: [2, 7]}
+      post :create, params: { id: 2,
+                              manager_ids: [2, 7] }
     end
 
     expect(response).to redirect_to(edit_organization_path(organization.identifier, tab: 'managers'))
@@ -38,15 +38,20 @@ describe Organizations::ManagersController, :type => :controller do
     expect(organization.managers).to include(User.find(7))
   end
 
-  it "should forbid users from sub-organization to modify managers in parents of their organization" do
-    @request.session[:user_id] = 2 # Not Admin, member of organization #2
-    assert_no_difference 'OrganizationManager.count' do
-      expect {post :create, params: {id: 1,
-                                     manager_ids: [1, 2]}
-      }.to raise_error(ActionView::Template::Error)
+  if Redmine::VERSION::MAJOR >= 5
+    it "should forbid users from sub-organization to modify managers in parents of their organization" do
+      @request.session[:user_id] = 2 # Not Admin, member of organization #2
+      expect {
+        post :create, params: { id: 1,
+                                manager_ids: [1, 2] }
+      }.to_not change { OrganizationManager.count }
+      expect(response).to have_http_status(:forbidden) # 403
     end
-    expect(response).to have_http_status(:forbidden) # 403
+  else
+    # it raises a TemplateError in Redmine 4, which is fixed in Redmine 5
+    # TODO: Remove this condition when we drop support of Redmine 4
   end
+
 
   pending "should send a notification to new managers" do
     @request.session[:user_id] = 1 # Admin
@@ -57,8 +62,8 @@ describe Organizations::ManagersController, :type => :controller do
 
     assert_difference 'ActionMailer::Base.deliveries.size', 1 do
       assert_difference 'OrganizationManager.count', 1 do
-        post :create, params: {id: 1,
-                               manager_ids: [3]}
+        post :create, params: { id: 1,
+                                manager_ids: [3] }
       end
     end
 
@@ -82,16 +87,17 @@ describe Organizations::ManagersController, :type => :controller do
 
     assert_difference 'ActionMailer::Base.deliveries.size', 1 do
       assert_difference 'OrganizationManager.count', -1 do
-        delete :destroy, params: {id: 1,
-                                  manager_id: [1]}
+        delete :destroy, params: { id: 1,
+                                   manager_id: [1] }
       end
     end
 
     expect(response).to redirect_to(edit_organization_path('org-a', tab: 'managers'))
 
     mail = ActionMailer::Base.deliveries.last
-    expect(mail['bcc'].to_s).to include(User.find(1).mail)
-    expect(mail['bcc'].to_s).to_not include(User.find(3).mail)
+    email_field = Redmine::VERSION::MAJOR >= 5 ? 'to' : 'bcc'
+    expect(mail[email_field].to_s).to include(User.find(1).mail)
+    expect(mail[email_field].to_s).to_not include(User.find(3).mail)
     mail.parts.each do |part|
       expect(part.body.raw_source).to include("vient de vous retirer les droits de")
       expect(part.body.raw_source).to_not include("vient de vous donner")

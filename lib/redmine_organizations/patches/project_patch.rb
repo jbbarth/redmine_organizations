@@ -19,11 +19,15 @@ class Project < ActiveRecord::Base
   # * :project => project               limit the condition to project
   # * :with_subprojects => true         limit the condition to project and its subprojects
   # * :member => true                   limit the condition to the user projects
-  def self.allowed_to_condition(user, permission, options={})
+  def self.allowed_to_condition(user, permission, options = {})
     perm = Redmine::AccessControl.permission(permission)
     base_statement =
       if perm && perm.read?
-        "#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED}"
+        if Redmine::VERSION::MAJOR >= 5
+          "#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED} AND #{Project.table_name}.status <> #{Project::STATUS_SCHEDULED_FOR_DELETION}"
+        else
+          "#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED}"
+        end
       else
         "#{Project.table_name}.status = #{Project::STATUS_ACTIVE}"
       end
@@ -109,10 +113,10 @@ class Project < ActiveRecord::Base
       hsh[:role]
     end.inject({}) do |memo, (role, users)|
       if role.hidden_on_overview?
-        #do nothing
+        # do nothing
         memo
       else
-        #build a hash for that role
+        # build a hash for that role
         hsh = users.group_by do |user|
           user[:organization] || dummy_org
         end
@@ -127,42 +131,40 @@ class Project < ActiveRecord::Base
 end
 
 # TODO Test it
-module PluginOrganizations
+module RedmineOrganizations::Patches::ProjectPatch
 
-  module CopyProjectModel
-    #Copies organizations_roles from +project+
-    def copy_organizations_roles(project)
-      orga_roles_to_copy = project.organization_roles
-      orga_roles_to_copy.each do |orga_role|
-        new_orga_role = OrganizationRole.new
-        new_orga_role.attributes = orga_role.attributes.dup.except("id", "project_id")
-        self.organization_roles << new_orga_role
-      end
+  # Copies organizations_roles from +project+
+  def copy_organizations_roles(project)
+    orga_roles_to_copy = project.organization_roles
+    orga_roles_to_copy.each do |orga_role|
+      new_orga_role = OrganizationRole.new
+      new_orga_role.attributes = orga_role.attributes.dup.except("id", "project_id")
+      self.organization_roles << new_orga_role
     end
+  end
 
-    def copy(project, options = {})
-      super
-      project = project.is_a?(Project) ? project : Project.find(project)
+  def copy(project, options = {})
+    super
+    project = Project.find(project) unless project.is_a?(Project)
 
-      to_be_copied = %w(organizations_roles)
+    to_be_copied = %w(organizations_roles)
 
-      to_be_copied = to_be_copied & Array.wrap(options[:only]) unless options[:only].nil?
+    to_be_copied = to_be_copied & Array.wrap(options[:only]) unless options[:only].nil?
 
-      Project.transaction do
-        if save
-          reload
+    Project.transaction do
+      if save
+        reload
 
-          to_be_copied.each do |name|
-            send "copy_#{name}", project
-          end
-
-          save
-        else
-          false
+        to_be_copied.each do |name|
+          send "copy_#{name}", project
         end
+
+        save
+      else
+        false
       end
     end
   end
 end
 
-Project.prepend PluginOrganizations::CopyProjectModel
+Project.prepend RedmineOrganizations::Patches::ProjectPatch

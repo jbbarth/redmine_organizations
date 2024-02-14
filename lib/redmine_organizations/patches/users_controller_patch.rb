@@ -1,7 +1,7 @@
 require_dependency 'users_controller'
 
-module PluginOrganizations
-  module UsersController
+module RedmineOrganizations::Patches
+  module UsersControllerPatch
     
     def create
 
@@ -49,7 +49,7 @@ module PluginOrganizations
 
   end
 end
-UsersController.prepend PluginOrganizations::UsersController
+UsersController.prepend RedmineOrganizations::Patches::UsersControllerPatch
 
 class UsersController < ApplicationController
 

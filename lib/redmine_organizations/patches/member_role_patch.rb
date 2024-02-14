@@ -1,11 +1,11 @@
 require_dependency 'member_role'
 
-module PluginOrganization
-  module MemberRole
+module RedmineOrganizations::Patches
+  module MemberRolePatch
     # NO nil member
     def add_role_to_group_users
       super unless self.member.nil?
     end
   end
 end
-MemberRole.prepend PluginOrganization::MemberRole
+MemberRole.prepend RedmineOrganizations::Patches::MemberRolePatch

@@ -38,9 +38,9 @@ module RedmineOrganizations::Patches
       end
       if managers_user_ids.exclude?(User.current.id)
         render_403
-        return false
+      else
+        true
       end
-      true
 
     end
 

@@ -7,10 +7,10 @@ describe "Organization" do
   it "should test_organization_tree_sorting" do
     o = Organization.create(:name => "Team C", :parent_id => 1)
     expect(o.left_sibling.name).to eq "Team B"
-    o.update_attributes(:name => "Team 0")
+    o.update(name: "Team 0")
     expect(o.right_sibling.name).to eq "Team A"
     expect(o.left_sibling).to be_nil
-    o.update_attributes(:name => "A new org", :parent_id => nil)
+    o.update(name: "A new org", parent_id: nil)
     expect(o.right_sibling.name).to eq "Org A"
   end
 

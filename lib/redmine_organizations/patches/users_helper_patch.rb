@@ -1,6 +1,6 @@
 require_dependency 'users_helper'
 
-module UsersHelper
+module RedmineOrganizations::Patches::UsersHelperPatch
   def user_settings_tabs
     tabs = [{:name => 'general', :partial => 'users/general', :label => :label_general},
             {:name => 'organizations', :partial => 'users/organizations', :label => :label_organization_plural},
@@ -12,3 +12,6 @@ module UsersHelper
     tabs
   end
 end
+
+UsersHelper.prepend RedmineOrganizations::Patches::UsersHelperPatch
+ActionView::Base.prepend UsersHelper

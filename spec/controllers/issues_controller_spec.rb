@@ -72,7 +72,8 @@ describe IssuesController, :type => :controller do
     expect(ActionMailer::Base.deliveries.size).to eq 2
 
     mails = ActionMailer::Base.deliveries
-    notified_addresses = mails.map { |m| m['bcc'].to_s }
+    email_field = Redmine::VERSION::MAJOR >= 5 ? 'to' : 'bcc'
+    notified_addresses = mails.map { |m| m[email_field].to_s }
     expect(notified_addresses).to include(User.find(2).mail)
     expect(notified_addresses).to include(User.find(3).mail)
 
