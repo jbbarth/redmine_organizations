@@ -43,10 +43,6 @@ class User < Principal
   end
 
   def is_admin_or_instance_manager?
-
-    puts "self.try(:instance_manager): #{self.try(:instance_manager)}"
-    puts "admin?: #{admin?}"
-
     admin? || (self.try(:instance_manager) == true)
   end
 
