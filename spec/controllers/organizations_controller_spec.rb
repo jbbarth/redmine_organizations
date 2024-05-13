@@ -180,15 +180,16 @@ describe OrganizationsController, :type => :controller do
       parent_id = organization_2.parent_id
       json_response = JSON.parse(response.body)
 
-      expect(json_response["organization"]['id']).to eq(organization_2.id)
-      expect(json_response["organization"]['name']).to eq(organization_2.name)
-      expect(json_response["organization"]['description']).to eq(organization_2.description)
-      expect(json_response["organization"]['parent']['id']).to eq(parent_id)
-      expect(json_response["organization"]['parent']['name']).to eq(Organization.find(parent_id).fullname)
-      expect(json_response["organization"]['mail']).to eq(organization_2.mail)
-      expect(json_response["organization"]['direction']).to eq(organization_2.direction)
-      expect(json_response["organization"]['name_with_parents']).to eq(organization_2.name_with_parents)
-      expect(json_response["organization"]['top_department_in_ldap']).to eq(organization_2.top_department_in_ldap)
+      json_organization = json_response["organization"]
+      expect(json_organization['id']).to eq(organization_2.id)
+      expect(json_organization['name']).to eq(organization_2.name)
+      expect(json_organization['description']).to eq(organization_2.description)
+      expect(json_organization['parent']['id']).to eq(parent_id)
+      expect(json_organization['parent']['name']).to eq(Organization.find(parent_id).fullname)
+      expect(json_organization['mail']).to eq(organization_2.mail)
+      expect(json_organization['direction']).to eq(organization_2.direction)
+      expect(json_organization['name_with_parents']).to eq(organization_2.name_with_parents)
+      expect(json_organization['top_department_in_ldap']).to eq(organization_2.top_department_in_ldap)
     end
 
     it "returns organization users in JSON format" do
@@ -211,6 +212,71 @@ describe OrganizationsController, :type => :controller do
     it "returns a 404 error when the organization does not exist" do
       get :show, params: { id: 80 }
       expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "GET #index/api" do
+    let(:organizations) { Organization.all }
+    before do
+      Setting.rest_api_enabled = '1'
+      request.headers['Authorization'] = ActionController::HttpAuthentication::Basic.encode_credentials("admin", "admin")
+      User.find(1).update_attribute('organization_id', 1)
+      User.find(4).update_attribute('organization_id', 1)
+      User.find(2).update_attribute('organization_id', 2)
+      User.find(7).update_attribute('organization_id', 2)
+    end
+
+    it "returns a success response" do
+      get :index, params: { :format => :json }
+      expect(response).to be_successful
+      expect(response).to have_http_status(200)
+    end
+
+    it "renders the index view" do
+      get :index, params: { format: :json }
+      expect(response).to render_template(:index)
+    end
+
+    it "returns organizations details in JSON format" do
+      get :index, params: { format: :json }
+
+      expect(response).to have_http_status(:success)
+
+      json_response = JSON.parse(response.body)
+      expect(json_response["organizations"].count).to eq(Organization.count)
+
+      organizations.each do |organization|
+        json_organization = json_response["organizations"].find { |org| org["id"] == organization.id }
+
+        expect(json_organization["name"]).to eq(organization.name)
+        expect(json_organization["description"]).to eq(organization.description)
+        expect(json_organization['parent']['id']).to eq(organization.parent_id) if json_organization['parent'].present?
+        expect(json_organization["mail"]).to eq(organization.mail)
+        expect(json_organization["direction"]).to eq(organization.direction)
+        expect(json_organization["name_with_parents"]).to eq(organization.name_with_parents)
+        expect(json_organization["top_department_in_ldap"]).to eq(organization.top_department_in_ldap)
+
+      end
+    end
+
+    it "returns organizations users in JSON format" do
+      get :index, params: { include: ["users"], format: 'json' }
+
+      expect(response).to have_http_status(:success)
+      json_response = JSON.parse(response.body)
+
+      json_response["organizations"].each_with_index do |json_organization, index|
+        organization = organizations[index]
+
+        json_users = json_organization["users"]
+        expect(json_users.count).to eq(organization.users.count)
+
+        organization.users.each do |user|
+          json_user = json_users.find { |u| u["id"] == user.id }
+          expect(json_user).to_not be_nil
+        end
+      end
+
     end
   end
 

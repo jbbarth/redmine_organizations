@@ -14,7 +14,14 @@ class OrganizationsController < ApplicationController
     @managers_by_organization = @organizations.map { |o| [o.id, o.managers.map(&:name)] }.to_h
     @team_leaders_by_organization = @organizations.map { |o| [o.id, o.team_leaders.map(&:name)] }.to_h
     @managed_organizations = Organization.managed_by(user: User.current)
-    render :layout => (User.current.admin? ? 'admin' : 'base')
+
+    respond_to do |format|
+      format.html do
+        render :layout => (User.current.admin? ? 'admin' : 'base')
+      end
+      format.api
+    end
+
   end
 
   def show
