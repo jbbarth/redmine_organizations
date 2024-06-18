@@ -2,7 +2,7 @@ require_dependency 'users_controller'
 
 module RedmineOrganizations::Patches
   module UsersControllerPatch
-    
+
     def create
 
       if params[:back_url].present?
@@ -56,10 +56,14 @@ class UsersController < ApplicationController
   before_action :require_admin, :except => [:show, :new, :create]
   before_action :require_admin_or_manager, :only => [:new, :create]
   after_action :update_memberships_according_to_new_orga, only: [:update]
+  before_action :get_old_orga, only: [:update]
 
   private
 
     def update_memberships_according_to_new_orga
+      if @user.present? && @old_orga.present? && @old_orga!= @user.organization
+        remove_old_organization_roles
+      end
 
       if @user.present? &&
           @user.errors.empty? &&
@@ -87,5 +91,15 @@ class UsersController < ApplicationController
             end
         end
       end
+    end
+
+    def get_old_orga
+      @old_orga = @user.organization if @user.present?
+    end
+
+    def remove_old_organization_roles
+      filtered_managers =@user.organization_managers.where(organization_id: @old_orga.id)
+      filtered_managers.destroy_all
+      @user.organization_team_leaders.destroy_all
     end
 end
