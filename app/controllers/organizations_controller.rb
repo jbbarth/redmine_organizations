@@ -4,7 +4,8 @@ class OrganizationsController < ApplicationController
   before_action :require_admin_or_manager, :except => [:index, :show, :autocomplete_users, :fetch_users_by_orga]
   before_action :require_login, :only => [:index, :show, :autocomplete_users]
   before_action :find_project_by_project_id, :only => [:autocomplete_users]
-  after_action :update_fullname_and_identifier_of_children, only: [:update]
+  after_action  :update_fullname_and_identifier_of_children, only: [:update]
+  accept_api_auth :index, :show
 
   layout 'admin'
 
@@ -13,7 +14,14 @@ class OrganizationsController < ApplicationController
     @managers_by_organization = @organizations.map { |o| [o.id, o.managers.map(&:name)] }.to_h
     @team_leaders_by_organization = @organizations.map { |o| [o.id, o.team_leaders.map(&:name)] }.to_h
     @managed_organizations = Organization.managed_by(user: User.current)
-    render :layout => (User.current.admin? ? 'admin' : 'base')
+
+    respond_to do |format|
+      format.html do
+        render :layout => (User.current.admin? ? 'admin' : 'base')
+      end
+      format.api
+    end
+
   end
 
   def show
@@ -40,8 +48,10 @@ class OrganizationsController < ApplicationController
     project_ids = Member.joins(:user).where('users.status = ? AND users.organization_id IN (?)', User::STATUS_ACTIVE, organization_ids).map(&:project_id).uniq
     @issues = Issue.open.visible.on_active_project.where(project_id: project_ids).joins(:priority).order("enumerations.position desc").limit(50)
 
-    render :layout => 'base'
-
+    respond_to do |format|
+      format.html
+      format.api
+    end
   rescue ActiveRecord::RecordNotFound
     render_404
   end

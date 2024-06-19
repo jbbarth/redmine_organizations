@@ -1,0 +1,28 @@
+api.array :organizations do
+  @organizations.each do |organization|
+    api.organization do
+      api.id                       organization.id
+      api.name                     organization.name
+      api.description              organization.description
+      api.parent(:id => organization.parent.id, :name => organization.parent.name) if organization.parent
+      api.mail                     organization.mail
+      api.direction                organization.direction
+      api.name_with_parents        organization.name_with_parents
+
+      api.top_department_in_ldap   organization.top_department_in_ldap
+      api.created_at               organization.created_at
+      api.updated_at               organization.updated_at
+
+      api.array :users do
+        organization.users.each do |user|
+          api.users do
+            api.id          user.id
+            api.name        user.name
+            api.manager     organization.managers.include?(user)
+            api.team_leader organization.team_leaders.include?(user)
+          end
+        end
+      end if include_in_api_response?('users')
+    end
+  end
+end
