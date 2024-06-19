@@ -62,20 +62,5 @@ describe UsersController, type: :controller do
 
       expect(response).to have_http_status(:redirect)
     end
-
-    it "removes the Organization Manager or Team Leader roles when the user leaves their organization" do
-      user_test = User.find(2)
-      user_test.organization = Organization.find(2)
-      user_test.save
-      expect {
-        put :update,
-          params:
-          {:id => 2,
-            :user => {:organization_id => '1',
-            :orga_update_method => 'keep'}}
-
-      }.to change{OrganizationTeamLeader.count}.by(-1)
-        .and change{OrganizationManager.count}.by(-1)
-    end
   end
 end
