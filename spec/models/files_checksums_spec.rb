@@ -8,8 +8,8 @@ describe "FilesChecksums" do
   end
 
   it "should ensure project patch file is up to date" do
-    # 5.1.2 & 4.2.9 checksum (the self.allowed_to_condition method is completely overridden and should be reviewed if this test breaks)
-    assert_checksum %w(c31728315eed8b65e2e906c264a1a8ae b8ce67efe695bc2381e56db07a0a889e a11cce5462e20a51064f9a72834ac527), "app/models/project.rb"
+    # 5.1.3 & 4.2.9 checksum (the self.allowed_to_condition method is completely overridden and should be reviewed if this test breaks)
+    assert_checksum %w(d3b53e9654bfdd6969c69d7ea7852cf8 b8ce67efe695bc2381e56db07a0a889e a11cce5462e20a51064f9a72834ac527), "app/models/project.rb"
   end
 
 end
