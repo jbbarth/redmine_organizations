@@ -157,4 +157,13 @@ describe Organizations::TeamLeadersController, :type => :controller do
     expect(Project.find(5).users).to_not include User.find(4)
   end
 
+  it "should delete team leader from an organization" do
+    @request.session[:user_id] = 1 # Admin
+    expect do
+        delete :destroy, :params => {
+          :team_leader_id => 2,
+          :id => 2
+        }, format: :js
+      end.to change { OrganizationTeamLeader.count }.by(-1)
+  end
 end
