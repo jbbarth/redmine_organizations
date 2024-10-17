@@ -1,0 +1,8 @@
+<% if @issue.organizations.present? %>
+  <hr>
+  <label class="label" id="label_related_organizations"><%= l("field_issue_organizations") %></label>
+  <span class="value">
+    <%= @issue.organizations.map { |o| link_to_organization(o, link_ancestors: false, title: o.users.active.map(&:to_s).join(', ')) }.to_sentence.html_safe %>
+  </span>
+<% end %>
+

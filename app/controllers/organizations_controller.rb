@@ -1,10 +1,12 @@
 class OrganizationsController < ApplicationController
 
   before_action :find_organization_by_id, only: [:show, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user]
-  before_action :require_admin_or_manager, :except => [:index, :show, :autocomplete_users, :fetch_users_by_orga]
-  before_action :require_login, :only => [:index, :show, :autocomplete_users]
+  before_action :require_admin_or_manager, :except => [:index, :show, :autocomplete_users, :fetch_users_by_orga, :search]
+  before_action :require_login, :only => [:index, :show, :autocomplete_users, :search]
   before_action :find_project_by_project_id, :only => [:autocomplete_users]
   after_action :update_fullname_and_identifier_of_children, only: [:update]
+
+  accept_api_auth :search
 
   layout 'admin'
 
@@ -14,6 +16,18 @@ class OrganizationsController < ApplicationController
     @team_leaders_by_organization = @organizations.map { |o| [o.id, o.team_leaders.map(&:name)] }.to_h
     @managed_organizations = Organization.managed_by(user: User.current)
     render :layout => (User.current.admin? ? 'admin' : 'base')
+  end
+
+  def search
+    q = params['organization']
+    @organizations = Organization.order('lft').where("LOWER(name_with_parents) LIKE LOWER(?)", "%#{q}%")
+
+    respond_to do |format|
+      format.api do
+        # @offset, @limit = api_offset_and_limit
+        @organizations_count = @organizations.count
+      end
+    end
   end
 
   def show

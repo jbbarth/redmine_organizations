@@ -12,6 +12,7 @@ RedmineApp::Application.routes.draw do
       post :ldap_sync_check_status
       get :add_organization_from_ldap
       post :add_all_organizations_from_ldap
+      get :search
     end
   end
   namespace :organizations do

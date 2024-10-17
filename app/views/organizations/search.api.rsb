@@ -1,0 +1,13 @@
+api.array :organizations, api_meta(:total_count => @organizations_count, :offset => @offset, :limit => @limit) do
+  @organizations.each do |organization|
+    api.organization do
+      api.id organization.id
+      api.name organization.name
+      api.name_with_parents organization.name_with_parents
+      api.identifier organization.identifier
+
+      api.created_at organization.created_at
+      api.updated_at organization.updated_at
+    end
+  end
+end

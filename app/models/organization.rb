@@ -16,6 +16,8 @@ class Organization < ActiveRecord::Base
   has_many :team_leaders, through: :organization_team_leaders, :source => :user
   has_many :organization_notifications
   has_many :notified_projects, through: :organization_notifications, :source => :project
+  has_many :issues_organizations, dependent: :destroy
+  has_many :issues, through: :issues_organizations
 
   safe_attributes :name, :parent_id, :description, :mail, :direction, :name_with_parents, :notified, :top_department_in_ldap
 

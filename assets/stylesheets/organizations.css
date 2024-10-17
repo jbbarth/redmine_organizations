@@ -72,6 +72,12 @@ textarea#organization_description{
 #tab-content-managers #principals {max-height: 400px; overflow: auto;}
 input#manager_search {width:90%}
 
+#label_related_organizations {
+    min-width: 175px;
+    font-weight: bold;
+    display: inline-block;
+}
+
 .ldap_sync_orga {
     border-radius: 10px;
     width: 10px;

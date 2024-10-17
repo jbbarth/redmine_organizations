@@ -15,6 +15,7 @@ module RedmineOrganizations
       require_relative 'patches/group_patch'
       require_relative 'patches/issue_patch'
       require_relative 'patches/issue_query_patch'
+      require_relative 'patches/issues_controller_patch'
       require_relative 'patches/mailer_patch'
       require_relative 'patches/project_patch'
       require_relative 'patches/users_helper_patch'

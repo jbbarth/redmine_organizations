@@ -2,6 +2,9 @@ require_dependency "issue"
 
 class Issue < ActiveRecord::Base
 
+  has_many :issues_organizations, dependent: :destroy
+  has_many :organizations, through: :issues_organizations
+
   # Preloads author's organization for a collection of issues
   def self.load_author_organization(issues, user = User.current)
     if issues.any?
@@ -40,6 +43,14 @@ class Issue < ActiveRecord::Base
     end
   end
 
+  def related_organizations_members
+    organizations.map(&:users).flatten.uniq.compact
+  end
+
+  def shared_with?(user = User.current)
+    related_organizations_members.include?(user)
+  end
+
 end
 
 module RedmineOrganizations::Patches::IssuePatch
@@ -55,5 +66,148 @@ module RedmineOrganizations::Patches::IssuePatch
                 .pluck(:mail)
                 .select(&:present?)
   end
+
+  # Returns true if usr or current user is allowed to view the issue
+  def visible?(usr = nil)
+    visibility = super
+    if visibility
+      return visibility
+    else
+      usr ||= User.current
+      user_organization = usr.organization
+      if self.organizations.include?(user_organization)
+        super(author)
+      else
+        visibility
+      end
+    end
+  end
+
+  # Returns the users that should be notified
+  def notified_users
+    super | notified_as_member_of_related_organizations
+  end
+
+  def notified_as_member_of_related_organizations
+    related_organizations_members.select { |u| u.active? && u.notify_about?(self) }
+  end
+
+  def editable?(user = User.current)
+    super || (shared_with?(user) && author.present? ? super(author.present? ? author : user) : false)
+  end
+
+  # Returns true if user or current user is allowed to edit the issue
+  def attributes_editable?(user = User.current)
+    super || (shared_with?(user) && author.present? ? super(author.present? ? author : user) : false)
+  end
+
+  def attachments_addable?(user = User.current)
+    super || (shared_with?(user) && author.present? ? super(author.present? ? author : user) : false)
+  end
+
+  # Overrides Redmine::Acts::Attachable::InstanceMethods#attachments_editable?
+  def attachments_editable?(user = User.current)
+    super || (shared_with?(user) && author.present? ? super(author) : false)
+  end
+
+  # Returns true if user or current user is allowed to add notes to the issue
+  def notes_addable?(user = User.current)
+    super || (shared_with?(user) && author.present? ? super(author) : false)
+  end
+
+  def visible_custom_field_values(user = nil)
+    if shared_with?(user)
+      super | super(author)
+    else
+      super
+    end
+  end
+
+  def safe_attributes=(attrs, user = User.current)
+    if shared_with?(user)
+      super | super(attrs, author)
+    else
+      super
+    end
+  end
+
+  def workflow_rule_by_attribute(user = nil)
+    if shared_with?(user)
+      super(author)
+    else
+      super
+    end
+  end
+
+  def visible_journals_with_index(user = User.current)
+    if shared_with?(user)
+      super(author)
+    else
+      super
+    end
+  end
+
+  def new_statuses_allowed_to(user = User.current, include_default = false)
+    if shared_with?(user)
+      super | super(author, include_default)
+    else
+      super
+    end
+  end
+
+  def css_classes(user = User.current)
+    if shared_with?(user)
+      super(author)
+    else
+      super
+    end
+  end
+
+  def allowed_target_projects_for_subtask(user = User.current)
+    if shared_with?(user)
+      super(author)
+    else
+      super
+    end
+  end
+
+  def allowed_target_projects(user = User.current, scope = nil)
+    if shared_with?(user)
+      super(author, scope)
+    else
+      super
+    end
+  end
+
+  def allowed_target_trackers(user = User.current)
+    if shared_with?(user)
+      super(author)
+    else
+      super
+    end
+  end
+
+  module ClassMethods
+    def visible_condition(user, options = {})
+      if user.organization_id.present?
+        organizations_issues_statement = Issue.joins(:issues_organizations)
+                                              .where("issues_organizations.organization_id = ?", user.organization_id)
+                                              .select(:id)
+                                              .to_sql
+        statement_through_related_organization = "#{Issue.table_name}.id IN (#{organizations_issues_statement})"
+
+        "(#{super} OR #{statement_through_related_organization})"
+      else
+        super
+      end
+    end
+  end
+
+  def self.prepended(base)
+    class << base
+      prepend ClassMethods
+    end
+  end
+
 end
 Issue.prepend RedmineOrganizations::Patches::IssuePatch
