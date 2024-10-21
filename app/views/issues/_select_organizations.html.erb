@@ -9,14 +9,14 @@
   </p>
 
   <script>
-      let data = [];
+      let issue_organizations = [];
       <% @issue.organizations.each do |organization| %>
-      data.push({id: '<%= organization.id %>', text: '<%= organization.name_with_parents %>'});
+      issue_organizations.push({id: '<%= organization.id %>', text: '<%= organization.name_with_parents %>'});
       <% end %>
       $("#issue_organization_ids").select2({
           containerCss: {width: '500px', minwidth: '500px'},
           width: 'style',
-          data: data,
+          data: issue_organizations,
           minimumInputLength: 3,
           language: {
               inputTooShort: function () {
