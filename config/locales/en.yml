@@ -8,6 +8,7 @@ en:
   field_parent_organization: "Parent organization"
   field_hidden_on_overview: "Hide on project overview"
   field_direction: "Is a direction"
+  field_issue_organizations: "Associated organizations"
   text_hide_groups_admin_menu: "Hide groups"
   undefined: "Undefined"
   update_user_orga: "Update %{username}'s organization :"
@@ -33,3 +34,5 @@ en:
   organization_delete_all_confirm: "Are you sure to remove all members of this organization?"
   inherited_from_parent_project: "Inherited from parent project"
   field_updated_by_organization: Updated by member of
+  permission_share_issues_with_organizations: "Share issues with associated organizations"
+  field_related_organizations: "Associated organizations"

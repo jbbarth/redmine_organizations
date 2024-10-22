@@ -10,7 +10,7 @@ fr:
   field_parent_organization: "Organisation parent"
   field_hidden_on_overview: "Cacher sur l'aperçu des projets"
   field_direction: "Est une direction"
-  field_issue_organizations: "Organisations concernées"
+  field_issue_organizations: "Organisations associées"
   text_hide_groups_admin_menu: "Cacher les 'Groupes'"
   undefined: "Indéterminé"
   update_user_orga: "Modifier l'organisation de %{username} :"
@@ -61,4 +61,4 @@ fr:
   field_top_department_in_ldap: "Département racine dans le LDAP"
   field_updated_by_organization: Mise à jour par un membre de
   permission_share_issues_with_organizations: "Partager des demandes avec des organisations"
-  field_related_organizations: "Organisations concernées"
+  field_related_organizations: "Organisations associées"
