@@ -2,6 +2,7 @@ require_dependency 'issue_query'
 
 class IssueQuery < Query
   self.available_columns << QueryColumn.new(:author_organization, :groupable => false) if self.available_columns.select { |c| c.name == :author_organization }.empty?
+  self.available_columns << QueryColumn.new(:related_organizations, :groupable => false, sortable: false) if self.available_columns.select { |c| c.name == :related_organizations }.empty?
 end
 
 module RedmineOrganizations::Patches
@@ -28,6 +29,10 @@ module RedmineOrganizations::Patches
                            :type => :list,
                            :values => lambda { organization_values },
                            :label => :field_updated_by_organization
+      add_available_filter "related_organizations",
+                           :type => :list_optional,
+                           :values => lambda { organization_values },
+                           :label => :field_related_organizations
     end
 
     def sql_for_author_organization_field(field, operator, value)
@@ -47,6 +52,25 @@ module RedmineOrganizations::Patches
                  "1=0"
         sql_not = operator == "!" ? 'NOT' : ''
         "(#{Issue.table_name}.author_id #{sql_not} IN (SELECT DISTINCT #{User.table_name}.id FROM #{User.table_name} WHERE #{cond}))"
+      end
+    end
+
+    def sql_for_related_organizations_field(field, operator, value)
+      value.push User.current&.organization&.id&.to_s if value.delete('mine')
+
+      case operator
+      when "*", "!*" # All / None
+        sql_not = operator == "!*" ? 'NOT' : ''
+        "(#{sql_not} EXISTS (SELECT 1 FROM #{IssuesOrganization.table_name}" +
+          " WHERE #{Issue.table_name}.id = #{IssuesOrganization.table_name}.issue_id))"
+      when "=", "!"
+        cond = value.any? ?
+                 "issues_orgas.organization_id IN (" + value.collect { |val| "'#{self.class.connection.quote_string(val)}'" }.join(",") + ")" :
+                 "1=0"
+        sql_not = operator == "!" ? 'NOT' : ''
+        "(#{sql_not} EXISTS (SELECT 1 FROM #{IssuesOrganization.table_name} issues_orgas" +
+          " WHERE #{Issue.table_name}.id = issues_orgas.issue_id" +
+          " AND #{cond}))"
       end
     end
 

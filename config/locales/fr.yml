@@ -61,3 +61,4 @@ fr:
   field_top_department_in_ldap: "Département racine dans le LDAP"
   field_updated_by_organization: Mise à jour par un membre de
   permission_share_issues_with_organizations: "Partager des demandes avec des organisations"
+  field_related_organizations: "Organisations concernées"

@@ -51,6 +51,10 @@ class Issue < ActiveRecord::Base
     related_organizations_members.include?(user)
   end
 
+  def related_organizations
+    organizations.to_a
+  end
+
 end
 
 module RedmineOrganizations::Patches::IssuePatch

@@ -29,7 +29,7 @@ describe "IssueQueryPatch" do
       query = IssueQuery.new(:name => '_')
       filter_name = "updated_by_organization"
 
-      query.filters = { filter_name => {:operator => '=', :values => [@org.id.to_s] }}
+      query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s] } }
 
       expect(find_issues_with_query(query).map(&:id).sort).to include(2, 3)
     end
@@ -41,7 +41,7 @@ describe "IssueQueryPatch" do
 
       query = IssueQuery.new(:name => '_')
       filter_name = "updated_by_organization"
-      query.filters = { filter_name => {:operator => '!', :values => [@org.id.to_s] }}
+      query.filters = { filter_name => { :operator => '!', :values => [@org.id.to_s] } }
 
       expect(find_issues_with_query(query).map(&:id).sort).to_not include(2, 3)
     end
@@ -57,7 +57,7 @@ describe "IssueQueryPatch" do
 
       query = IssueQuery.new(:name => '_')
       filter_name = "updated_by_organization"
-      query.filters = { filter_name => {:operator => '=', :values => [@org.id.to_s, org_test.id.to_s] }}
+      query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s, org_test.id.to_s] } }
 
       expect(find_issues_with_query(query).map(&:id).sort).to include(2, 3, 4)
     end
@@ -73,7 +73,7 @@ describe "IssueQueryPatch" do
 
       query = IssueQuery.new(:name => '_')
       filter_name = "updated_by_organization"
-      query.filters = { filter_name => {:operator => '=', :values => [@org.id.to_s, org_test.id.to_s] }}
+      query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s, org_test.id.to_s] } }
 
       expect(find_issues_with_query(query).map(&:id).sort).to_not include([2, 3, 4])
     end
@@ -84,14 +84,20 @@ describe "IssueQueryPatch" do
 
       query = IssueQuery.new(:name => '_')
       filter_name = "updated_by_organization"
-      query.filters = {filter_name => {:operator => '=', :values => [@org.id.to_s]}}
+      query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s] } }
 
       expect(find_issues_with_query(query).map(&:id).sort).to eq([2, 3])
 
-      User.current =  User.anonymous
-      query.filters = {filter_name => {:operator => '=', :values => [@org.id.to_s]}}
+      User.current = User.anonymous
+      query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s] } }
 
       expect(find_issues_with_query(query).map(&:id).sort).to eq([3])
+    end
+  end
+
+  context "filter issues by related organizations" do
+    it "adds a relate organization column" do
+      expect(IssueQuery.available_columns.find { |column| column.name == :related_organizations }).to be_present
     end
   end
 end
