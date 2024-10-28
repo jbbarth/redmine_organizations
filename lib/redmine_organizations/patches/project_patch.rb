@@ -100,12 +100,15 @@ class Project < ActiveRecord::Base
   end
 
   # Builds a nested hash of users sorted by role and organization
-  # => { Role(1) => { Org(1) => [ User(1), User(2), ... ] } }
+  # => { Role(1) => { Org(1) => [ User(1), User(2), ... ] } }
   #
   # TODO: simplify / refactor / test it correctly !!!
   def users_by_role_and_organization
     dummy_org = Organization.new(:name => l(:label_others))
-    self.members.map do |member|
+
+    members = self.members.includes(:roles, user: :organization)
+
+    members.map do |member|
       member.roles.map do |role|
         { :user => member.user, :role => role, :organization => member.user.organization }
       end
