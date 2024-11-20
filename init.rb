@@ -33,3 +33,9 @@ Redmine::MenuManager.map :top_menu do |menu|
             :if => Proc.new {User.current.logged?}, :last => true
 end
 
+# Support for Redmine 5
+if Redmine::VERSION::MAJOR < 6
+  class ApplicationRecord < ActiveRecord::Base
+    self.abstract_class = true
+  end
+end
