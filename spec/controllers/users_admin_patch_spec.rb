@@ -4,8 +4,6 @@ describe "UsersAdminPatch", :type => :controller do
   render_views
   before do
     @controller = UsersController.new
-    @request    = ActionDispatch::TestRequest.create
-    @response   = ActionDispatch::TestResponse.new
     User.current = nil
     @request.session[:user_id] = 1 # admin
   end

@@ -1,4 +1,4 @@
-require "spec_helper"
+require "rails_helper"
 
 describe "IssueQueryPatch" do
   fixtures :organizations, :users, :roles, :projects, :members, :trackers
@@ -7,13 +7,15 @@ describe "IssueQueryPatch" do
     before do
       @org = Organization.create(:name => "Team C")
       @user = User.generate!
+      expect(@user).to be_present
       @user.update_attribute(:organization_id, @org.id)
+      User.current = User.anonymous
     end
 
-    def find_issues_with_query(query)
+    def find_issues_ids_with_query(query)
       Issue.joins(:status, :tracker, :project, :priority).where(
         query.statement
-      ).to_a
+      ).order(:id).pluck(:id)
     end
 
     it "Should have updated_by_organization in available_filters" do
@@ -31,7 +33,7 @@ describe "IssueQueryPatch" do
 
       query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s] } }
 
-      expect(find_issues_with_query(query).map(&:id).sort).to include(2, 3)
+      expect(find_issues_ids_with_query(query)).to include(2, 3)
     end
 
     it "operator equal ! , one organization" do
@@ -43,7 +45,7 @@ describe "IssueQueryPatch" do
       filter_name = "updated_by_organization"
       query.filters = { filter_name => { :operator => '!', :values => [@org.id.to_s] } }
 
-      expect(find_issues_with_query(query).map(&:id).sort).to_not include(2, 3)
+      expect(find_issues_ids_with_query(query)).to_not include(2, 3)
     end
 
     it "operator equal = , multi organizations" do
@@ -59,7 +61,7 @@ describe "IssueQueryPatch" do
       filter_name = "updated_by_organization"
       query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s, org_test.id.to_s] } }
 
-      expect(find_issues_with_query(query).map(&:id).sort).to include(2, 3, 4)
+      expect(find_issues_ids_with_query(query)).to include(2, 3, 4)
     end
 
     it "operator equal ! , multi organizations" do
@@ -75,23 +77,23 @@ describe "IssueQueryPatch" do
       filter_name = "updated_by_organization"
       query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s, org_test.id.to_s] } }
 
-      expect(find_issues_with_query(query).map(&:id).sort).to_not include([2, 3, 4])
+      expect(find_issues_ids_with_query(query)).to_not include([2, 3, 4])
     end
 
-    it "Should ignore private notes that are not visible" do
+    it "ignores private notes that are not visible" do
       Journal.create!(:user_id => @user.id, :journalized => Issue.find(2), :notes => 'Notes', :private_notes => true)
       Journal.create!(:user_id => @user.id, :journalized => Issue.find(3), :notes => 'Notes')
 
       query = IssueQuery.new(:name => '_')
       filter_name = "updated_by_organization"
-      query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s] } }
 
-      expect(find_issues_with_query(query).map(&:id).sort).to eq([2, 3])
+      User.current = @user
+      query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s] } }
+      expect(find_issues_ids_with_query(query)).to eq([2, 3])
 
       User.current = User.anonymous
       query.filters = { filter_name => { :operator => '=', :values => [@org.id.to_s] } }
-
-      expect(find_issues_with_query(query).map(&:id).sort).to eq([3])
+      expect(find_issues_ids_with_query(query)).to eq([3])
     end
   end
 

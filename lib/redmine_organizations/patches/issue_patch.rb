@@ -1,6 +1,6 @@
 require_dependency "issue"
 
-class Issue < ActiveRecord::Base
+class Issue
 
   has_many :issues_organizations, dependent: :destroy
   has_many :organizations, through: :issues_organizations

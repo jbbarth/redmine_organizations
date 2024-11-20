@@ -29,6 +29,6 @@ end
 
 Redmine::FieldFormat.include RedmineOrganizations::Patches::FieldFormatPatch
 
-class CustomField < ActiveRecord::Base
+class CustomField
   safe_attributes('direction_only')
 end

@@ -2,7 +2,7 @@ require_dependency 'project'
 require_dependency 'principal'
 require_dependency 'user'
 
-class Project < ActiveRecord::Base
+class Project
 
   has_many :organization_roles, :dependent => :destroy
   has_many :organization_notifications

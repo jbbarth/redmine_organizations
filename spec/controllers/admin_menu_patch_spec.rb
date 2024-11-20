@@ -8,8 +8,6 @@ describe "AdminMenuPatch", :type => :controller do
 
   before do
     @controller = AdminController.new
-    @request    = ActionDispatch::TestRequest.create
-    @response   = ActionDispatch::TestResponse.new
     User.current = nil
     @request.session[:user_id] = 1 # admin
   end

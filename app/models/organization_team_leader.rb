@@ -1,4 +1,4 @@
-class OrganizationTeamLeader < ActiveRecord::Base
+class OrganizationTeamLeader < ApplicationRecord
 
   belongs_to :user
   belongs_to :organization

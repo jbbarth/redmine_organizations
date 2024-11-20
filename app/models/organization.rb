@@ -1,4 +1,4 @@
-class Organization < ActiveRecord::Base
+class Organization < ApplicationRecord
   include Redmine::SafeAttributes
 
   acts_as_nested_set
