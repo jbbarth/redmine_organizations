@@ -2,7 +2,7 @@ require_dependency 'users_controller'
 
 module RedmineOrganizations::Patches
   module UsersControllerPatch
-    
+
     def create
 
       if params[:back_url].present?
