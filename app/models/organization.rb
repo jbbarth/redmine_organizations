@@ -21,7 +21,7 @@ class Organization < ApplicationRecord
 
   safe_attributes :name, :parent_id, :description, :mail, :direction, :name_with_parents, :notified, :top_department_in_ldap
 
-  attr_accessor :self_and_descendants_cached_ids, :self_and_ancestors_cached_ids
+  attr_accessor :self_and_descendants_cached_ids, :self_and_ancestors_cached_ids, :organization_non_member_roles_by_project
 
   before_validation :update_name_with_parents
 
@@ -208,9 +208,14 @@ class Organization < ApplicationRecord
   end
 
   def organization_non_member_roles_for_project(project)
-    Role.joins(:organization_non_member_roles).where("organization_non_member_roles.organization_id IN (?) AND organization_non_member_roles.project_id in (?)",
-                                                     self.self_and_ancestors_ids,
-                                                     project.self_and_ancestors.ids)
+    @organization_non_member_roles_by_project ||= {}
+    @organization_non_member_roles_by_project[project.id] ||= Role.joins(:organization_non_member_roles)
+                                                                  .where(
+                                                                    "organization_non_member_roles.organization_id IN (?)
+                                                                    AND organization_non_member_roles.project_id IN (?)",
+                                                                    self.self_and_ancestors_ids,
+                                                                    project.self_and_ancestors.ids
+                                                                  )
   end
 
 end
