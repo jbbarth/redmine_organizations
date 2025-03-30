@@ -1,6 +1,6 @@
 class Organizations::TeamLeadersController < ApplicationController
 
-  before_action :find_organization_by_id, only: [:update]
+  before_action :find_organization_by_id, only: [:update, :destroy]
   before_action :require_admin_or_manager
 
   def assign_to_team_projects
@@ -34,6 +34,15 @@ class Organizations::TeamLeadersController < ApplicationController
 
     respond_to do |format|
       format.js
+    end
+  end
+
+  def destroy
+    user = User.find(params[:team_leader_id])
+    @organization.team_leaders.delete(user)
+
+    respond_to do |format|
+      format.js { render js: "window.location.reload();" }
     end
   end
 
