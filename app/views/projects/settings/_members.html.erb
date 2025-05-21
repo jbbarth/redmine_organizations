@@ -28,7 +28,7 @@
       <% members_per_organization.each do |organization, members| %>
         <% if organization.present? %>
           <tr id="organization-<%= organization.id %>" class="organization">
-            <td class="name icon icon-group"><%= link_to_organization organization %></td>
+            <td class="name icon icon-group" style="display: table-cell;"><%= link_to_organization organization %></td>
             <td id="organization-<%= organization.id %>-form"
                 colspan="<%= Redmine::Plugin.installed?(:redmine_limited_visibility) ? "3" : "2" %>"
                 class="hidden form">
@@ -57,7 +57,7 @@
         <% members.each do |member| %>
           <% next if member.new_record? %>
           <tr id="member-<%= member.id %>" class="member">
-            <td class="name icon icon-<%= member.principal.class.name.downcase %>"><%= link_to_user member.principal %></td>
+            <td class="name"><%= link_to_user member.principal %></td>
             <td id="member-<%= member.id %>-form"
                 colspan="<%= Redmine::Plugin.installed?(:redmine_limited_visibility) ? "3" : "2" %>"
                 class="hidden form">
