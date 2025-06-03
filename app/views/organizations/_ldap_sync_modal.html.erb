@@ -9,7 +9,7 @@
           <%= content_tag(:span, "", class: "ldap_sync_orga green") if @synchronized_organizations.include?(orga) %>
           <%= content_tag(:span, "", class: "ldap_sync_orga orange") if @desynchronized_organizations.include?(orga) %>
           <%= content_tag(:span, orga, class: "orga") %>
-          <%= link_to '#', :onclick => "addOrganizationFromLdap(this); return false;", class: 'action', data: { 'orga' => orga, 'parent-orga-id' => @organization.id } do %>
+          <%= link_to sprite_icon('add', l(:label_message_new)), :onclick => "addOrganizationFromLdap(this); return false;", class: 'action', data: { 'orga' => orga, 'parent-orga-id' => @organization.id } do %>
             <%= content_tag(:span, "", class: "icon icon-add") %>
           <% end if @unknown_organizations.include?(orga) %>
         </div>
