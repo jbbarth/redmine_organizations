@@ -32,7 +32,7 @@
   </tr>
   </thead>
   <tbody>
-  <% Organization.each_with_level(@organizations) do |organization, level| %>
+  <% Organization.each_with_level(@organizations.to_a) do |organization, level| %>
     <tr class="organization <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
       <% if @synchronizable_organizations.include?(organization) %>
         <td><%= button_to "", { action: "ldap_sync_check_status",
@@ -62,7 +62,7 @@
         <%= link_to h(organization.name), { :controller => 'organizations', :action => 'show', :id => organization.identifier } %>
       </td>
       <td class="description"><%= h organization.description %></td>
-      <% nb_users = organization.users.size %>
+      <% nb_users = organization.users_count %>
       <td class="users <%= "zero" if nb_users == 0 && organization.children.empty? %>">
         <%= nb_users %>
       </td>

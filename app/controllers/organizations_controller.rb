@@ -139,20 +139,36 @@ class OrganizationsController < ApplicationController
   end
 
   def ldap_sync
-    return render_error :status => 403 unless Redmine::Plugin.installed?(:redmine_ldap_minequip)
+    return render_error status: 403 unless Redmine::Plugin.installed?(:redmine_ldap_minequip)
 
-    @organizations = Organization.order('lft').includes(:users, :children)
+    @organizations = Organization.order(:lft).includes(:children)
 
-    @synchronizable_organizations = Organization.order('lft').where(top_department_in_ldap: true).map(&:self_and_descendants).flatten.uniq
-    @fullpaths_from_top_department_in_ldap_by_organization_id = @synchronizable_organizations.map { |o| [o.id, o.fullpath_from_top_department_in_ldap_organization] }.to_h
+    top_departments = Organization.where(top_department_in_ldap: true).select(:lft, :rgt)
+    sql_condition = top_departments.map { |t| "(lft >= #{t.lft} AND rgt <= #{t.rgt})" }.join(' OR ')
+    @synchronizable_organizations = Organization.where(sql_condition).order(:lft)
+
+    @hierarchy_cache = OrganizationHierarchyCache.new(@synchronizable_organizations)
+
+    @fullpaths_from_top_department_in_ldap_by_organization_id =
+      @synchronizable_organizations.index_with do |org|
+        @hierarchy_cache.fullpath_from_top_department(org)
+      end
+
+    sync_org_ids = @synchronizable_organizations.map(&:id).to_set
+    intern_organizations = @organizations.map do |org|
+      if sync_org_ids.include?(org.id)
+        @fullpaths_from_top_department_in_ldap_by_organization_id[org.id]
+      else
+        org.name_with_parents
+      end
+    end
 
     ldap_organizations = LdapOrganization.order(:fullpath).pluck(:fullpath)
-    intern_organizations = Organization.order('lft').map { |o| @synchronizable_organizations.include?(o) ? @fullpaths_from_top_department_in_ldap_by_organization_id[o.id] : o.name_with_parents }
     @unknown_organizations = ldap_organizations - intern_organizations
     @synchronized_organizations = ldap_organizations & intern_organizations
     @desynchronized_organizations = intern_organizations - ldap_organizations
 
-    render :layout => 'admin'
+    render layout: 'admin'
   end
 
   def ldap_sync_check_status

@@ -8,7 +8,7 @@ require_dependency 'user'
 # User.scopes[:like] = Principal.scopes[:like]
 
 class User < Principal
-  belongs_to :organization
+  belongs_to :organization, counter_cache: true
   has_many :organization_managers, :dependent => :destroy
   has_many :organization_team_leaders, :dependent => :destroy
 

@@ -110,13 +110,16 @@ class Organization < ApplicationRecord
     name_to_(top_department_in_ldap_organization)
   end
 
-  def name_to_(organization)
-    return "" if organization.nil?
-    if self != organization && parent.present?
-      parent.name_to_(organization) + Organization::SEPARATOR + name
-    else
-      name
+  def name_to_(organization, orgs_by_id = {})
+    return '' unless organization
+
+    names = []
+    current = organization
+    while current
+      names.unshift(current.name)
+      current = orgs_by_id[current.parent_id]
     end
+    names.join(Organization::SEPARATOR)
   end
 
   def memberships
