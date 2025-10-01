@@ -24,7 +24,7 @@ class Project
     base_statement =
       if perm && perm.read?
         if Redmine::VERSION::MAJOR >= 5
-          "#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED} AND #{Project.table_name}.status <> #{Project::STATUS_SCHEDULED_FOR_DELETION}"
+          "#{Project.table_name}.status IN (#{Project::STATUS_ACTIVE}, #{Project::STATUS_CLOSED})"
         else
           "#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED}"
         end
