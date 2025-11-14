@@ -80,7 +80,7 @@ module RedmineOrganizations::Patches::IssuePatch
       usr ||= User.current
       user_organization = usr.organization
       if self.organizations.include?(user_organization)
-        super(author)
+        true # Always visible by associated organization members
       else
         visibility
       end
