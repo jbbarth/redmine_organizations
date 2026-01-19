@@ -1,8 +1,8 @@
-name: Tests 6.1.0
+name: Tests 6.1.1
 
 env:
   PLUGIN_NAME: redmine_organizations
-  REDMINE_VERSION: 6.1.0
+  REDMINE_VERSION: 6.1.1
 
 on:
   push:
