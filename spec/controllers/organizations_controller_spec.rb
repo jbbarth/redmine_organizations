@@ -1,5 +1,4 @@
 require "spec_helper"
-require "active_support/testing/assertions"
 
 describe OrganizationsController, :type => :controller do
 
@@ -7,8 +6,6 @@ describe OrganizationsController, :type => :controller do
            :organization_team_leaders, :members, :member_roles, :roles
 
   render_views
-
-  include ActiveSupport::Testing::Assertions
 
   describe 'Admin actions' do
     before do
@@ -18,7 +15,7 @@ describe OrganizationsController, :type => :controller do
     it "should get index" do
       get :index
       expect(response).to be_successful
-      refute_nil assigns(:organizations)
+      expect(assigns(:organizations)).not_to be_nil
     end
 
     it "should get new" do
@@ -27,9 +24,9 @@ describe OrganizationsController, :type => :controller do
     end
 
     it "should create organization" do
-      assert_difference('Organization.count') do
+      expect {
         post :create, params: {organization: {name: "orga-A"}}
-      end
+      }.to change { Organization.count }.by(1)
 
       expect(response).to redirect_to(organization_path(assigns(:organization)))
     end
@@ -50,9 +47,9 @@ describe OrganizationsController, :type => :controller do
     end
 
     it "should destroy organization" do
-      assert_difference('Organization.count', -1) do
+      expect {
         delete :destroy, params: {:id => Organization.find(3).to_param}
-      end
+      }.to change { Organization.count }.by(-1)
 
       expect(response).to redirect_to(organizations_path)
     end
@@ -63,26 +60,26 @@ describe OrganizationsController, :type => :controller do
       user.save
       delete :destroy, params: {:id => Organization.find(3).to_param}
       user.reload
-      assert_equal user.organization_id, nil
+      expect(user.organization_id).to be_nil
     end
 
     it "should autocomplete for users" do
       get :autocomplete_for_user, params: {:id => 2, :q => "adm"}
       expect(response).to be_successful
-      assert response.body.include?("Admin")
-      assert !response.body.include?("John")
+      expect(response.body).to include("Admin")
+      expect(response.body).not_to include("John")
     end
 
     it "should NOT create organizations with same names and parents" do
-      assert_no_difference('Organization.count') do
+      expect {
         post :create, params: {organization: {name: "Team A", parent_id: 1}}
-      end
+      }.not_to change { Organization.count }
     end
 
     it "should create organizations with same names but different parents" do
-      assert_difference('Organization.count') do
+      expect {
         post :create, params: {organization: {name: "Team A", parent_id: 3}}
-      end
+      }.to change { Organization.count }.by(1)
     end
 
     it "Changing name of parent organization should update full_name and identifier of its children" do
@@ -98,8 +95,8 @@ describe OrganizationsController, :type => :controller do
       org.reload
 
       org.children.each do |child|
-        assert_equal child.name_with_parents, new_name + Organization::SEPARATOR + child.name
-        assert_equal child.identifier, (new_name + Organization::SEPARATOR + child.name).parameterize
+        expect(child.name_with_parents).to eq(new_name + Organization::SEPARATOR + child.name)
+        expect(child.identifier).to eq((new_name + Organization::SEPARATOR + child.name).parameterize)
       end
     end
   end
@@ -139,14 +136,15 @@ describe OrganizationsController, :type => :controller do
     end
 
     it "should add a user to the organization" do
-      assert_difference 'Organization.find(1).users.count', 1 do
+      expect {
         post :add_users, params: {id: 1, user_ids: ["8"]}
-      end
+      }.to change { Organization.find(1).users.count }.by(1)
     end
+
     it "should add several users at a time to the organization" do
-      assert_difference 'Organization.find(1).users.count', 2 do
+      expect {
         post :add_users, params: {id: 1, user_ids: ["7", "8"]}
-      end
+      }.to change { Organization.find(1).users.count }.by(2)
     end
   end
 

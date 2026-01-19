@@ -3,8 +3,6 @@ require "spec_helper"
 describe Organizations::TeamLeadersController, :type => :controller do
 
   include Redmine::I18n
-  include Rails::Dom::Testing::Assertions
-  include ActiveSupport::Testing::Assertions
 
   fixtures :organizations, :organization_managers, :users, :organization_team_leaders, :members, :member_roles, :roles
 
@@ -29,10 +27,10 @@ describe Organizations::TeamLeadersController, :type => :controller do
     expect(organization.team_leaders).to include(User.find(2))
     expect(organization.team_leaders).to_not include(User.find(7))
 
-    assert_difference 'OrganizationTeamLeader.count', 1 do
+    expect {
       patch :update, params: { id: 2,
                                team_leader_ids: [2, 7] }
-    end
+    }.to change { OrganizationTeamLeader.count }.by(1)
 
     expect(response).to redirect_to(edit_organization_path(2, tab: 'users'))
     organization.reload
@@ -59,12 +57,11 @@ describe Organizations::TeamLeadersController, :type => :controller do
     organization = Organization.find(1)
     expect(organization.team_leaders).to include(User.find(1))
 
-    assert_difference 'ActionMailer::Base.deliveries.size', 1 do
-      assert_difference 'OrganizationTeamLeader.count', 1 do
-        patch :update, params: { id: 1,
-                                 team_leader_ids: [1, 3] }
-      end
-    end
+    expect {
+      patch :update, params: { id: 1,
+                               team_leader_ids: [1, 3] }
+    }.to change { OrganizationTeamLeader.count }.by(1)
+      .and change { ActionMailer::Base.deliveries.size }.by(1)
 
     expect(response).to redirect_to(edit_organization_path(1, tab: 'users'))
 
@@ -84,12 +81,11 @@ describe Organizations::TeamLeadersController, :type => :controller do
     organization = Organization.find(1)
     expect(organization.team_leaders).to include(User.find(1))
 
-    assert_difference 'ActionMailer::Base.deliveries.size', 1 do
-      assert_difference 'OrganizationTeamLeader.count', -1 do
-        patch :update, params: { id: 1,
-                                 team_leader_ids: [] }
-      end
-    end
+    expect {
+      patch :update, params: { id: 1,
+                               team_leader_ids: [] }
+    }.to change { OrganizationTeamLeader.count }.by(-1)
+      .and change { ActionMailer::Base.deliveries.size }.by(1)
 
     expect(response).to redirect_to(edit_organization_path(1, tab: 'users'))
 
@@ -114,10 +110,10 @@ describe Organizations::TeamLeadersController, :type => :controller do
       expect(organization.team_leaders).to include(User.find(1))
       expect(organization.team_leaders).to_not include(User.find(4))
 
-      assert_difference 'OrganizationTeamLeader.count', 1 do
+      expect {
         patch :update, params: { id: 1,
                                  team_leader_ids: [1, 4] }
-      end
+      }.to change { OrganizationTeamLeader.count }.by(1)
 
       organization.reload
       expect(organization.team_leaders).to include(User.find(4))
@@ -136,10 +132,10 @@ describe Organizations::TeamLeadersController, :type => :controller do
     expect(organization.team_leaders).to_not include(User.find(4))
 
     # First, set a new team leader
-    assert_difference 'OrganizationTeamLeader.count', 1 do
+    expect {
       patch :update, params: { id: 1,
                                team_leader_ids: [1, 4] }
-    end
+    }.to change { OrganizationTeamLeader.count }.by(1)
 
     organization.reload
     expect(organization.users).to include(User.find(4))
@@ -147,10 +143,10 @@ describe Organizations::TeamLeadersController, :type => :controller do
     expect(organization.team_leaders).to include(User.find(4))
 
     # Then, remove a team leader
-    assert_difference 'OrganizationTeamLeader.count', -1 do
+    expect {
       patch :update, params: { id: 1,
                                team_leader_ids: [1] }
-    end
+    }.to change { OrganizationTeamLeader.count }.by(-1)
 
     organization.reload
     expect(organization.team_leaders).to_not include(User.find(4))

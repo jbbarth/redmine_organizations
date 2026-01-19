@@ -3,8 +3,6 @@ require "spec_helper"
 describe Organizations::ManagersController, :type => :controller do
 
   include Redmine::I18n
-  include Rails::Dom::Testing::Assertions
-  include ActiveSupport::Testing::Assertions
 
   fixtures :organizations, :organization_managers, :users, :members, :member_roles, :roles
 
@@ -27,10 +25,10 @@ describe Organizations::ManagersController, :type => :controller do
     expect(organization.managers).to include(User.find(2))
     expect(organization.managers).to_not include(User.find(7))
 
-    assert_difference 'OrganizationManager.count', 2 do
+    expect {
       post :create, params: { id: 2,
                               manager_ids: [2, 7] }
-    end
+    }.to change { OrganizationManager.count }.by(2)
 
     expect(response).to redirect_to(edit_organization_path(organization.identifier, tab: 'managers'))
     organization.reload
@@ -60,12 +58,11 @@ describe Organizations::ManagersController, :type => :controller do
     organization = Organization.find(1)
     expect(organization.managers).to include(User.find(1))
 
-    assert_difference 'ActionMailer::Base.deliveries.size', 1 do
-      assert_difference 'OrganizationManager.count', 1 do
-        post :create, params: { id: 1,
-                                manager_ids: [3] }
-      end
-    end
+    expect {
+      post :create, params: { id: 1,
+                              manager_ids: [3] }
+    }.to change { OrganizationManager.count }.by(1)
+      .and change { ActionMailer::Base.deliveries.size }.by(1)
 
     expect(response).to redirect_to(edit_organization_path('org-a', tab: 'managers'))
 
@@ -85,12 +82,11 @@ describe Organizations::ManagersController, :type => :controller do
     organization = Organization.find(1)
     expect(organization.managers).to include(User.find(1))
 
-    assert_difference 'ActionMailer::Base.deliveries.size', 1 do
-      assert_difference 'OrganizationManager.count', -1 do
-        delete :destroy, params: { id: 1,
-                                   manager_id: [1] }
-      end
-    end
+    expect {
+      delete :destroy, params: { id: 1,
+                                 manager_id: [1] }
+    }.to change { OrganizationManager.count }.by(-1)
+      .and change { ActionMailer::Base.deliveries.size }.by(1)
 
     expect(response).to redirect_to(edit_organization_path('org-a', tab: 'managers'))
 
