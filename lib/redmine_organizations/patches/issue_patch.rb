@@ -9,28 +9,23 @@ class Issue
   def self.load_author_organization(issues, user = User.current)
     if issues.any?
       issue_ids = issues.map(&:id)
-      author_organization_per_issue = Issue.joins(author: :organization).
-        select('issues.id as issue_id, organizations.id as organization_id').
-        where('issues.id' => issue_ids).map do |issue|
-        {
-          issue_id: issue.issue_id,
-          organization_id: issue.organization_id
-        }
+
+      author_org_by_issue = Issue.joins(author: :organization)
+        .where(id: issue_ids)
+        .pluck('issues.id', 'organizations.id')
+        .to_h
+
+      org_ids = author_org_by_issue.values.uniq
+      org_names_by_id = if org_ids.any?
+        Organization.where(id: org_ids).pluck(:id, :name_with_parents).to_h
+      else
+        {}
       end
-      organizations_names = Organization.all.map do |o|
-        {
-          id: o.id,
-          name: o.to_s
-        }
-      end
+
       issues.each do |issue|
-        organization = author_organization_per_issue.detect { |i| i[:issue_id] == issue.id }
-        if organization
-          organization_name = organizations_names.detect { |n| n[:id] == organization[:organization_id] }
-          issue.instance_variable_set("@author_organization", organization_name ? organization_name[:name] : '')
-        else
-          issue.instance_variable_set("@author_organization", '')
-        end
+        org_id = author_org_by_issue[issue.id]
+        org_name = org_id ? org_names_by_id[org_id] : ''
+        issue.instance_variable_set("@author_organization", org_name || '')
       end
     end
   end

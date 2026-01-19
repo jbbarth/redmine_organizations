@@ -2,7 +2,7 @@ require_dependency 'users_controller'
 
 module RedmineOrganizations::Patches
   module UsersControllerPatch
-    
+
     def create
 
       if params[:back_url].present?
@@ -22,13 +22,13 @@ module RedmineOrganizations::Patches
             format.html {
               flash[:notice] = l(:notice_user_successful_create, :id => view_context.link_to(@user.login, user_path(@user)))
               if params[:continue]
-                attrs = {:generate_password => @user.generate_password}
+                attrs = { :generate_password => @user.generate_password }
                 redirect_to new_user_path(:user => attrs, back_url: @back_url)
               else
                 redirect_back_or_default(user_path(@user))
               end
             }
-            format.api {render :action => 'show', :status => :created, :location => user_url(@user)}
+            format.api { render :action => 'show', :status => :created, :location => user_url(@user) }
           end
         else
           @auth_sources = AuthSource.all
@@ -36,8 +36,8 @@ module RedmineOrganizations::Patches
           @user.password = @user.password_confirmation = nil
 
           respond_to do |format|
-            format.html {render :action => 'new', back_url: @back_url}
-            format.api {render_validation_errors(@user)}
+            format.html { render :action => 'new', back_url: @back_url }
+            format.api { render_validation_errors(@user) }
           end
         end
 

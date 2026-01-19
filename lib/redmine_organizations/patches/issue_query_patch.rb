@@ -87,9 +87,9 @@ module RedmineOrganizations::Patches
       neg = (operator == '!' ? 'NOT' : '')
 
       subquery = "SELECT 1 FROM #{Journal.table_name}" +
-        " WHERE #{Journal.table_name}.journalized_type='Issue' AND #{Journal.table_name}.journalized_id=#{Issue.table_name}.id" +
-        " AND (journals.user_id IN (SELECT DISTINCT #{User.table_name}.id FROM #{User.table_name} WHERE #{cond}))" +
-        " AND (#{Journal.visible_notes_condition(User.current, :skip_pre_condition => true)})"
+                 " WHERE #{Journal.table_name}.journalized_type='Issue' AND #{Journal.table_name}.journalized_id=#{Issue.table_name}.id" +
+                 " AND (journals.user_id IN (SELECT DISTINCT #{User.table_name}.id FROM #{User.table_name} WHERE #{cond}))" +
+                 " AND (#{Journal.visible_notes_condition(User.current, :skip_pre_condition => true)})"
 
       "#{neg} EXISTS (#{subquery})"
     end
@@ -105,11 +105,9 @@ module RedmineOrganizations::Patches
 
     def all_organizations_values
       return @all_organizations_values if @all_organizations_values
-      values = []
-      Organization.sorted.each do |organization|
-        values << [organization.fullname, organization.id.to_s]
+      @all_organizations_values = Organization.sorted.pluck(:name_with_parents, :id).map do |name, id|
+        [name, id.to_s]
       end
-      @all_organizations_values = values
     end
 
   end
