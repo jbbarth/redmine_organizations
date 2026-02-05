@@ -20,7 +20,17 @@ class OrganizationHierarchyCache
 
   def fullpath_from_top_department(org)
     top = top_department_in_ldap(org)
-    org.name_to_(top)
+    return "" if top.nil?
+
+    # Build path using cached data instead of AR parent association (avoids N+1)
+    path_parts = []
+    current = org
+    while current
+      path_parts.unshift(current.name)
+      break if current == top
+      current = @all_organizations_by_id[current.parent_id]
+    end
+    path_parts.join(Organization::SEPARATOR)
   end
 
   private

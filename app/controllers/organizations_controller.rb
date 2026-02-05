@@ -145,7 +145,7 @@ class OrganizationsController < ApplicationController
 
     top_departments = Organization.where(top_department_in_ldap: true).select(:lft, :rgt)
     sql_condition = top_departments.map { |t| "(lft >= #{t.lft} AND rgt <= #{t.rgt})" }.join(' OR ')
-    @synchronizable_organizations = Organization.where(sql_condition).order(:lft)
+    @synchronizable_organizations = Organization.where(sql_condition).order(:lft).to_a
 
     @hierarchy_cache = OrganizationHierarchyCache.new(@synchronizable_organizations)
 
@@ -154,9 +154,9 @@ class OrganizationsController < ApplicationController
         @hierarchy_cache.fullpath_from_top_department(org)
       end
 
-    sync_org_ids = @synchronizable_organizations.map(&:id).to_set
+    @synchronizable_organization_ids = @synchronizable_organizations.map(&:id).to_set
     intern_organizations = @organizations.map do |org|
-      if sync_org_ids.include?(org.id)
+      if @synchronizable_organization_ids.include?(org.id)
         @fullpaths_from_top_department_in_ldap_by_organization_id[org.id]
       else
         org.name_with_parents
@@ -165,8 +165,8 @@ class OrganizationsController < ApplicationController
 
     ldap_organizations = LdapOrganization.order(:fullpath).pluck(:fullpath)
     @unknown_organizations = ldap_organizations - intern_organizations
-    @synchronized_organizations = ldap_organizations & intern_organizations
-    @desynchronized_organizations = intern_organizations - ldap_organizations
+    @synchronized_organizations = (ldap_organizations & intern_organizations).to_set
+    @desynchronized_organizations = (intern_organizations - ldap_organizations).to_set
 
     render layout: 'admin'
   end

@@ -34,7 +34,7 @@
   <tbody>
   <% Organization.each_with_level(@organizations.to_a) do |organization, level| %>
     <tr class="organization <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= organization.direction? ? "direction" : "" %>">
-      <% if @synchronizable_organizations.include?(organization) %>
+      <% if @synchronizable_organization_ids.include?(organization.id) %>
         <td><%= button_to "", { action: "ldap_sync_check_status",
                                 controller: "organizations",
                                 method: :post,
