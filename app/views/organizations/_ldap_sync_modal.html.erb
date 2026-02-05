@@ -10,7 +10,8 @@
           <%= content_tag(:span, "", class: "ldap_sync_orga orange") if @desynchronized_organizations.include?(orga) %>
           <%= content_tag(:span, orga, class: "orga") %>
           <% if @unknown_organizations.include?(orga) %>
-            <%= link_to sprite_icon('add'), :onclick => "addOrganizationFromLdap(this); return false;",
+            <%= link_to sprite_icon('add'), "#",
+                        onclick: "addOrganizationFromLdap(this); return false;",
                         class: 'action icon icon-add',
                         data: { 'orga' => orga, 'parent-orga-id' => @organization.id } %>
           <% end %>
