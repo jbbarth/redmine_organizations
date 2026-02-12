@@ -36,6 +36,17 @@ describe Organizations::ManagersController, :type => :controller do
     expect(organization.managers).to include(User.find(7))
   end
 
+  it "should delete manager from an organization" do
+    @request.session[:user_id] = 1
+    expect do
+        delete :destroy, :params => {
+          :manager_id => 2,
+          :page => "user",
+          :id => 2
+        }, format: :js
+      end.to change { OrganizationManager.count }.by(-1)
+  end
+
   if Redmine::VERSION::MAJOR >= 5
     it "should forbid users from sub-organization to modify managers in parents of their organization" do
       @request.session[:user_id] = 2 # Not Admin, member of organization #2

@@ -13,7 +13,15 @@ class Organizations::ManagersController < ApplicationController
   end
 
   def destroy
-    @organization.managers.delete(User.find(params[:manager_id]))
+    user = User.find(params[:manager_id])
+    @organization.managers.delete(user)
+
+    if params[:page].present? && params[:page] == "user"
+      respond_to do |format|
+        format.js { render js: "window.location.reload();" }
+      end
+    end
+
     respond_to do |format|
       format.html { redirect_to edit_organization_path(@organization.identifier, tab: 'managers') }
       format.js

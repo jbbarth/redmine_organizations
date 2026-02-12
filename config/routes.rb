@@ -21,7 +21,7 @@ RedmineApp::Application.routes.draw do
         get :autocomplete_for_manager
       end
     end
-    resources :team_leaders, only: [:update] do
+    resources :team_leaders, only: [:update, :destroy] do
       collection do
         put :assign_to_team_projects
       end
