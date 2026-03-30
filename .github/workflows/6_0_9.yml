@@ -1,8 +1,8 @@
-name: Tests 6.1.1
+name: Tests 6.0.9
 
 env:
   PLUGIN_NAME: redmine_organizations
-  REDMINE_VERSION: 6.1.1
+  REDMINE_VERSION: 6.0.9
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        ruby: [ '3.4' ]
+        ruby: [ '3.3' ]
         db: [ 'postgres' ]
       fail-fast: false
 
