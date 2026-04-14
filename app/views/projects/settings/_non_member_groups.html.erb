@@ -57,10 +57,11 @@
     </td>
   </tr>
 
-  <% non_member_organizations = OrganizationNonMemberRole.for_project(@project).map(&:organization)
-     non_member_organizations |= OrganizationNonMemberFunction.for_project(@project).map(&:organization) if Redmine::Plugin.installed?(:redmine_limited_visibility)
+  <% non_member_organizations = OrganizationNonMemberRole.for_project(@project).includes(:organization).map(&:organization)
+     non_member_organizations |= OrganizationNonMemberFunction.for_project(@project).includes(:organization).map(&:organization) if Redmine::Plugin.installed?(:redmine_limited_visibility)
+     has_non_member_roles = OrganizationNonMemberRole.where(project: @project).exists?
      non_member_organizations.each do |orga| %>
-    <%= render :partial => 'projects/settings/non_member_organization', :locals => { :o => orga } %>
+    <%= render :partial => 'projects/settings/non_member_organization', :locals => { :o => orga, :has_non_member_roles => has_non_member_roles } %>
   <% end %>
 
 <% end %>

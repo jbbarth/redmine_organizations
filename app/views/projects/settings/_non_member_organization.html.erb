@@ -74,7 +74,8 @@
     <% end %>
 
     <td class="buttons">
-      <% if OrganizationNonMemberRole.where(project: @project).exists? %>
+      <% has_non_member_roles ||= OrganizationNonMemberRole.where(project: @project).exists? %>
+      <% if has_non_member_roles %>
 
         <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{o.id}, 'non-member-orga'); return false;",
                              :class => 'icon icon-edit') %>
