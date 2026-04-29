@@ -27,7 +27,7 @@
 
       <div style="margin-top: 5px;">Gestionnaires d'organisation :</div>
       <ul>
-        <% if @user.organization.all_managers.each do |manager| %>
+        <% if @user.organization.all_managers.select(&:active?).each do |manager| %>
           <li>
             <%= link_to_user manager %> (<%= link_to_organization(manager.organization) %>)
           </li>
@@ -38,7 +38,7 @@
 
       <div style="margin-top: 5px;">Chefs d'équipe :</div>
       <ul>
-        <% if @user.organization.all_team_leaders.each do |team_leader| %>
+        <% if @user.organization.all_team_leaders.select(&:active?).each do |team_leader| %>
           <li>
             <%= link_to_user team_leader %> (<%= link_to_organization(team_leader.organization) %>)
           </li>
