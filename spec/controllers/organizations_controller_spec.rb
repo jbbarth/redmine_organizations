@@ -148,6 +148,34 @@ describe OrganizationsController, :type => :controller do
     end
   end
 
+  describe "autocomplete action" do
+    context "when logged in" do
+      before { @request.session[:user_id] = 2 }
+
+      it "returns matching organizations as JSON" do
+        get :autocomplete, params: { organization: "Team" }
+        expect(response).to be_successful
+        json = JSON.parse(response.body)
+        expect(json["organizations"]).to be_an(Array)
+        expect(json["organizations"].first).to include("id", "name_with_parents")
+      end
+
+      it "returns empty array when query matches nothing" do
+        get :autocomplete, params: { organization: "zzznomatch" }
+        expect(response).to be_successful
+        json = JSON.parse(response.body)
+        expect(json["organizations"]).to be_empty
+      end
+    end
+
+    context "when not logged in" do
+      it "redirects to login" do
+        get :autocomplete, params: { organization: "Team" }
+        expect(response).to redirect_to('/login?back_url=http%3A%2F%2Ftest.host%2Forganizations%2Fautocomplete%3Forganization%3DTeam')
+      end
+    end
+  end
+
   describe "memberships methods" do
 
     before do

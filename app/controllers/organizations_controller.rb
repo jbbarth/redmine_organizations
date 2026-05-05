@@ -1,8 +1,8 @@
 class OrganizationsController < ApplicationController
 
   before_action :find_organization_by_id, only: [:show, :edit, :update, :destroy, :add_users, :remove_user, :autocomplete_for_user]
-  before_action :require_admin_or_manager, :except => [:index, :show, :autocomplete_users, :fetch_users_by_orga, :search]
-  before_action :require_login, :only => [:index, :show, :autocomplete_users, :search]
+  before_action :require_admin_or_manager, :except => [:index, :show, :autocomplete_users, :fetch_users_by_orga, :search, :autocomplete]
+  before_action :require_login, :only => [:index, :show, :autocomplete_users, :search, :autocomplete]
   before_action :find_project_by_project_id, :only => [:autocomplete_users]
   after_action :update_fullname_and_identifier_of_children, only: [:update]
 
@@ -28,6 +28,12 @@ class OrganizationsController < ApplicationController
         @organizations_count = @organizations.count
       end
     end
+  end
+
+  def autocomplete
+    q = params['organization'].to_s
+    organizations = Organization.order('lft').where("LOWER(name_with_parents) LIKE LOWER(?)", "%#{q}%")
+    render json: { organizations: organizations.map { |org| { id: org.id, name_with_parents: org.name_with_parents } } }
   end
 
   def show

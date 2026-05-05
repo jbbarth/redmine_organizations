@@ -6,6 +6,7 @@ RedmineApp::Application.routes.draw do
       get :autocomplete_for_user
     end
     collection do
+      get :autocomplete
       get :autocomplete_user_from_id
       get :autocomplete_users
       get :ldap_sync
