@@ -60,6 +60,7 @@
         <% managed_organizations.each do |organization| %>
           <li>
             <%= link_to_organization organization %>
+            <%= link_to l(:button_delete), organizations_manager_path(:id => organization.id, :manager_id => @user.id, :page => "user"), :method => :delete, :remote => true, :class => 'icon icon-del' %>
           </li>
         <% end %>
       </ul>
@@ -70,6 +71,7 @@
         <% team_leader_organizations.each do |organization| %>
           <li>
             <%= link_to_organization organization %>
+            <%= link_to l(:button_delete), organizations_team_leader_path(:id => organization.id, :team_leader_id => @user.id), :method => :delete, :remote => true, :class => 'icon icon-del' %>
           </li>
         <% end %>
       </ul>

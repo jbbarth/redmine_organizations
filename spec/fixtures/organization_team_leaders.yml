@@ -1,7 +1,9 @@
 ---
 organization_team_leaders_001:
+  id: 1
   user_id: 1
   organization_id: 1
 organization_team_leaders_002:
+  id: 2
   user_id: 2
   organization_id: 2
