@@ -21,7 +21,7 @@ module RedmineOrganizations::Patches
 
     def initialize_available_filters
       super
-      add_available_filter "author_organization",
+      add_available_filter "author.organization",
                            :type => :list_optional,
                            :values => lambda { organization_values },
                            :label => :field_author_organization
