@@ -118,7 +118,8 @@ module RedmineOrganizations::Patches::UserPatch
       roles.any? do |role|
 
         # Keep compatibility with Redmine 6.0 and previous versions
-        if Redmine::VERSION::MAJOR >= 6 && Redmine::VERSION::MINOR >= 1
+        # (the oauth scope argument was introduced in 6.1)
+        if Redmine::VERSION::MAJOR > 6 || (Redmine::VERSION::MAJOR == 6 && Redmine::VERSION::MINOR >= 1)
           role.allowed_to?(action, @oauth_scope) &&
             (block ? yield(role, self) : true)
         else
