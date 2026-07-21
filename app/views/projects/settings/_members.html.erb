@@ -12,8 +12,8 @@
 %>
 
 <p>
-  <%= link_to l(:label_member_new), new_project_membership_path(@project), :remote => true, :class => "icon icon-add" %>
-  <%= link_to l(:label_new_members_through_organization), new_organizations_membership_path(project_id: @project.id), :remote => true, :class => "icon icon-group", style: "margin-left:10px;background-position: top left;" %>
+  <%= link_to sprite_icon('add', l(:label_member_new)), new_project_membership_path(@project), :remote => true %>
+  <%= link_to sprite_icon('group', l(:label_new_members_through_organization)), new_organizations_membership_path(project_id: @project.id), :remote => true, style: "margin-left:10px;" %>
 </p>
 
 <% if members.any? %>
@@ -30,7 +30,7 @@
       <% members_per_organization.each do |organization, members| %>
         <% if organization.present? %>
           <tr id="organization-<%= organization.id %>" class="organization">
-            <td class="name icon icon-group" style="display: table-cell;"><%= link_to_organization organization %></td>
+            <td class="name" style="display: table-cell;"><%= sprite_icon('group') %><%= link_to_organization organization %></td>
             <td id="organization-<%= organization.id %>-form"
                 colspan="<%= Redmine::Plugin.installed?(:redmine_limited_visibility) ? "3" : "2" %>"
                 class="hidden form">
@@ -48,11 +48,10 @@
               <div id="organization-<%= organization.id %>-users-form"></div>
             </td>
             <td class="buttons">
-              <%= link_to l(:button_edit),
+              <%= link_to sprite_icon('edit', l(:button_edit)),
                           edit_organizations_membership_path(id: organization.id, project_id: @project.id),
-                          :remote => true,
-                          :class => 'icon icon-edit' if managed_organizations.include? organization %>
-              <%= link_to l(:button_delete_all), destroy_organization_organizations_membership_path(id: organization.id, project_id: @project.id), :method => :delete, :data => {:confirm => l(:organization_delete_all_confirm)}, :class => 'icon icon-del', :remote => true %>
+                          :remote => true if managed_organizations.include? organization %>
+              <%= link_to sprite_icon('del', l(:button_delete_all)), destroy_organization_organizations_membership_path(id: organization.id, project_id: @project.id), :method => :delete, :data => {:confirm => l(:organization_delete_all_confirm)}, :remote => true %>
             </td>
           </tr>
         <% end %>
@@ -70,10 +69,9 @@
             <td class="users"></td>
             <td class="buttons">
               <% if organization.blank? || managed_organizations.include?(organization) %>
-                <%= link_to l(:button_edit),
+                <%= link_to sprite_icon('edit', l(:button_edit)),
                             edit_membership_path(member),
-                            :remote => true,
-                            :class => 'icon icon-edit' %>
+                            :remote => true %>
                 <% if member.deletable? %>
                   <%# Redmine 7.0 replaced delete_link (icon-del) with remove_link (icon-link-break) in the members view %>
                   <%= send(Redmine::VERSION::MAJOR >= 7 ? :remove_link : :delete_link, membership_path(member),

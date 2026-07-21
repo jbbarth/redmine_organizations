@@ -37,8 +37,7 @@
       <td class="function"></td>
     <% end %>
     <td class="buttons">
-      <%= link_to_function(l(:button_edit), "toggleOrgaForms(#{group.id}, 'group'); return false;",
-                           :class => 'icon icon-edit') %>
+      <%= link_to_function(sprite_icon('edit', l(:button_edit)), "toggleOrgaForms(#{group.id}, 'group'); return false;") %>
     </td>
   </tr>
 

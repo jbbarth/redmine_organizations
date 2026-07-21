@@ -17,7 +17,7 @@
             <%= content_tag(:span, "Chef d'équipe", :class => "badge team-leader-badge") if @organization.all_team_leaders.include?(manager) %>
           </td>
           <td class="buttons">
-            <%= link_to l(:button_delete), organizations_manager_path(:id => @organization, :manager_id => manager.id), :method => :delete, :remote => true, :class => 'icon icon-del' %>
+            <%= link_to sprite_icon('del', l(:button_delete)), organizations_manager_path(:id => @organization, :manager_id => manager.id), :method => :delete, :remote => true %>
           </td>
         </tr>
       <% end %>

@@ -12,7 +12,7 @@
           <% if @unknown_organizations.include?(orga) %>
             <%= link_to sprite_icon('add'), "#",
                         onclick: "addOrganizationFromLdap(this); return false;",
-                        class: 'action icon icon-add',
+                        class: 'action icon',
                         data: { 'orga' => orga, 'parent-orga-id' => @organization.id } %>
           <% end %>
         </div>
