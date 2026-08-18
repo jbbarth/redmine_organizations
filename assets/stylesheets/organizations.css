@@ -1,4 +1,3 @@
-.icon-organizations, #admin-menu a.organizations { background-image: url(../images/building.png); }
 tr.organization.direction td.name, tr.organization.direction td.description { font-weight:bold; }
 tr.organization td.name .icon { margin-left: 0.5em; }
 tr.organization.idnt td.name a { padding-left: 16px; }

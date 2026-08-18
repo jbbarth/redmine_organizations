@@ -25,7 +25,9 @@ Redmine::MenuManager.map :admin_menu do |menu|
   menu.push :organizations, {:controller => 'organizations'},
             :after => :groups,
             :caption => :label_organization_plural,
-            :html => {:class => 'icon'}
+            :icon => 'building',
+            :plugin => 'redmine_organizations',
+            :html => {:class => 'icon icon-building'}
 end
 
 Redmine::MenuManager.map :top_menu do |menu|
