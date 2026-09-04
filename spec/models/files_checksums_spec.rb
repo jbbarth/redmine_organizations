@@ -7,9 +7,9 @@ describe "FilesChecksums" do
     assert checksum.in?(Array(expected)), "Bad checksum for file: #{filename}, local version should be reviewed: checksum=#{checksum}, expected=#{Array(expected).join(" or ")}"
   end
 
-  it "should ensure project patch file is up to date" do
-    # 6.0 / 6.1 / trunk checksums (the self.allowed_to_condition method is completely overridden and should be reviewed if this test breaks)
-    assert_checksum %w(601659a9f0979d68453ec381451331ac 7a81704769de36b09964de216c26c621 885bf5f74d0ada1fc1a1736744c16667), "app/models/project.rb"
+  it "ensures the project patch file is up to date" do
+    # 6.1.4 / 7.0.1 / trunk checksums (the self.allowed_to_condition method is completely overridden and should be reviewed if this test breaks)
+    assert_checksum %w(8f1b3c7ec0cc28c13924fb626dc6257d b371ef44053677bba9c927cf47426ec1), "app/models/project.rb"
   end
 
 end
