@@ -73,7 +73,7 @@ class Project
       if user.organization.present?
         non_member_organization_statements = []
         OrganizationNonMemberRole.where(organization_id: user.organization.self_and_ancestors_ids)
-                                 .joins(:project).each do |non_member_role|
+                                 .joins(:project).preload(:project).each do |non_member_role|
           non_member_organization_statements << "(#{Project.table_name}.lft >= #{non_member_role.project.lft} AND #{Project.table_name}.rgt <= #{non_member_role.project.rgt})"
         end
       end
