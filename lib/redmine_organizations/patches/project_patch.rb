@@ -70,15 +70,17 @@ class Project
       end
 
       ### START PATCH FOR NON-MEMBER EXCEPTIONS BY ORGANIZATION ###
-      if user.organization.present?
-        non_member_organization_statements = []
-        OrganizationNonMemberRole.where(organization_id: user.organization.self_and_ancestors_ids)
-                                 .joins(:project).preload(:project).each do |non_member_role|
-          non_member_organization_statements << "(#{Project.table_name}.lft >= #{non_member_role.project.lft} AND #{Project.table_name}.rgt <= #{non_member_role.project.rgt})"
-        end
-      end
+      user.organization_non_member_project_ranges_by_role.each do |role, ranges|
+        next unless role.allowed_to?(permission)
 
-      if statement_by_role.empty? && non_member_organization_statements.blank?
+        s = ranges.map do |lft, rgt|
+          "(#{Project.table_name}.lft >= #{lft} AND #{Project.table_name}.rgt <= #{rgt})"
+        end.join(' OR ')
+        statement_by_role[role] = statement_by_role[role] ? "(#{statement_by_role[role]} OR #{s})" : "(#{s})"
+      end
+      ### END PATCH FOR NON-MEMBER EXCEPTIONS BY ORGANIZATION ###
+
+      if statement_by_role.empty?
         "1=0"
       else
         if block_given?
@@ -88,15 +90,8 @@ class Project
             end
           end
         end
-        if non_member_organization_statements.present?
-          statements_by_role = statement_by_role.values + non_member_organization_statements
-          "((#{base_statement}) AND (#{statements_by_role.join(' OR ')}))"
-        else
-          "((#{base_statement}) AND (#{statement_by_role.values.join(' OR ')}))"
-        end
+        "((#{base_statement}) AND (#{statement_by_role.values.join(' OR ')}))"
       end
-
-      ### END PATCH FOR NON-MEMBER EXCEPTIONS BY ORGANIZATION ###
     end
   end
 

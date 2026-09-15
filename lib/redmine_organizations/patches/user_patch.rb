@@ -87,6 +87,34 @@ module RedmineOrganizations::Patches::UserPatch
     roles
   end
 
+  # Returns the nested set bounds [lft, rgt] of the projects where the user's
+  # organization or one of its ancestors grants non-member roles, grouped by role.
+  # Ranges nested in another range of the same role are dropped.
+  def organization_non_member_project_ranges_by_role
+    return {} if organization.nil?
+
+    @organization_non_member_project_ranges_by_role ||= begin
+      rows = OrganizationNonMemberRole.joins(:project)
+                                      .where(organization_id: organization.self_and_ancestors_ids)
+                                      .pluck(:role_id, "#{Project.table_name}.lft", "#{Project.table_name}.rgt")
+      roles = Role.where(id: rows.map(&:first).uniq).index_by(&:id)
+      rows.group_by(&:first).each_with_object({}) do |(role_id, role_rows), result|
+        next unless (role = roles[role_id])
+
+        ranges = []
+        role_rows.map { |_, lft, rgt| [lft, rgt] }.sort.each do |lft, rgt|
+          ranges << [lft, rgt] unless ranges.any? && rgt <= ranges.last[1]
+        end
+        result[role] = ranges
+      end
+    end
+  end
+
+  def reload(*)
+    @organization_non_member_project_ranges_by_role = nil
+    super
+  end
+
   # with organization exceptions TODO Test it
   #
   # Return true if the user is allowed to do the specified action on a specific context
