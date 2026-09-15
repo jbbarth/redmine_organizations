@@ -1,22 +1,13 @@
-<% members = @project.memberships.preload(:project).includes(:user => [:organization]).sorted
-   members = members.active unless Rails.env.test?
-  members_per_organization = {}
-  members.each { |member|
-    # group members have no organization; bucket them under nil
-    organization = member.principal.respond_to?(:organization) ? member.principal.organization : nil
-    members_per_organization[organization] ||= []
-    members_per_organization[organization] << member }
-    members_per_organization = members_per_organization.sort_by{|k,v|k.try(:fullname).to_s}
-
-  managed_organizations = User.current.managed_organizations(@project)
+<% members_per_organization, member_pages, member_count = paginate_members_per_organization(@project)
+   managed_organizations = User.current.managed_organizations(@project)
 %>
 
 <p>
-  <%= link_to sprite_icon('add', l(:label_member_new)), new_project_membership_path(@project), :remote => true %>
+  <%= link_to sprite_icon('add', l(:label_member_new)), new_project_membership_path(@project, :members_page => params[:members_page]), :remote => true %>
   <%= link_to sprite_icon('group', l(:label_new_members_through_organization)), new_organizations_membership_path(project_id: @project.id), :remote => true, style: "margin-left:10px;" %>
 </p>
 
-<% if members.any? %>
+<% if member_count > 0 %>
   <table class="list members organizations">
     <thead>
     <tr>
@@ -56,7 +47,6 @@
           </tr>
         <% end %>
         <% members.each do |member| %>
-          <% next if member.new_record? %>
           <tr id="member-<%= member.id %>" class="member">
             <td class="name"><%= link_to_principal member.principal %></td>
             <td id="member-<%= member.id %>-form"
@@ -70,11 +60,11 @@
             <td class="buttons">
               <% if organization.blank? || managed_organizations.include?(organization) %>
                 <%= link_to sprite_icon('edit', l(:button_edit)),
-                            edit_membership_path(member),
+                            edit_membership_path(member, :members_page => params[:members_page]),
                             :remote => true %>
                 <% if member.deletable? %>
                   <%# Redmine 7.0 replaced delete_link (icon-del) with remove_link (icon-link-break) in the members view %>
-                  <%= send(Redmine::VERSION::MAJOR >= 7 ? :remove_link : :delete_link, membership_path(member),
+                  <%= send(Redmine::VERSION::MAJOR >= 7 ? :remove_link : :delete_link, membership_path(member, :members_page => params[:members_page]),
                            :remote => true,
                            :data => (!User.current.is_admin_or_instance_manager? && member.include?(User.current) ? {:confirm => l(:text_own_membership_delete_confirmation)} : {})) %>
                 <% end %>
@@ -85,6 +75,11 @@
       <% end %>
     </tbody>
   </table>
+  <span class="pagination">
+    <%= pagination_links_full(member_pages, member_count) do |text, parameters, options|
+          link_to text, settings_project_path(@project, 'members', request.query_parameters.except('tab', :tab).merge(parameters)), options
+        end %>
+  </span>
 <% else %>
   <p class="nodata"><%= l(:label_no_data) %></p>
 <% end %>

@@ -3,7 +3,7 @@
 <% if Redmine::Plugin.installed?(:redmine_limited_visibility)
      organization_functions = @member.principal.organization ? @member.principal.organization.default_functions_by_project(@project) : []
    end %>
-<%= form_for(@member, :url => membership_path(@member),
+<%= form_for(@member, :url => membership_path(@member, :members_page => params[:members_page]),
              :as => :membership,
              :remote => request.xhr?,
              :method => :put) do |f| %>

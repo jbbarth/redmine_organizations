@@ -14,7 +14,8 @@ Redmine::Plugin.register :redmine_organizations do
   requires_redmine_plugin :redmine_base_deface, :version_or_higher => '0.0.1'
   settings :default => {
     'hide_groups_admin_menu' => "0",
-    'default_team_leader_role' => nil
+    'default_team_leader_role' => nil,
+    'members_per_page' => ''
   }, :partial => 'settings/organizations_settings'
   project_module :issue_tracking do
     permission :share_issues_with_organizations, {}, :require => :member

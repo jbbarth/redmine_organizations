@@ -16,4 +16,9 @@ end -%>
     <%= select_tag 'settings[default_team_leader_role]', options_from_collection_for_select(Role.all, "id", "name",
                                                                                             @settings['default_team_leader_role']) %>
   </p>
+  <p>
+    <label><%= l(:label_members_per_page) %></label>
+    <%= number_field_tag 'settings[members_per_page]', @settings['members_per_page'], :min => 1, :size => 6 %>
+    <em class="info"><%= l(:text_members_per_page_info) %></em>
+  </p>
 </fieldset>

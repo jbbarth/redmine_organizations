@@ -12,6 +12,8 @@ fr:
   field_direction: "Est une direction"
   field_issue_organizations: "Organisations associées"
   text_hide_groups_admin_menu: "Cacher les 'Groupes'"
+  label_members_per_page: "Membres par page dans la configuration des projets"
+  text_members_per_page_info: "Laisser vide pour utiliser le paramètre global « Options d'objets affichés par page »"
   undefined: "Indéterminé"
   update_user_orga: "Modifier l'organisation de %{username} :"
   memberships_keep: "Conserver tous les projets et les rôles actuels"

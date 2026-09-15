@@ -10,6 +10,8 @@ en:
   field_direction: "Is a direction"
   field_issue_organizations: "Associated organizations"
   text_hide_groups_admin_menu: "Hide groups"
+  label_members_per_page: "Members per page in project settings"
+  text_members_per_page_info: "Leave empty to use the global \"Objects per page options\" setting"
   undefined: "Undefined"
   update_user_orga: "Update %{username}'s organization :"
   memberships_keep: "Keep all current roles and projects"
