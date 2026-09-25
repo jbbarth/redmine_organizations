@@ -87,7 +87,7 @@ describe ProjectsController, :type => :controller do
     it "keeps the table and the pagination links for an out of range page" do
       expect(members_on_page(99)).to be_empty
       expect(response.body).to include("settings/members?members_page=")
-      expect(response.body).to_not include('class="nodata"')
+      expect(Nokogiri::HTML(response.body).css('div#tab-content-members .nodata')).to be_empty
     end
 
     context "with the members per page setting" do
