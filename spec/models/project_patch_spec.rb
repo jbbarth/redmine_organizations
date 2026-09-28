@@ -28,6 +28,11 @@ describe "ProjectPatch" do
       expect { Project.allowed_to_condition(user, :view_issues) }.not_to raise_error
     end
 
+    it "restricts the non-member role to public projects by default" do
+      expect(Project.public_projects_condition(user)).to eq("projects.is_public = #{Project.connection.quoted_true}")
+      expect(Project.allowed_to_condition(user, :view_project)).to include(Project.public_projects_condition(user))
+    end
+
     it "destroys associated OrganizationNonMemberRole records when a project is destroyed" do
       OrganizationNonMemberRole.create!(organization: organization, role: role, project: project)
 

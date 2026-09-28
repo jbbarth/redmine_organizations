@@ -13,6 +13,12 @@ class Project
     Organization.joins(:users => :members).where("project_id = ? AND users.status = ?", self.id, User::STATUS_ACTIVE).uniq
   end
 
+  # Returns a SQL condition matching the projects open to non-members.
+  # Extension point: other plugins may prepend their own condition.
+  def self.public_projects_condition(_user)
+    "#{Project.table_name}.is_public = #{connection.quoted_true}"
+  end
+
   # Returns a SQL conditions string used to find all projects for which +user+ has the given +permission+
   #
   # Valid options:
@@ -51,7 +57,7 @@ class Project
       unless options[:member]
         role = user.builtin_role
         if role.allowed_to?(permission)
-          s = "#{Project.table_name}.is_public = #{connection.quoted_true}"
+          s = public_projects_condition(user)
           if user.id
             group = role.anonymous? ? Group.anonymous : Group.non_member
             principal_ids = [user.id, group.id].compact
