@@ -25,7 +25,9 @@ module RedmineOrganizations::Patches::MembersHelperPatch
   # Paginates members one by one, then groups the page by organization:
   # an organization whose members span several pages is listed on each of them
   def paginate_members_per_organization(project)
-    members = project.memberships.preload(:project).includes(:user => [:organization]).sorted
+    # The core filters the members list since Redmine 7.1 (#44458)
+    scope = defined?(members_scope) ? members_scope(project) : project.memberships
+    members = scope.preload(:project).includes(:user => [:organization]).sorted
     members = members.active unless Rails.env.test?
     members = members.reject(&:new_record?)
 
@@ -35,6 +37,14 @@ module RedmineOrganizations::Patches::MembersHelperPatch
     page_members = ordered_members[member_pages.offset, member_pages.per_page] || []
 
     [group_members_by_organization(page_members).to_a, member_pages, member_count]
+  end
+
+  # Params of the members list (pagination, and filters since Redmine 7.1),
+  # preserved across the member creation, edition and deletion requests
+  def members_list_params
+    return super if defined?(super)
+
+    {:members_page => params[:members_page]}.compact_blank
   end
 
   private
