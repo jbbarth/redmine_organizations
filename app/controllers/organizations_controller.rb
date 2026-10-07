@@ -8,14 +8,40 @@ class OrganizationsController < ApplicationController
 
   accept_api_auth :search
 
+  helper :sort
+  include SortHelper
+  helper :queries
+  include QueriesHelper
+
   layout 'admin'
 
   def index
-    @organizations = Organization.order('lft').includes(:managers, :team_leaders)
-    @managers_by_organization = @organizations.map { |o| [o.id, o.managers.map(&:name)] }.to_h
-    @team_leaders_by_organization = @organizations.map { |o| [o.id, o.team_leaders.map(&:name)] }.to_h
+    retrieve_query(OrganizationQuery, !request.format.csv?)
     @managed_organizations = Organization.managed_by(user: User.current)
-    render :layout => (User.current.admin? ? 'admin' : 'base')
+    layout = request.xhr? ? false : (User.current.admin? ? 'admin' : 'base')
+
+    if @query.valid?
+      scope = @query.results_scope
+      @organization_count = scope.count
+
+      respond_to do |format|
+        format.html do
+          @limit = per_page_option
+          @organization_pages = Paginator.new @organization_count, @limit, params['page']
+          @organizations = scope.limit(@limit).offset(@organization_pages.offset).to_a
+          render :layout => layout
+        end
+        format.csv do
+          send_data(query_to_csv(scope.to_a, @query, params), :type => 'text/csv; header=present',
+                    :filename => "#{filename_for_export(@query, 'organizations')}.csv")
+        end
+      end
+    else
+      respond_to do |format|
+        format.html { render :layout => layout }
+        format.csv { head :unprocessable_content }
+      end
+    end
   end
 
   def search

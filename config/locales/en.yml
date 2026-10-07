@@ -39,3 +39,10 @@ en:
   field_updated_by_organization: Updated by member of
   permission_share_issues_with_organizations: "Share issues with associated organizations"
   field_related_organizations: "Associated organizations"
+  field_managers: "Managers"
+  field_team_leaders: "Team leaders"
+  field_top_department_in_ldap: "Root department in LDAP"
+  field_name_with_parents: "Full name"
+  field_users_count: "Number of users"
+  label_managed_organizations: "Organizations I manage"
+  label_all_organizations: "All organizations"

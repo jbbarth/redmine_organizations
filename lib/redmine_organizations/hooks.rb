@@ -23,6 +23,7 @@ module RedmineOrganizations
       require_relative 'patches/member_patch'
       require_relative 'patches/members_helper_patch'
       require_relative 'patches/users_controller_patch'
+      require_relative 'patches/queries_controller_patch'
       require_relative 'patches/application_controller_patch'
       require_relative 'patches/field_format_patch'
 

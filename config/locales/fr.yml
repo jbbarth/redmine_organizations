@@ -64,3 +64,5 @@ fr:
   field_updated_by_organization: Mise à jour par un membre de
   permission_share_issues_with_organizations: "Partager des demandes avec des organisations"
   field_related_organizations: "Organisations associées"
+  field_name_with_parents: "Nom complet"
+  field_users_count: "Nombre d'utilisateurs"

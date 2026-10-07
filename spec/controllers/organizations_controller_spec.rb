@@ -129,6 +129,54 @@ describe OrganizationsController, :type => :controller do
     end
   end
 
+  describe "index with query" do
+    before do
+      @request.session[:user_id] = 3
+    end
+
+    it "lists organizations in tree order for a non admin user" do
+      get :index
+      expect(response).to be_successful
+      expect(assigns(:organizations).map(&:id)).to eq [1, 2, 3]
+      expect(response.body).to include('id="query_form"')
+      expect(response.body).to match(/<tr id="organization-2" class="[^"]*idnt idnt-1/)
+      expect(response.body).to match(%r{<td class="managers"><a [^>]*href="/users/2">John Smith</a></td>})
+    end
+
+    it "filters organizations" do
+      get :index, params: {set_filter: '1', f: ['direction', ''], op: {direction: '='}, v: {direction: ['1']}}
+      expect(response).to be_successful
+      expect(assigns(:organizations).map(&:id)).to eq [1]
+    end
+
+    it "displays the selected columns" do
+      get :index, params: {set_filter: '1', c: ['name', 'mail', 'parent_fullname']}
+      expect(response).to be_successful
+      expect(response.body).to include('team-a@example.com')
+      expect(response.body).to include('<td class="parent_fullname">Org A</td>')
+    end
+
+    it "exports organizations as CSV" do
+      get :index, params: {format: 'csv', set_filter: '1', f: ['parent_id', ''], op: {parent_id: '='}, v: {parent_id: ['1']},
+                           c: ['name', 'name_with_parents', 'managers']}
+      expect(response).to be_successful
+      expect(response.content_type).to start_with 'text/csv'
+      lines = response.body.chomp.split("\n")
+      expect(lines.size).to eq 3
+      expect(lines.first).to eq "Name,Full name,Managers"
+      expect(lines.second).to eq "Team A,Org A/Team A,#{User.find(2).name}"
+    end
+
+    it "loads a saved query" do
+      query = OrganizationQuery.create!(name: 'Directions', visibility: Query::VISIBILITY_PUBLIC, user_id: 1,
+                                        filters: {'direction' => {operator: '=', values: ['1']}})
+      get :index, params: {query_id: query.id}
+      expect(response).to be_successful
+      expect(assigns(:organizations).map(&:id)).to eq [1]
+      expect(response.body).to include('<h2>Directions</h2>')
+    end
+  end
+
   describe "add_users method" do
 
     before do
