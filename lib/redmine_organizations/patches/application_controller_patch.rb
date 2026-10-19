@@ -4,23 +4,12 @@ module RedmineOrganizations::Patches
   module ApplicationControllerPatch
 
     def authorize(ctrl = params[:controller], action = params[:action], global = false)
-      if ctrl == "issues" && (%w(show edit update).include?(action))
-        if @issue.present? && @issue.organizations.include?(User.current.organization)
-          true
-        else
-          super
-        end
+      # Roles of organization exceptions are checked by super through User#roles_for_project
+      if ctrl == "issues" && (%w(show edit update).include?(action)) &&
+         @issue.present? && @issue.organizations.include?(User.current.organization)
+        true
       else
-        if @project.present? && User.current.try(:organization).present?
-          user_organization_and_parents_ids = User.current.organization.self_and_ancestors_ids
-          project_and_parents_ids = @project.self_and_ancestors.ids
-          organization_roles = OrganizationNonMemberRole.where(project_id: project_and_parents_ids, organization_id: user_organization_and_parents_ids)
-        end
-        if organization_roles.present?
-          true
-        else
-          super
-        end
+        super
       end
     end
 
